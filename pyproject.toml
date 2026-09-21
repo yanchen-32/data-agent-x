@@ -1,0 +1,35 @@
+[build-system]
+requires=["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name="dataagentx"
+version="0.1.0"
+description="DataAgentX FastAPI service"
+requires-python=">=3.10"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "pydantic>=2"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "httpx>=0.27",
+    "httpx2>=2.0.0",
+]
+
+[project.scripts]
+dataagentx = "dataagentx.main:run"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    # 临时忽略 Starlette 内部 anyio 的弃用警告，等待上游修复
+    "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+]
