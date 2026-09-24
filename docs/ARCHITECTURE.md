@@ -1,0 +1,11 @@
+# DataAgentX Architecture Note
+
+This document describes the system as it is currently implemented. Planned capabilities belong in `ROADMAP.md`; project goals and boundaries belong in `PROJECT_CHARTER.md`.
+
+- **src layout**：业务包放在 `src/dataagentx/`，与项目根目录和测试分开，减少从当前目录误导入源码的问题，让开发和测试通过安装后的包访问代码。
+- **pyproject.toml**：统一声明构建方式、项目元数据、Python 版本、运行与开发依赖、`dataagentx` 命令入口及 pytest 配置。
+- **类型标注**：函数参数、返回值和容器具有明确类型，例如 `ItemService.get()` 返回 `Item | None`，提醒调用方处理查询不存在的情况；类型标注本身不执行运行时校验。
+- **Pydantic**：`schemas.py` 中的 `ItemCreate` 校验请求名称长度，`ItemRead` 定义响应字段，配合 FastAPI 完成响应校验与 JSON 序列化。
+- **dataclass**：`models.py` 中的 `Item` 表达内部领域数据，自动生成初始化等方法，使用 `frozen=True` 限制字段赋值；默认不校验字段类型，也不负责 HTTP 输入校验。
+- **测试组织**：`tests/test_health.py` 检查健康接口状态码与响应体，`tests/test_items.py` 检查创建成功、空名称拒绝和查询不存在；通过 FastAPI `TestClient` 调用接口，运行 `.venv/bin/python -m pytest` 执行测试。
+- **日志处理**：使用标准库 `logging`，`logging_config.py` 在根 logger 没有 handler 时添加 stdout 输出及时间、级别、模块名格式，默认级别为 INFO；业务模块通过 `getLogger(__name__)` 记录创建成功（INFO）和查询不存在（WARNING）。

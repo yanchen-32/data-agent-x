@@ -9,9 +9,8 @@ Currently under active development.
 
 ## Roadmap
 
-- Agent Runtime
-- RAG
-- Long-Term Memory
-- Go Gateway
-- Evaluation
-- Observability
+Project direction and progress are documented separately:
+
+- [Project charter](docs/PROJECT_CHARTER.md): goals, boundaries, priorities, and success criteria
+- [Roadmap](docs/ROADMAP.md): milestone-level progress
+- [Architecture](docs/ARCHITECTURE.md): the currently implemented system
