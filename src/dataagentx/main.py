@@ -2,6 +2,7 @@ import logging
 
 from fastapi import FastAPI, HTTPException, status
 
+from dataagentx.config import load_settings
 from dataagentx.logging_config import configure_logging
 from dataagentx.schemas import ItemCreate, ItemRead
 from dataagentx.service import ItemService
@@ -35,4 +36,5 @@ def get_item(item_id: int) -> ItemRead:
 def run() -> None:
     import uvicorn
 
-    uvicorn.run("dataagentx.main:app", host="127.0.0.1", port=8000, reload=True)
+    settings = load_settings()
+    uvicorn.run("dataagentx.main:app", host=settings.host, port=settings.port, reload=True)

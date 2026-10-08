@@ -4,6 +4,7 @@ This document describes the system as it is currently implemented. Planned capab
 
 - **src layout**：业务包放在 `src/dataagentx/`，与项目根目录和测试分开，减少从当前目录误导入源码的问题，让开发和测试通过安装后的包访问代码。
 - **pyproject.toml**：统一声明构建方式、项目元数据、Python 版本、运行与开发依赖、`dataagentx` 命令入口及 pytest 配置。
+- **环境配置**：`config.py` 的 `load_settings()` 每次调用都通过标准库 `os.getenv` 读取 `DATAAGENTX_HOST` 和 `DATAAGENTX_PORT`，默认值为 `127.0.0.1` 和 `8000`，返回不可变的 `Settings` dataclass；端口转换为整数并检查 1～65535 范围，非法值抛出 `ValueError`。`main.run()` 在启动时加载配置并传给 Uvicorn。`tests/test_config.py` 使用 pytest `monkeypatch.setenv` / `delenv` 控制环境、验证默认值与覆盖、重复读取和端口校验，并替换 `uvicorn.run` 验证启动参数；monkeypatch 在测试结束时自动恢复环境和替换对象。
 - **类型标注**：函数参数、返回值和容器具有明确类型，例如 `ItemService.get()` 返回 `Item | None`，提醒调用方处理查询不存在的情况；类型标注本身不执行运行时校验。
 - **Pydantic**：`schemas.py` 中的 `ItemCreate` 校验请求名称长度，`ItemRead` 定义响应字段，配合 FastAPI 完成响应校验与 JSON 序列化。
 - **dataclass**：`models.py` 中的 `Item` 表达内部领域数据，自动生成初始化等方法，使用 `frozen=True` 限制字段赋值；默认不校验字段类型，也不负责 HTTP 输入校验。
