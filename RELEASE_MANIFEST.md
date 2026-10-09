@@ -1,0 +1,56 @@
+# DataAgentX v1.2.1 GitHub公开快照清单
+
+25份技术设计与独立公开设计ZIP同hash。基础API的22项现有测试实跑通过；设计静态契约/独立参考核对125项通过，调查系统尚未运行验收。两份清单互不自引用，其余文件全部登记。
+
+| 相对路径 | 字节数 | SHA-256 |
+| --- | ---: | --- |
+| `.gitignore` | 427 | `2131f1f5ddd85db6f46c10fba32cd28569c7b18e148a5683bdfb651deb5b9eab` |
+| `AGENTS.md` | 1885 | `c4e35d3bd54f33c506875c11d5c4d0ede5661c9959fbc0adb06091e0b2f20f87` |
+| `docs/ARCHITECTURE.md` | 2548 | `c767c2bc59e02380d050d2bb260e0b419b970e415b9ffabf5407e9931d705e79` |
+| `docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md` | 54381 | `8440318ebaea1565dc02fd9096e09cbe23e10f0c961dad4762ea74d605fc7950` |
+| `docs/engineering/01_需求基线/DataAgentX_需求优先级清单_v1.2.md` | 14369 | `dc0e0b10b40084960ea3c4e86b587ef5a66f9dfbf1705a890c218bb1cadbf0ed` |
+| `docs/engineering/01_需求基线/DataAgentX_需求补充与变更记录_v1.2.1.md` | 2894 | `130c3667f8ded2bbc17604bfde6c37e6e923fdf1d199fda0fb1940a44d9084d8` |
+| `docs/engineering/01_需求基线/DataAgentX_需求评审记录_v1.2.md` | 4678 | `2f1462e782ef95ef60c85bfd51b340d62f1c188aa8ec2b3d717de958f7a65d47` |
+| `docs/engineering/02_总体设计与方案验证/DataAgentX_总体设计方案_v1.2.md` | 3746 | `330cc19ae50a5ccef1c4297a03b4bdd3cd569d3a722957abe6977cc60b5174ce` |
+| `docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md` | 2104 | `51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce` |
+| `docs/engineering/02_总体设计与方案验证/DataAgentX_设计总册与完成性评审_v1.2.1.md` | 1844 | `d6b6385cf798f22ba14225c9c4927379e825dc4e8b1fa5d64cecc148eb3e4e21` |
+| `docs/engineering/02_总体设计与方案验证/DataAgentX_设计追溯矩阵_v1.2.1.json` | 31942 | `7fec56812c4dd52cabb4ba2ced04031873a55bd995571f19161fc1700a7f5329` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_API契约_v1.2.1.openapi.json` | 96368 | `231b667dcbc307cd02cbdbdce3c2fdd4bd4c013a9f588c970aad3ee3cdafd43c` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期_v1.2.md` | 4741 | `79e9c13af453a2d09e12591547ea6b78c22b1f022b67472824001b53ac82a75e` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md` | 5505 | `3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md` | 7449 | `bb983f3f3cd53294d0abb1f9dc5ab087c29152848c4dd16e145637ad043ec2b0` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md` | 4397 | `ada2546c5e98879030325a2e776a0c6eb6d4512e52eb829fb679dd7c1333f2b0` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md` | 9034 | `a48696548eb95cf86e461a6eb335c094a73147af8f83d720f038584c0b2eeee1` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md` | 9694 | `808fb253e0ecb4829dd74c75f63418c0dcfe187e3a025c3639cf4de9901ffea1` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_合成运行配置_v1.2.1.json` | 6116 | `97e50dc3b035956d96e68598e00aa6930b706412121641283a9f48f9623d7144` |
+| `docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json` | 65562 | `e50b08ca770ef699dcc58db246782ff800eb2e7c856c9558369c25022528383a` |
+| `docs/engineering/05_原型验证与实现/DataAgentX_v1.2.1契约边界核对.py` | 16606 | `597fdf96b87f4967a98ccfbdd1c77b36bb7e5ac785a7d985ad4644dc1abc4966` |
+| `docs/engineering/05_原型验证与实现/DataAgentX_v1.2.1边界用例.json` | 773 | `0309d91a68e5986ab7485dd5a07fc87b585f20e53fa0b075efecebccc98ab620` |
+| `docs/engineering/05_原型验证与实现/DataAgentX_v1.2契约参考样例.json` | 5892 | `4995712bd0287cc963e8081cbb19e1de6831fc37b130a90fbd2191a8aaf10f94` |
+| `docs/engineering/05_原型验证与实现/DataAgentX_首批原型用例目录_v1.2.json` | 45654 | `c20bcf021e94293cadb72106839e18b78fdc16274055dc017371bbcf3540dbb2` |
+| `docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md` | 14292 | `0b67404e91fe696a6342133b7353fe9e6c86b635565e35f2a3c14ecdd928a6aa` |
+| `docs/engineering/07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md` | 4968 | `8a2009916a37551bdf6013572e2a95b136695876ebc9c3bbdd8fcba34765bfd3` |
+| `docs/engineering/07_发布与求职材料/DataAgentX_求职能力与工程证据矩阵_v1.2.md` | 4181 | `15f5efd80057570c6a95a8f614e65ee22f44f715a229c6cc9836b405f14aa638` |
+| `docs/engineering/07_发布与求职材料/DataAgentX_设计发布说明_v1.2.1.md` | 2584 | `02905d57737676b20be6044537dc28a321c7554683670c97893c3cb10fca35ea` |
+| `docs/engineering/AGENTS.md` | 881 | `35ff6f9be035478e82013f3b013f8dc71fb7550acb3c8a133b1390eba4eb83e9` |
+| `docs/engineering/BASELINE.md` | 4968 | `ce1c4568d0079ff909ebd2d58a50681092e8d55010d925180ad7133505bc1496` |
+| `docs/engineering/SYNC_MANIFEST.json` | 8935 | `2abcce20ffd7913ead20640891d75b8ae435245d5617872e24cf843e21d20fe5` |
+| `docs/PROJECT_CHARTER.md` | 4841 | `ee2936241874900bcb04c7d30864321e9170f39162d6521d08787e8db4993d08` |
+| `docs/ROADMAP.md` | 1354 | `7f444fc1e224ae0292f7c02bda562522ae982f4756f1eea67ba3a28858fcbf6f` |
+| `pyproject.toml` | 732 | `5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0` |
+| `README.md` | 2501 | `8dda2358d2f3e4cf96dea2e3694dd07726cd31994fe0d06bf61a94b9d9de13fd` |
+| `src/dataagentx/__init__.py` | 21 | `3ebbb4065141012142168ecc70776886d2a452d80c3c3c1b19fc94665136fd5c` |
+| `src/dataagentx/config.py` | 656 | `f8c396b00e855ccb1640edd35cb171196ce32d77fb9833a222c481b460c7ce4b` |
+| `src/dataagentx/logging_config.py` | 434 | `5b5019c7057594af3123e57d548df3b8c9b822a87cf20086ddbb0be1c5f346c9` |
+| `src/dataagentx/main.py` | 1171 | `70909a2abb94fa55a94ebf1be6218843f9c729551f6c8b8aab1dee2e9512d63b` |
+| `src/dataagentx/models.py` | 326 | `794fbea861887e9386fa6e254ebd028b114f8e4619a4e51ce01c617d861cfcbf` |
+| `src/dataagentx/schemas.py` | 389 | `90a4c685e77eb4f90859772272585bbab920365a9d3ad3cbde40c107e6bc0e91` |
+| `src/dataagentx/service.py` | 718 | `bb7f27ce448673af4259bbe52a7b63f57ea7e2ce2dc591b90e59290f5c5f2555` |
+| `tests/test_config.py` | 2069 | `b3c6636b8895b1788f19eb612e3baff6e463c76583e7d4172b08a8a98aacff40` |
+| `tests/test_health.py` | 335 | `eda6a4fb3fd1dd9a7ef81e7c9faacc5c215ae0ee4a9b9c7a9ad7a2723cd6d4c9` |
+| `tests/test_items.py` | 741 | `c9d88a4849f77bd35b9b03ac1e5ba75e65684f0e48e5d76bb7688417a124ea3d` |
+| `tests/test_service.py` | 927 | `192a21250385f0f02bc9976a6fca9f4c42cb18d90d11ea46198e031b5d947f72` |
+| `verification/公开维护核对.json` | 1121 | `b4048921fe0eef7495bb1dec64479dcda3bc9d3599296b9470fdea1e5eb14131` |
+| `verification/基础API核对.json` | 1450 | `16f3b4ae6637b7ddb09c74421378447c05e82171a2834514e25764b7631d27cd` |
+| `verification/契约与独立参考核对.json` | 15374 | `1b6a778250f55867c1a1fc4108cc3d47d61a2b1122cbaec4f65c6e8010c493fd` |
+| `verification/源码文档同步与本地版本.json` | 473 | `d90521ef81cd9043d5b3f42cf11859ee48b0e49be4f136c0f3ba0152b27a7ecd` |

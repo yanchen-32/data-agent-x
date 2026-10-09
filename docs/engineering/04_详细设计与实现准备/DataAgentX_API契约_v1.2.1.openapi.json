@@ -1,0 +1,3593 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DataAgentX investigation design API",
+    "version": "1.2.1",
+    "description": "设计契约发布v1.2.1；仅修订无Scope终态报告、充分澄清答案接受后的自动重排队/计时，以及真实完成吞吐口径。载荷schema_version/工具contract_version维持1.2，尚无已上线客户端兼容性验证。"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/investigations": {
+      "post": {
+        "operationId": "createInvestigation",
+        "responses": {
+          "202": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "格式/Schema错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "身份无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "请求域未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "对象不存在或不可访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "状态/幂等/游标冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "正文超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "容量拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "脱敏内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ]
+      }
+    },
+    "/v1/investigations/{task_id}": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getInvestigation",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "格式/Schema错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "身份无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "请求域未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "对象不存在或不可访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "状态/幂等/游标冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "正文超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "容量拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "脱敏内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/investigations/{task_id}/clarifications": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "clarifyInvestigation",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "格式/Schema错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "身份无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "请求域未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "对象不存在或不可访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "状态/幂等/游标冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "正文超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "脱敏内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClarificationRequest"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          }
+        ],
+        "description": "充分有效答案原子持久接受，200 TaskView；若等待调度则status=needs_clarification、phase=pending_requeue、clarification=null，人工等待停止，系统自动负责重入，不因原任务重入队满返回429。无效答案400、不充分合法部分答案可200继续awaiting_user；相同澄清ID/答案幂等，异答案/旧版本409。"
+      }
+    },
+    "/v1/investigations/{task_id}/cancel": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "operationId": "cancelInvestigation",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskView"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "格式/Schema错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "身份无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "请求域未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "对象不存在或不可访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "状态/幂等/游标冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "正文超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "容量拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "脱敏内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/investigations/{task_id}/events": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "observeInvestigation",
+        "responses": {
+          "200": {
+            "description": "SSE observer; disconnect does not cancel",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "格式/Schema错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "身份无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "请求域未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "对象不存在或不可访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "状态/幂等/游标冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "正文超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "容量拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "脱敏内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "Last-Event-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/investigations/{task_id}/report": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getReport",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportView"
+                }
+              },
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "格式/Schema错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "身份无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "请求域未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "对象不存在或不可访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "状态/幂等/游标冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "正文超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "容量拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "脱敏内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "不支持的Accept",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "description": "200已发布终态报告；无Scope非完成任务返回scope_hash=null的状态摘要，无业务Claim/证据；无报告409。completed必须真实Scope，服务端验证与task一致，禁止伪造hash。"
+      }
+    },
+    "/v1/investigations/{task_id}/evidence/{evidence_id}": {
+      "parameters": [
+        {
+          "name": "task_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "evidence_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "operationId": "getEvidence",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "格式/Schema错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "身份无效",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "请求域未授权",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "对象不存在或不可访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "状态/幂等/游标冲突",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "正文超限",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "容量拒绝",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "脱敏内部错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "依赖不可用",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Window": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "additionalProperties": false
+      },
+      "CreateRequest": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "\\S"
+          },
+          "requested_scope_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "metric_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "metric_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalWindow"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "horizon_seconds": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|[+-]\\d{2}:\\d{2})$",
+            "description": "显式偏移RFC3339，最多微秒；服务端拒绝-00:00未知偏移和闰秒，规范化为UTC微秒Z。"
+          },
+          "business_timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "category",
+                "region",
+                "channel"
+              ]
+            },
+            "uniqueItems": true,
+            "maxItems": 3
+          },
+          "control_mode": {
+            "type": "string",
+            "enum": [
+              "explicit_cancel"
+            ]
+          },
+          "filters": {
+            "$ref": "#/components/schemas/BusinessFilters"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "additionalProperties": false
+      },
+      "ClarificationAnswers": {
+        "type": "object",
+        "properties": {
+          "requested_scope_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "metric_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "metric_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalWindow"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "horizon_seconds": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|[+-]\\d{2}:\\d{2})$",
+            "description": "显式偏移RFC3339，最多微秒；服务端拒绝-00:00未知偏移和闰秒，规范化为UTC微秒Z。"
+          },
+          "business_timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "category",
+                "region",
+                "channel"
+              ]
+            },
+            "uniqueItems": true,
+            "maxItems": 3
+          },
+          "filters": {
+            "$ref": "#/components/schemas/BusinessFilters"
+          }
+        },
+        "required": [],
+        "additionalProperties": false,
+        "minProperties": 1
+      },
+      "ClarificationRequest": {
+        "type": "object",
+        "properties": {
+          "clarification_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expected_state_version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "answers": {
+            "$ref": "#/components/schemas/ClarificationAnswers"
+          }
+        },
+        "required": [
+          "clarification_id",
+          "expected_state_version",
+          "answers"
+        ],
+        "additionalProperties": false
+      },
+      "ScopeSpec": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "const": "1.2"
+          },
+          "scope_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "domain_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "metric_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "metric_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Window"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "horizon_seconds": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          },
+          "business_timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "category",
+                "region",
+                "channel"
+              ]
+            },
+            "uniqueItems": true,
+            "maxItems": 3
+          },
+          "snapshot_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "snapshot_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "knowledge_snapshot_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "knowledge_snapshot_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "watermark": {
+            "type": "object",
+            "properties": {
+              "payments_through": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+              },
+              "refunds_through": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+              }
+            },
+            "required": [
+              "payments_through",
+              "refunds_through"
+            ],
+            "additionalProperties": false
+          },
+          "scope_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/BusinessFilters"
+          }
+        },
+        "required": [
+          "schema_version",
+          "scope_id",
+          "scope_version",
+          "domain_id",
+          "metric_id",
+          "metric_version",
+          "windows",
+          "horizon_seconds",
+          "as_of",
+          "business_timezone",
+          "dimensions",
+          "snapshot_id",
+          "snapshot_hash",
+          "knowledge_snapshot_id",
+          "knowledge_snapshot_hash",
+          "watermark",
+          "scope_hash",
+          "filters"
+        ],
+        "additionalProperties": false
+      },
+      "BudgetView": {
+        "type": "object",
+        "properties": {
+          "tool_calls_sent": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "model_calls_sent": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "input_tokens_known": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_tokens_known": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "input_tokens_unknown_reserved": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_tokens_unknown_reserved": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "input_tokens_pending": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_tokens_pending": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "semantic_repairs": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "active_elapsed_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "accounting_mode": {
+            "type": "string",
+            "enum": [
+              "audited",
+              "strict_calibrated"
+            ]
+          },
+          "input_tokens_estimated": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "output_tokens_requested_cap": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "usage_reconciliation_status": {
+            "type": "string",
+            "enum": [
+              "known",
+              "pending",
+              "unknown",
+              "estimate_exceeded",
+              "not_applicable"
+            ]
+          }
+        },
+        "required": [
+          "tool_calls_sent",
+          "model_calls_sent",
+          "input_tokens_known",
+          "output_tokens_known",
+          "input_tokens_unknown_reserved",
+          "output_tokens_unknown_reserved",
+          "input_tokens_pending",
+          "output_tokens_pending",
+          "semantic_repairs",
+          "active_elapsed_ms",
+          "accounting_mode",
+          "input_tokens_estimated",
+          "output_tokens_requested_cap",
+          "usage_reconciliation_status"
+        ],
+        "additionalProperties": false,
+        "description": "本地估算/请求cap与实际known/unknown分层；实际超额也记录，不能用maximum丢弃供应商差异。"
+      },
+      "ClarificationPrompt": {
+        "type": "object",
+        "properties": {
+          "clarification_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "minItems": 1
+          },
+          "question": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "\\S"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          }
+        },
+        "required": [
+          "clarification_id",
+          "fields",
+          "question",
+          "expires_at"
+        ],
+        "additionalProperties": false
+      },
+      "TaskView": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "const": "1.2"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "validating",
+              "needs_clarification",
+              "running",
+              "completed",
+              "insufficient_evidence",
+              "failed",
+              "cancelled",
+              "budget_exceeded"
+            ]
+          },
+          "phase": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "state_version": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScopeSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "budget": {
+            "$ref": "#/components/schemas/BudgetView"
+          },
+          "cancel_requested": {
+            "type": "boolean"
+          },
+          "clarification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClarificationPrompt"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "config_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            "minItems": 0
+          },
+          "terminal_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timing": {
+            "$ref": "#/components/schemas/TimingView"
+          }
+        },
+        "required": [
+          "schema_version",
+          "task_id",
+          "status",
+          "phase",
+          "state_version",
+          "reason_code",
+          "updated_at",
+          "scope",
+          "budget",
+          "cancel_requested",
+          "clarification",
+          "config_hash",
+          "limitations",
+          "terminal_at",
+          "timing"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "completed",
+                    "insufficient_evidence",
+                    "failed",
+                    "cancelled",
+                    "budget_exceeded"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "terminal_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "needs_clarification"
+                },
+                "phase": {
+                  "not": {
+                    "const": "pending_requeue"
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "clarification": {
+                  "$ref": "#/components/schemas/ClarificationPrompt"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "phase": {
+                  "const": "pending_requeue"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "status": {
+                  "const": "needs_clarification"
+                },
+                "clarification": {
+                  "type": "null"
+                },
+                "cancel_requested": {
+                  "const": false
+                },
+                "terminal_at": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "completed"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "scope": {
+                  "$ref": "#/components/schemas/ScopeSpec"
+                }
+              }
+            }
+          }
+        ],
+        "description": "pending_requeue表示有效且充分答案已接受、系统自动等待调度，clarification=null；不能要求用户再次答复。已发取消处理必须先离开pending_requeue阶段。"
+      },
+      "QuerySpec": {
+        "type": "object",
+        "properties": {
+          "template_id": {
+            "type": "string",
+            "enum": [
+              "cohort_totals",
+              "cohort_by_dimension",
+              "registered_quality_summary"
+            ]
+          },
+          "scope_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "dimension": {
+            "type": "string",
+            "enum": [
+              "category",
+              "region",
+              "channel"
+            ]
+          }
+        },
+        "required": [
+          "template_id",
+          "scope_hash"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "template_id": {
+                  "const": "cohort_by_dimension"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "dimension"
+              ]
+            },
+            "else": {
+              "not": {
+                "required": [
+                  "dimension"
+                ]
+              }
+            }
+          }
+        ],
+        "description": "只选受信模板和Scope允许的分组维度；窗口/H/指标/region过滤仅从已授权冻结Scope读取，禁止候选SQL与过滤覆写。"
+      },
+      "AgentAction": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "action_type": {
+                "const": "tool"
+              },
+              "tool_name": {
+                "const": "metric_catalog.get"
+              },
+              "contract_version": {
+                "const": "1.2"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "metric_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  },
+                  "metric_version": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256
+                  }
+                },
+                "required": [
+                  "metric_id"
+                ],
+                "additionalProperties": false
+              },
+              "input_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "minItems": 0,
+                "maxItems": 20
+              },
+              "decision_summary": {
+                "type": "string",
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "action_type",
+              "tool_name",
+              "contract_version",
+              "arguments",
+              "input_evidence_ids",
+              "decision_summary"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action_type": {
+                "const": "tool"
+              },
+              "tool_name": {
+                "const": "quality.check"
+              },
+              "contract_version": {
+                "const": "1.2"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "scope_hash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                },
+                "required": [
+                  "scope_hash"
+                ],
+                "additionalProperties": false
+              },
+              "input_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "minItems": 0,
+                "maxItems": 20
+              },
+              "decision_summary": {
+                "type": "string",
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "action_type",
+              "tool_name",
+              "contract_version",
+              "arguments",
+              "input_evidence_ids",
+              "decision_summary"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action_type": {
+                "const": "tool"
+              },
+              "tool_name": {
+                "const": "sql.query"
+              },
+              "contract_version": {
+                "const": "1.2"
+              },
+              "arguments": {
+                "$ref": "#/components/schemas/QuerySpec"
+              },
+              "input_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "minItems": 0,
+                "maxItems": 20
+              },
+              "decision_summary": {
+                "type": "string",
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "action_type",
+              "tool_name",
+              "contract_version",
+              "arguments",
+              "input_evidence_ids",
+              "decision_summary"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action_type": {
+                "const": "tool"
+              },
+              "tool_name": {
+                "const": "analysis.run"
+              },
+              "contract_version": {
+                "const": "1.2"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "scope_hash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "query_evidence_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "minItems": 1,
+                    "maxItems": 4
+                  },
+                  "operator": {
+                    "type": "string",
+                    "enum": [
+                      "cohort_rate",
+                      "compare_rates",
+                      "decompose_rate_change",
+                      "rank_contributors"
+                    ]
+                  }
+                },
+                "required": [
+                  "scope_hash",
+                  "query_evidence_ids",
+                  "operator"
+                ],
+                "additionalProperties": false
+              },
+              "input_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "minItems": 0,
+                "maxItems": 20
+              },
+              "decision_summary": {
+                "type": "string",
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "action_type",
+              "tool_name",
+              "contract_version",
+              "arguments",
+              "input_evidence_ids",
+              "decision_summary"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action_type": {
+                "const": "tool"
+              },
+              "tool_name": {
+                "const": "knowledge.search"
+              },
+              "contract_version": {
+                "const": "1.2"
+              },
+              "arguments": {
+                "type": "object",
+                "properties": {
+                  "scope_hash": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  },
+                  "query": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096,
+                    "pattern": "\\S"
+                  },
+                  "top_k": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                },
+                "required": [
+                  "scope_hash",
+                  "query",
+                  "top_k"
+                ],
+                "additionalProperties": false
+              },
+              "input_evidence_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "minItems": 0,
+                "maxItems": 20
+              },
+              "decision_summary": {
+                "type": "string",
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "action_type",
+              "tool_name",
+              "contract_version",
+              "arguments",
+              "input_evidence_ids",
+              "decision_summary"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action_type": {
+                "const": "finish"
+              },
+              "candidate_claims": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Claim"
+                },
+                "minItems": 0,
+                "maxItems": 100
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4096,
+                  "pattern": "\\S"
+                },
+                "minItems": 0
+              }
+            },
+            "required": [
+              "action_type",
+              "candidate_claims",
+              "limitations"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SourceRef": {
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "content_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "source_id",
+          "version",
+          "content_hash"
+        ],
+        "additionalProperties": false
+      },
+      "AggregateRow": {
+        "type": "object",
+        "properties": {
+          "window_index": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "paid_orders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "refunded_orders": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "rate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "description": "规范十进制字符串；拒绝NaN/Infinity；单位另列。"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dimension_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "category",
+                  "region",
+                  "channel"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "group_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "group_label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "window_index",
+          "paid_orders",
+          "refunded_orders",
+          "rate",
+          "dimension_id",
+          "group_id",
+          "group_label"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "dimension_id": {
+                  "type": "null"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "group_id": {
+                  "type": "null"
+                },
+                "group_label": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "group_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                }
+              }
+            }
+          }
+        ]
+      },
+      "QualityPayload": {
+        "type": "object",
+        "properties": {
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "severity": {
+                  "type": "string",
+                  "enum": [
+                    "critical",
+                    "warning",
+                    "info"
+                  ]
+                },
+                "count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "disposition": {
+                  "type": "string",
+                  "enum": [
+                    "block",
+                    "retain_unknown",
+                    "diagnostic_only",
+                    "ok"
+                  ]
+                }
+              },
+              "required": [
+                "code",
+                "severity",
+                "count",
+                "disposition"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 0
+          },
+          "comparable": {
+            "type": "boolean"
+          },
+          "checked_snapshot_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "issues",
+          "comparable",
+          "checked_snapshot_hash"
+        ],
+        "additionalProperties": false
+      },
+      "QueryPayload": {
+        "type": "object",
+        "properties": {
+          "query_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "template_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "executed_sql_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AggregateRow"
+            },
+            "minItems": 0,
+            "maxItems": 1000
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "reused_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "query_id",
+          "template_id",
+          "executed_sql_hash",
+          "rows",
+          "truncated",
+          "reused_from"
+        ],
+        "additionalProperties": false
+      },
+      "AnalysisPayload": {
+        "type": "object",
+        "properties": {
+          "analysis_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "formula_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "value": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                      "description": "规范十进制字符串；拒绝NaN/Infinity；单位另列。"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "unit": {
+                  "type": "string",
+                  "enum": [
+                    "ratio",
+                    "percentage_point",
+                    "relative_change",
+                    "count"
+                  ]
+                },
+                "reason_code": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "dimension_id": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "category",
+                        "region",
+                        "channel"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "group_id": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "group_label": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "contribution_type": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "within",
+                        "structure",
+                        "entry",
+                        "exit"
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "window_index": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "value",
+                "unit",
+                "reason_code",
+                "dimension_id",
+                "group_id",
+                "group_label",
+                "contribution_type",
+                "window_index"
+              ],
+              "additionalProperties": false
+            },
+            "minItems": 1,
+            "maxItems": 1000
+          },
+          "decomposition_residual": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "description": "规范十进制字符串；拒绝NaN/Infinity；单位另列。"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "analysis_id",
+          "formula_version",
+          "results",
+          "decomposition_residual"
+        ],
+        "additionalProperties": false
+      },
+      "KnowledgePayload": {
+        "type": "object",
+        "properties": {
+          "document_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "document_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "position": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "quote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 800
+          },
+          "valid_from": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "document_id",
+          "document_version",
+          "position",
+          "quote",
+          "valid_from",
+          "valid_to"
+        ],
+        "additionalProperties": false
+      },
+      "EvidenceEnvelope": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "schema_version": {
+                "const": "1.2"
+              },
+              "evidence_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "task_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "domain_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "scope_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "scope_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "source": {
+                "$ref": "#/components/schemas/SourceRef"
+              },
+              "upstream_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "uniqueItems": true,
+                "maxItems": 32
+              },
+              "complete": {
+                "type": "boolean"
+              },
+              "content_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "kind": {
+                "const": "quality"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/QualityPayload"
+              }
+            },
+            "required": [
+              "schema_version",
+              "evidence_id",
+              "task_id",
+              "domain_id",
+              "scope_hash",
+              "scope_version",
+              "source",
+              "upstream_ids",
+              "complete",
+              "content_hash",
+              "kind",
+              "payload"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "schema_version": {
+                "const": "1.2"
+              },
+              "evidence_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "task_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "domain_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "scope_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "scope_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "source": {
+                "$ref": "#/components/schemas/SourceRef"
+              },
+              "upstream_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "uniqueItems": true,
+                "maxItems": 32
+              },
+              "complete": {
+                "type": "boolean"
+              },
+              "content_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "kind": {
+                "const": "query"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/QueryPayload"
+              }
+            },
+            "required": [
+              "schema_version",
+              "evidence_id",
+              "task_id",
+              "domain_id",
+              "scope_hash",
+              "scope_version",
+              "source",
+              "upstream_ids",
+              "complete",
+              "content_hash",
+              "kind",
+              "payload"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "schema_version": {
+                "const": "1.2"
+              },
+              "evidence_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "task_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "domain_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "scope_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "scope_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "source": {
+                "$ref": "#/components/schemas/SourceRef"
+              },
+              "upstream_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "uniqueItems": true,
+                "maxItems": 32
+              },
+              "complete": {
+                "type": "boolean"
+              },
+              "content_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "kind": {
+                "const": "analysis"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/AnalysisPayload"
+              }
+            },
+            "required": [
+              "schema_version",
+              "evidence_id",
+              "task_id",
+              "domain_id",
+              "scope_hash",
+              "scope_version",
+              "source",
+              "upstream_ids",
+              "complete",
+              "content_hash",
+              "kind",
+              "payload"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "schema_version": {
+                "const": "1.2"
+              },
+              "evidence_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "task_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "domain_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "scope_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "scope_version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "source": {
+                "$ref": "#/components/schemas/SourceRef"
+              },
+              "upstream_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "uniqueItems": true,
+                "maxItems": 32
+              },
+              "complete": {
+                "type": "boolean"
+              },
+              "content_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "kind": {
+                "const": "knowledge"
+              },
+              "payload": {
+                "$ref": "#/components/schemas/KnowledgePayload"
+              }
+            },
+            "required": [
+              "schema_version",
+              "evidence_id",
+              "task_id",
+              "domain_id",
+              "scope_hash",
+              "scope_version",
+              "source",
+              "upstream_ids",
+              "complete",
+              "content_hash",
+              "kind",
+              "payload"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Claim": {
+        "type": "object",
+        "properties": {
+          "claim_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "fact",
+              "contribution",
+              "hypothesis",
+              "limitation"
+            ]
+          },
+          "predicate": {
+            "type": "string",
+            "enum": [
+              "metric_value",
+              "delta",
+              "decomposition_contribution",
+              "knowledge_rule",
+              "evidence_insufficient",
+              "suggested_test"
+            ]
+          },
+          "metric_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "window_index": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "typed_value": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "description": "规范十进制字符串；拒绝NaN/Infinity；单位另列。"
+              },
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "count",
+              "ratio",
+              "percentage_point",
+              "relative_change",
+              "none"
+            ]
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "\\S"
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "uniqueItems": true,
+            "maxItems": 32
+          },
+          "support_rule": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "dimension_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "category",
+                  "region",
+                  "channel"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "group_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "group_label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contribution_type": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "within",
+                  "structure",
+                  "entry",
+                  "exit"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "formula_version": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "claim_id",
+          "kind",
+          "predicate",
+          "metric_id",
+          "window_index",
+          "typed_value",
+          "unit",
+          "statement",
+          "evidence_ids",
+          "support_rule",
+          "dimension_id",
+          "group_id",
+          "group_label",
+          "contribution_type",
+          "formula_version"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "fact",
+                    "contribution"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "evidence_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "minItems": 1,
+                  "maxItems": 32
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "predicate": {
+                  "const": "decomposition_contribution"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "kind": {
+                  "const": "contribution"
+                },
+                "dimension_id": {
+                  "type": "string",
+                  "enum": [
+                    "category",
+                    "region",
+                    "channel"
+                  ]
+                },
+                "group_id": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "contribution_type": {
+                  "type": "string",
+                  "enum": [
+                    "within",
+                    "structure",
+                    "entry",
+                    "exit"
+                  ]
+                },
+                "formula_version": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 256
+                },
+                "typed_value": {
+                  "type": "string",
+                  "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                  "description": "规范十进制字符串；拒绝NaN/Infinity；单位另列。"
+                },
+                "unit": {
+                  "const": "ratio"
+                },
+                "window_index": {
+                  "type": "null"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "contribution_type": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "const": "contribution"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "predicate": {
+                  "const": "decomposition_contribution"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ReportView": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "const": "1.2"
+          },
+          "report_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "report_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope_hash": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "terminal_status": {
+            "type": "string",
+            "enum": [
+              "completed",
+              "insufficient_evidence",
+              "failed",
+              "cancelled",
+              "budget_exceeded"
+            ]
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Claim"
+            },
+            "minItems": 0,
+            "maxItems": 100
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "uniqueItems": true,
+            "maxItems": 100
+          },
+          "limitations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4096,
+              "pattern": "\\S"
+            },
+            "minItems": 0
+          },
+          "quality_summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "pattern": "\\S"
+          },
+          "budget": {
+            "$ref": "#/components/schemas/BudgetView"
+          },
+          "config_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "markdown": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200000,
+            "pattern": "\\S"
+          },
+          "timing": {
+            "$ref": "#/components/schemas/TimingView"
+          }
+        },
+        "required": [
+          "schema_version",
+          "report_id",
+          "report_version",
+          "task_id",
+          "scope_hash",
+          "terminal_status",
+          "claims",
+          "evidence_refs",
+          "limitations",
+          "quality_summary",
+          "budget",
+          "config_hash",
+          "markdown",
+          "timing"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "terminal_status": {
+                  "const": "completed"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "claims": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Claim"
+                  },
+                  "minItems": 1,
+                  "maxItems": 100
+                },
+                "evidence_refs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "minItems": 1,
+                  "maxItems": 100
+                },
+                "scope_hash": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "scope_hash": {
+                  "type": "null"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "claims": {
+                  "maxItems": 0
+                },
+                "evidence_refs": {
+                  "maxItems": 0
+                },
+                "limitations": {
+                  "minItems": 1
+                },
+                "terminal_status": {
+                  "enum": [
+                    "cancelled",
+                    "failed",
+                    "budget_exceeded",
+                    "insufficient_evidence"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "description": "scope_hash=null为无口径终态摘要，仅非completed且claims/evidence_refs为空；非null必须由服务端关联真实task Scope，形式合法hash不证明存在。"
+      },
+      "Usage": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "known",
+              "unknown",
+              "not_sent"
+            ]
+          },
+          "input_tokens": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "output_tokens": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "price_config_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "estimated_cost": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$",
+                "description": "规范十进制字符串；拒绝NaN/Infinity；单位另列。"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "input_tokens",
+          "output_tokens",
+          "price_config_id",
+          "estimated_cost",
+          "currency"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "known"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input_tokens": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "output_tokens": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "unknown"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "input_tokens": {
+                  "type": "null"
+                },
+                "output_tokens": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CallRecord": {
+        "type": "object",
+        "properties": {
+          "call_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "task_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logical_operation_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "attempt": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "tool",
+              "model"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "contract_version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "scope_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "dispatch_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "deadline": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "reserved",
+              "prepared",
+              "dispatching",
+              "dispatched",
+              "returned",
+              "error",
+              "cancelled",
+              "abandoned",
+              "unknown"
+            ]
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        },
+        "required": [
+          "call_id",
+          "task_id",
+          "logical_operation_id",
+          "attempt",
+          "kind",
+          "name",
+          "contract_version",
+          "scope_hash",
+          "dispatch_at",
+          "deadline",
+          "outcome",
+          "duration_ms",
+          "usage"
+        ],
+        "additionalProperties": false
+      },
+      "ToolResult": {
+        "type": "object",
+        "properties": {
+          "call_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "rejected",
+              "error",
+              "cancelled"
+            ]
+          },
+          "reason_code": {
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "minItems": 0,
+            "maxItems": 32
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "usage": {
+            "$ref": "#/components/schemas/Usage"
+          }
+        },
+        "required": [
+          "call_id",
+          "status",
+          "reason_code",
+          "evidence_ids",
+          "complete",
+          "truncated",
+          "duration_ms",
+          "usage"
+        ],
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "truncated": {
+                  "const": true
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "complete": {
+                  "const": false
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4096,
+                "pattern": "\\S"
+              },
+              "retryable": {
+                "type": "boolean"
+              },
+              "details": {
+                "type": "object",
+                "properties": {
+                  "fields": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 256
+                    },
+                    "minItems": 0
+                  },
+                  "expected_state_version": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "retry_after_seconds": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "retryable",
+              "details"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "request_id",
+          "error"
+        ],
+        "additionalProperties": false
+      },
+      "ExternalWindow": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|[+-]\\d{2}:\\d{2})$",
+            "description": "显式偏移RFC3339，最多微秒；服务端拒绝-00:00未知偏移和闰秒，规范化为UTC微秒Z。"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,6})?(Z|[+-]\\d{2}:\\d{2})$",
+            "description": "显式偏移RFC3339，最多微秒；服务端拒绝-00:00未知偏移和闰秒，规范化为UTC微秒Z。"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "additionalProperties": false
+      },
+      "BusinessFilters": {
+        "type": "object",
+        "properties": {
+          "region_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$"
+            },
+            "uniqueItems": true,
+            "maxItems": 1
+          }
+        },
+        "required": [
+          "region_ids"
+        ],
+        "additionalProperties": false
+      },
+      "TimingView": {
+        "type": "object",
+        "properties": {
+          "accepted_at": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+          },
+          "first_started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}Z$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "queue_wait_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "active_execution_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "clarification_wait_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "end_to_end_ms": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "accepted_at",
+          "first_started_at",
+          "queue_wait_ms",
+          "active_execution_ms",
+          "clarification_wait_ms",
+          "end_to_end_ms"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "x-websocket-control": {
+    "enabled": false,
+    "conditional_subfeature": "SC-01",
+    "required_for_R0": false
+  },
+  "x-design-baseline": "DAX-RB-1.2.1"
+}

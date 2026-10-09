@@ -1,0 +1,771 @@
+{
+  "baseline": "DAX-RB-1.2.1",
+  "date": "2026-10-09",
+  "scope": "design baseline formed; key prototypes pending",
+  "requirements": [
+    {
+      "requirement_id": "F01",
+      "name": "结构化任务与澄清",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "verification_groups": [
+        "T01",
+        "T13"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成.md#api",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F02",
+      "name": "指标与Schema目录",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "verification_groups": [
+        "T01",
+        "T02"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具.md#metric",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F03",
+      "name": "数据质量",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "verification_groups": [
+        "T03"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具.md#data",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F04",
+      "name": "有界计划",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "verification_groups": [
+        "T04",
+        "T09"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider.md#runtime",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F05",
+      "name": "工具契约",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "verification_groups": [
+        "T04",
+        "T08"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider.md#runtime",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F06",
+      "name": "安全SQL",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "verification_groups": [
+        "T02",
+        "T08"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具.md#sql",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F07",
+      "name": "确定性分析",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "verification_groups": [
+        "T05"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具.md#metric",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F08",
+      "name": "最小知识检索",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "verification_groups": [
+        "T06"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告.md#retrieval",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F09",
+      "name": "证据核验",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "verification_groups": [
+        "T07"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告.md#verifier",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F10",
+      "name": "报告导出",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "verification_groups": [
+        "T07",
+        "T13"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告.md#report",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F11",
+      "name": "状态与取消",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "verification_groups": [
+        "T04",
+        "T10"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider.md#runtime",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F12",
+      "name": "有界恢复",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "verification_groups": [
+        "T09",
+        "T10"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider.md#recovery",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F13",
+      "name": "脱敏轨迹与归档",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期_v1.2.md",
+      "verification_groups": [
+        "T11"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期.md#audit",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F14",
+      "name": "独立评测",
+      "priority": "Must",
+      "primary_design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "verification_groups": [
+        "T12"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../06_评测与验收/DataAgentX_DD06_评测与验收设计.md#dataset",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F15",
+      "name": "版本化复现",
+      "priority": "Must",
+      "primary_design": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+      "verification_groups": [
+        "T12",
+        "T13"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计.md#ci",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F16",
+      "name": "最小案例Memory",
+      "priority": "Should",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T14"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#memory",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F17",
+      "name": "Memory版本与冲突",
+      "priority": "Should",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T14"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#memory",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F18",
+      "name": "四记忆基线",
+      "priority": "Should",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T14"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#memory-eval",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F19",
+      "name": "四检索策略消融",
+      "priority": "Should",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T06",
+        "T12"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#retrieval",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F20",
+      "name": "Go网关实验",
+      "priority": "Should",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T10",
+        "T15"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#go",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F21",
+      "name": "MCP适配",
+      "priority": "Could",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T16"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#mcp",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "F22",
+      "name": "轻量界面/监控",
+      "priority": "Could",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T13",
+        "T16"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#ui",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N01",
+      "name": "身份/域/只读与防注入",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期_v1.2.md",
+      "verification_groups": [
+        "T08"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期.md#auth",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N02",
+      "name": "数值与证据追溯",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "verification_groups": [
+        "T05",
+        "T07"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告.md#verifier",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N03",
+      "name": "有界执行与取消",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "verification_groups": [
+        "T04",
+        "T09",
+        "T10"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider.md#budget",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N04",
+      "name": "性能负载",
+      "priority": "Must",
+      "primary_design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "verification_groups": [
+        "T15"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../06_评测与验收/DataAgentX_DD06_评测与验收设计.md#load",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N05",
+      "name": "模型与Token预算",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "verification_groups": [
+        "T10",
+        "T11"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider.md#budget",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N06",
+      "name": "可观测性",
+      "priority": "Must",
+      "primary_design": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+      "verification_groups": [
+        "T11"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计.md#operations",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N07",
+      "name": "复现与测试质量",
+      "priority": "Must",
+      "primary_design": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+      "verification_groups": [
+        "T12",
+        "T13"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计.md#ci",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N08",
+      "name": "维护与替换",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md",
+      "verification_groups": [
+        "T04",
+        "T13"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider.md#verification",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N09",
+      "name": "可理解与操作",
+      "priority": "Must",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "verification_groups": [
+        "T01",
+        "T13"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告.md#report",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N10",
+      "name": "环境与资源",
+      "priority": "Must",
+      "primary_design": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+      "verification_groups": [
+        "T13"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "R0_required",
+      "historical_design_reference": "../07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计.md#deployment",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N11",
+      "name": "Memory时效/污染",
+      "priority": "Should",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T08",
+        "T14"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#memory",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    },
+    {
+      "requirement_id": "N12",
+      "name": "扩展成本",
+      "priority": "Could",
+      "primary_design": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "verification_groups": [
+        "T16"
+      ],
+      "design_status": "documented_key_assumptions_not_validated",
+      "implementation_status": "not_claimed",
+      "acceptance_status": "not_executed",
+      "activation": "conditional_off_by_default",
+      "historical_design_reference": "../04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计.md#cost",
+      "requirement_spec": "../01_需求基线/DataAgentX_SRS_v1.2.md",
+      "revision_impact": "See R2 decision record; runtime acceptance not executed"
+    }
+  ],
+  "modules": [
+    {
+      "module_id": "M01",
+      "name": "用户/API/鉴权",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期_v1.2.md"
+    },
+    {
+      "module_id": "M02",
+      "name": "语义目录",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md"
+    },
+    {
+      "module_id": "M03",
+      "name": "Runtime",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md"
+    },
+    {
+      "module_id": "M04",
+      "name": "工具执行",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md"
+    },
+    {
+      "module_id": "M05",
+      "name": "SQL",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md"
+    },
+    {
+      "module_id": "M06",
+      "name": "RAG",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md"
+    },
+    {
+      "module_id": "M07",
+      "name": "DQ/分析",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md"
+    },
+    {
+      "module_id": "M08",
+      "name": "Verifier/报告",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md"
+    },
+    {
+      "module_id": "M09",
+      "name": "状态/归档",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    },
+    {
+      "module_id": "M10",
+      "name": "独立评测",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md"
+    }
+  ],
+  "interfaces": [
+    {
+      "interface_id": "IF01",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    },
+    {
+      "interface_id": "IF02",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    },
+    {
+      "interface_id": "IF03",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    },
+    {
+      "interface_id": "IF04",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    },
+    {
+      "interface_id": "IF05",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    },
+    {
+      "interface_id": "IF06",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    },
+    {
+      "interface_id": "IF07",
+      "design": "../04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md"
+    }
+  ],
+  "verification_groups": [
+    {
+      "test_group": "T01",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T02",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T03",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T04",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T05",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T06",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T07",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T08",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T09",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T10",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T11",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T12",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T13",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T14",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T15",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    },
+    {
+      "test_group": "T16",
+      "design": "../06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "runtime_status": "not_executed"
+    }
+  ],
+  "summary": {
+    "requirements": 34,
+    "Must": 25,
+    "Should": 6,
+    "Could": 3,
+    "modules": 10,
+    "interfaces": 7,
+    "test_groups": 16
+  },
+  "authority_order": [
+    "SRS v1.2 plus CR-121-01/02/03 only",
+    "Explicit current per-file versions in BASELINE and SYNC_MANIFEST",
+    "Historical versions are evidence, not parallel implementation instructions"
+  ],
+  "historical_design_reference_root": "内部历史设计资料（未随公开包提供）",
+  "conditional_subfeatures": [
+    {
+      "id": "SC-01",
+      "parent_requirements": [
+        "F11",
+        "N03"
+      ],
+      "priority": "Should_subfeature",
+      "enabled": false
+    },
+    {
+      "id": "SC-02",
+      "parent_requirements": [
+        "F13",
+        "N01"
+      ],
+      "priority": "Should_subfeature",
+      "enabled": false
+    }
+  ],
+  "requirements_addendum": "../01_需求基线/DataAgentX_需求补充与变更记录_v1.2.1.md"
+}

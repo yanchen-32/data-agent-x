@@ -1,0 +1,185 @@
+{
+  "schema_version": "1.2",
+  "status": "design_baseline_key_prototypes_pending",
+  "provider": {
+    "mode": "mock",
+    "script_version": "mock-design-1",
+    "real_binding": null,
+    "budget_mode": "audited",
+    "strict_external_usage_guarantee": false,
+    "real_small_sample_requires": [
+      "provider/model identity",
+      "full-input estimation method and limitations",
+      "request output limit capability",
+      "unknown usage and in-flight audit",
+      "run-level call/cost stop configuration"
+    ]
+  },
+  "environment": {
+    "python_compatibility": "3.10",
+    "api_bind": "127.0.0.1",
+    "api_port": 8000,
+    "workers": 1,
+    "reload": false,
+    "timezone": "UTC",
+    "gpu_required": false
+  },
+  "limits": {
+    "tool_calls": 12,
+    "model_calls": 8,
+    "input_tokens": 20000,
+    "output_tokens": 4000,
+    "active_seconds": 120,
+    "sql_seconds": 10,
+    "sql_rows": 1000,
+    "stop_new_after_cancel_seconds": 2,
+    "local_cleanup_seconds": 5,
+    "server_sql_stop_seconds": 10,
+    "clarification_seconds": 1800,
+    "transient_retries_per_operation": 2,
+    "semantic_repairs_per_task": 2,
+    "queue_wait_seconds": 30,
+    "queue_wait_accounting": "cumulative_ready_queue_only_no_reset",
+    "clarification_wait_accounting": "cumulative_human_wait_no_reset"
+  },
+  "control_design_candidates": {
+    "first_bind_seconds": 5,
+    "heartbeat_interval_seconds": 1,
+    "heartbeat_deadline_seconds": 3,
+    "detector_interval_seconds": 0.25,
+    "enabled": false,
+    "priority": "conditional_Should_SC-01",
+    "reconnect_grace_seconds": 5,
+    "required_for_R0": false
+  },
+  "capacity_design_candidates": {
+    "running_tasks": 1,
+    "queued_tasks": 16,
+    "nonterminal_per_principal": 16,
+    "request_body_bytes": 65536,
+    "app_pool": 2,
+    "business_pool_per_domain": 1,
+    "business_pool_total": 2
+  },
+  "synthetic_business": {
+    "metric_id": "refund_rate_order_horizon",
+    "horizon_seconds": 604800,
+    "business_timezone": "UTC",
+    "snapshot_binding": null,
+    "filters": {
+      "region_ids": []
+    },
+    "max_region_filters": 1
+  },
+  "retrieval": {
+    "strategy": "bm25",
+    "top_k": 5,
+    "chunk_max_characters": 800,
+    "overlap_characters": 100,
+    "version_binding": null,
+    "acceptance_calibration": {
+      "id": "CAL-R01",
+      "status": "not_executed",
+      "final_numeric_gate": null,
+      "required_before_formal_acceptance": true,
+      "metrics": [
+        "Recall@5 and ceiling",
+        "Hit@5",
+        "MRR@5",
+        "nDCG@5",
+        "Critical Evidence Recall@k",
+        "End-to-End Evidence Recall"
+      ]
+    }
+  },
+  "retention": {
+    "detail_trace_days_after_terminal": 7,
+    "task_aggregate_days_after_terminal": 30,
+    "idempotency_hours_from_acceptance": 24,
+    "managed_synthetic_export_days": 180,
+    "backup_enabled": false,
+    "backup_max_days": 7,
+    "cleanup_mode": "trusted_operator_and_scheduled_ttl",
+    "advanced_restore_enabled": false,
+    "formal_run_archive_days_from_sealed": 180,
+    "formal_run_archive_before_detail_purge": true
+  },
+  "features": {
+    "memory": false,
+    "retrieval_ablation": false,
+    "go_gateway": false,
+    "mcp": false,
+    "web_ui": false,
+    "control_websocket": false,
+    "advanced_backup_restore": false
+  },
+  "activation_checks": [
+    "validated catalog/snapshot/index manifests",
+    "stable dependency lock and image digests",
+    "configured principal-domain mapping without secrets in config",
+    "resource and performance measurements before acceptance",
+    "audited provider small-sample binding before real mode; strict only after verified bound",
+    "CAL-R01 preregistered numeric retrieval gates before formal acceptance",
+    "CAL-P01 freeze offered load and all capacity gates before T15",
+    "formal raw_run sealed/archive verification before ordinary TTL purge"
+  ],
+  "baseline": "DAX-RB-1.2.1",
+  "sql_policy": {
+    "primary_input": "typed_query_spec",
+    "dialect": "postgres",
+    "templates": [
+      "cohort_totals",
+      "cohort_by_dimension",
+      "registered_quality_summary"
+    ],
+    "free_sql_enabled": false,
+    "arbitrary_identifiers_enabled": false,
+    "parameter_binding_required": true
+  },
+  "time_contract": {
+    "external": "explicit_offset_RFC3339_0_to_6_fraction_digits",
+    "internal": "UTC_6_fraction_digits_Z",
+    "reject_unknown_offset": true,
+    "reject_leap_second": true
+  },
+  "evaluation": {
+    "blind_cases": 60,
+    "dynamic_minimum_cases": 30,
+    "dynamic_mechanisms": 5,
+    "minimum_cases_per_dynamic_mechanism": 6,
+    "gain_candidate_percentage_points": 5,
+    "paired_case_bootstrap_replicates": 2000,
+    "candidate_is_not_statistical_proof": true
+  },
+  "load_calibration": {
+    "id": "CAL-P01",
+    "status": "not_executed",
+    "offered_load_rps": null,
+    "acceptance_ratio_min": null,
+    "completed_throughput_min": null,
+    "queue_wait_p95_ms_max": null,
+    "rejection_429_ratio_max": null,
+    "queue_timeout_ratio_max": null,
+    "min_completed_ratio": null,
+    "drain_grace_ms": null,
+    "required_before_formal_acceptance": true,
+    "normal_load_zero_expected_cancellation": true,
+    "completed_throughput_definition": "completed terminal commit in [measurement_start,measurement_end) / measurement_seconds; includes warmup accepted work completed in measurement, disclosed by origin",
+    "accepted_cohort_completion_definition": "accepted in [measurement_start,measurement_end) and completed before drain deadline / accepted in that interval",
+    "drain_completions_included_in_throughput": false
+  },
+  "document_version": "1.2.1",
+  "clarification_rescheduling": {
+    "accepted_response": 200,
+    "public_status": "needs_clarification",
+    "phase": "pending_requeue",
+    "clarification_prompt": null,
+    "automatic_requeue": true,
+    "sufficient_answer_stops_human_wait": true,
+    "capacity_wait_uses_cumulative_queue_budget": true,
+    "queue_wait_seconds_ref": "limits.queue_wait_seconds",
+    "new_task_or_budget_reset": false,
+    "pending_tasks_keep_original_principal_nonterminal_quota": true,
+    "pending_backlog_must_be_reported": true
+  }
+}

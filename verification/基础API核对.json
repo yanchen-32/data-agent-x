@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-09",
+  "scope": "公开冻结基础API源码的原有测试，不包含调查Agent或开发工作区未提交Provider",
+  "passed": true,
+  "test_count": 22,
+  "public_snapshot_import_verified": true,
+  "uncommitted_provider_tests_executed": false,
+  "production_investigation_runtime_tests_executed": false,
+  "source_hashes": {
+    "src/dataagentx/config.py": "f8c396b00e855ccb1640edd35cb171196ce32d77fb9833a222c481b460c7ce4b",
+    "src/dataagentx/logging_config.py": "5b5019c7057594af3123e57d548df3b8c9b822a87cf20086ddbb0be1c5f346c9",
+    "src/dataagentx/main.py": "70909a2abb94fa55a94ebf1be6218843f9c729551f6c8b8aab1dee2e9512d63b",
+    "src/dataagentx/models.py": "794fbea861887e9386fa6e254ebd028b114f8e4619a4e51ce01c617d861cfcbf",
+    "src/dataagentx/schemas.py": "90a4c685e77eb4f90859772272585bbab920365a9d3ad3cbde40c107e6bc0e91",
+    "src/dataagentx/service.py": "bb7f27ce448673af4259bbe52a7b63f57ea7e2ce2dc591b90e59290f5c5f2555",
+    "src/dataagentx/__init__.py": "3ebbb4065141012142168ecc70776886d2a452d80c3c3c1b19fc94665136fd5c",
+    "tests/test_config.py": "b3c6636b8895b1788f19eb612e3baff6e463c76583e7d4172b08a8a98aacff40",
+    "tests/test_health.py": "eda6a4fb3fd1dd9a7ef81e7c9faacc5c215ae0ee4a9b9c7a9ad7a2723cd6d4c9",
+    "tests/test_items.py": "c9d88a4849f77bd35b9b03ac1e5ba75e65684f0e48e5d76bb7688417a124ea3d",
+    "tests/test_service.py": "192a21250385f0f02bc9976a6fca9f4c42cb18d90d11ea46198e031b5d947f72"
+  }
+}

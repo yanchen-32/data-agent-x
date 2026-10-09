@@ -1,0 +1,160 @@
+{
+  "baseline": "DAX-RB-1.2.1",
+  "edition": "public",
+  "date": "2026-10-09",
+  "technical_root": "docs/engineering",
+  "document_master_semantics": "本清单列出的当前设计文件；内部环境日志不随公开版提供",
+  "application_runtime_tests_executed": false,
+  "files": [
+    {
+      "relative_path": "docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "canonical_relative_path": "docs/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "version": "1.2",
+      "sha256": "8440318ebaea1565dc02fd9096e09cbe23e10f0c961dad4762ea74d605fc7950"
+    },
+    {
+      "relative_path": "docs/engineering/01_需求基线/DataAgentX_需求优先级清单_v1.2.md",
+      "canonical_relative_path": "docs/01_需求基线/DataAgentX_需求优先级清单_v1.2.md",
+      "version": "1.2",
+      "sha256": "dc0e0b10b40084960ea3c4e86b587ef5a66f9dfbf1705a890c218bb1cadbf0ed"
+    },
+    {
+      "relative_path": "docs/engineering/01_需求基线/DataAgentX_需求评审记录_v1.2.md",
+      "canonical_relative_path": "docs/01_需求基线/DataAgentX_需求评审记录_v1.2.md",
+      "version": "1.2",
+      "sha256": "2f1462e782ef95ef60c85bfd51b340d62f1c188aa8ec2b3d717de958f7a65d47"
+    },
+    {
+      "relative_path": "docs/engineering/02_总体设计与方案验证/DataAgentX_总体设计方案_v1.2.md",
+      "canonical_relative_path": "docs/02_总体设计与方案验证/DataAgentX_总体设计方案_v1.2.md",
+      "version": "1.2",
+      "sha256": "330cc19ae50a5ccef1c4297a03b4bdd3cd569d3a722957abe6977cc60b5174ce"
+    },
+    {
+      "relative_path": "docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "canonical_relative_path": "docs/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "version": "1.2",
+      "sha256": "51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce"
+    },
+    {
+      "relative_path": "docs/engineering/02_总体设计与方案验证/DataAgentX_设计总册与完成性评审_v1.2.1.md",
+      "canonical_relative_path": "docs/02_总体设计与方案验证/DataAgentX_设计总册与完成性评审_v1.2.1.md",
+      "version": "1.2.1",
+      "sha256": "d6b6385cf798f22ba14225c9c4927379e825dc4e8b1fa5d64cecc148eb3e4e21"
+    },
+    {
+      "relative_path": "docs/engineering/02_总体设计与方案验证/DataAgentX_设计追溯矩阵_v1.2.1.json",
+      "canonical_relative_path": "docs/02_总体设计与方案验证/DataAgentX_设计追溯矩阵_v1.2.1.json",
+      "version": "1.2.1",
+      "sha256": "7fec56812c4dd52cabb4ba2ced04031873a55bd995571f19161fc1700a7f5329"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_API契约_v1.2.1.openapi.json",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_API契约_v1.2.1.openapi.json",
+      "version": "1.2.1",
+      "sha256": "231b667dcbc307cd02cbdbdce3c2fdd4bd4c013a9f588c970aad3ee3cdafd43c"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期_v1.2.md",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期_v1.2.md",
+      "version": "1.2",
+      "sha256": "79e9c13af453a2d09e12591547ea6b78c22b1f022b67472824001b53ac82a75e"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "version": "1.2",
+      "sha256": "3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "version": "1.2.1",
+      "sha256": "bb983f3f3cd53294d0abb1f9dc5ab087c29152848c4dd16e145637ad043ec2b0"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "version": "1.2",
+      "sha256": "ada2546c5e98879030325a2e776a0c6eb6d4512e52eb829fb679dd7c1333f2b0"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md",
+      "version": "1.2.1",
+      "sha256": "a48696548eb95cf86e461a6eb335c094a73147af8f83d720f038584c0b2eeee1"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "version": "1.2",
+      "sha256": "808fb253e0ecb4829dd74c75f63418c0dcfe187e3a025c3639cf4de9901ffea1"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_合成运行配置_v1.2.1.json",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_合成运行配置_v1.2.1.json",
+      "version": "1.2.1",
+      "sha256": "97e50dc3b035956d96e68598e00aa6930b706412121641283a9f48f9623d7144"
+    },
+    {
+      "relative_path": "docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json",
+      "canonical_relative_path": "docs/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json",
+      "version": "1.2.1",
+      "sha256": "e50b08ca770ef699dcc58db246782ff800eb2e7c856c9558369c25022528383a"
+    },
+    {
+      "relative_path": "docs/engineering/05_原型验证与实现/DataAgentX_v1.2契约参考样例.json",
+      "canonical_relative_path": "docs/05_原型验证与实现/DataAgentX_v1.2契约参考样例.json",
+      "version": "1.2",
+      "sha256": "4995712bd0287cc963e8081cbb19e1de6831fc37b130a90fbd2191a8aaf10f94"
+    },
+    {
+      "relative_path": "docs/engineering/05_原型验证与实现/DataAgentX_首批原型用例目录_v1.2.json",
+      "canonical_relative_path": "docs/05_原型验证与实现/DataAgentX_首批原型用例目录_v1.2.json",
+      "version": "1.2",
+      "sha256": "c20bcf021e94293cadb72106839e18b78fdc16274055dc017371bbcf3540dbb2"
+    },
+    {
+      "relative_path": "docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "canonical_relative_path": "docs/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "version": "1.2.1",
+      "sha256": "0b67404e91fe696a6342133b7353fe9e6c86b635565e35f2a3c14ecdd928a6aa"
+    },
+    {
+      "relative_path": "docs/engineering/07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+      "canonical_relative_path": "docs/07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+      "version": "1.2.1",
+      "sha256": "8a2009916a37551bdf6013572e2a95b136695876ebc9c3bbdd8fcba34765bfd3"
+    },
+    {
+      "relative_path": "docs/engineering/07_发布与求职材料/DataAgentX_求职能力与工程证据矩阵_v1.2.md",
+      "canonical_relative_path": "docs/07_发布与求职材料/DataAgentX_求职能力与工程证据矩阵_v1.2.md",
+      "version": "1.2",
+      "sha256": "15f5efd80057570c6a95a8f614e65ee22f44f715a229c6cc9836b405f14aa638"
+    },
+    {
+      "relative_path": "docs/engineering/01_需求基线/DataAgentX_需求补充与变更记录_v1.2.1.md",
+      "canonical_relative_path": "docs/01_需求基线/DataAgentX_需求补充与变更记录_v1.2.1.md",
+      "version": "1.2.1",
+      "sha256": "130c3667f8ded2bbc17604bfde6c37e6e923fdf1d199fda0fb1940a44d9084d8"
+    },
+    {
+      "relative_path": "docs/engineering/07_发布与求职材料/DataAgentX_设计发布说明_v1.2.1.md",
+      "canonical_relative_path": "docs/07_发布与求职材料/DataAgentX_设计发布说明_v1.2.1.md",
+      "version": "1.2.1",
+      "sha256": "02905d57737676b20be6044537dc28a321c7554683670c97893c3cb10fca35ea"
+    },
+    {
+      "relative_path": "docs/engineering/05_原型验证与实现/DataAgentX_v1.2.1契约边界核对.py",
+      "canonical_relative_path": "docs/05_原型验证与实现/DataAgentX_v1.2.1契约边界核对.py",
+      "version": "1.2.1",
+      "sha256": "597fdf96b87f4967a98ccfbdd1c77b36bb7e5ac785a7d985ad4644dc1abc4966"
+    },
+    {
+      "relative_path": "docs/engineering/05_原型验证与实现/DataAgentX_v1.2.1边界用例.json",
+      "canonical_relative_path": "docs/05_原型验证与实现/DataAgentX_v1.2.1边界用例.json",
+      "version": "1.2.1",
+      "sha256": "0309d91a68e5986ab7485dd5a07fc87b585f20e53fa0b075efecebccc98ab620"
+    }
+  ]
+}

@@ -1,0 +1,646 @@
+{
+  "date": "2026-10-09",
+  "baseline": "DAX-RB-1.2.1",
+  "scope": "JSON Schema/OpenAPI静态契约与独立状态/统计参考模型",
+  "production_application_tests_executed": false,
+  "passed": true,
+  "check_count": 125,
+  "document_scan_policy": "fixed_current_technical_markdown_v1.2.1",
+  "document_scan_scope": [
+    "01_需求基线/DataAgentX_SRS_v1.2.md",
+    "01_需求基线/DataAgentX_需求优先级清单_v1.2.md",
+    "01_需求基线/DataAgentX_需求评审记录_v1.2.md",
+    "02_总体设计与方案验证/DataAgentX_总体设计方案_v1.2.md",
+    "02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+    "02_总体设计与方案验证/DataAgentX_设计总册与完成性评审_v1.2.1.md",
+    "04_详细设计与实现准备/DataAgentX_DD01_身份权限与生命周期_v1.2.md",
+    "04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+    "04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+    "04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md",
+    "04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md",
+    "04_详细设计与实现准备/DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+    "06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+    "07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+    "07_发布与求职材料/DataAgentX_求职能力与工程证据矩阵_v1.2.md",
+    "01_需求基线/DataAgentX_需求补充与变更记录_v1.2.1.md",
+    "07_发布与求职材料/DataAgentX_设计发布说明_v1.2.1.md"
+  ],
+  "checks": [
+    {
+      "check": "26个Schema定义结构合法",
+      "passed": true
+    },
+    {
+      "check": "Schema内部引用完整",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "OpenAPI内部引用完整",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "OpenAPI和独立对象逐字段一致",
+      "passed": true
+    },
+    {
+      "check": "7路径7操作保持",
+      "passed": true
+    },
+    {
+      "check": "载荷与工具版本维持1.2",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:Window",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:Window",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:CreateRequest",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:CreateRequest",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ClarificationAnswers",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ClarificationAnswers",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ClarificationRequest",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ClarificationRequest",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ScopeSpec",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ScopeSpec",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:BudgetView",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:BudgetView",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ClarificationPrompt",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ClarificationPrompt",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:TaskView",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:TaskView",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:QuerySpec",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:QuerySpec",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:AgentAction",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:AgentAction",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:SourceRef",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:SourceRef",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:AggregateRow",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:AggregateRow",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:QualityPayload",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:QualityPayload",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:QueryPayload",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:QueryPayload",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:AnalysisPayload",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:AnalysisPayload",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:KnowledgePayload",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:KnowledgePayload",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:EvidenceEnvelope",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:EvidenceEnvelope",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:Claim",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:Claim",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ReportView",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ReportView",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:Usage",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:Usage",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:CallRecord",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:CallRecord",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ToolResult",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ToolResult",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ErrorEnvelope",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ErrorEnvelope",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:ExternalWindow",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:ExternalWindow",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:BusinessFilters",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:BusinessFilters",
+      "passed": true
+    },
+    {
+      "check": "Schema正例:TimingView",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "Schema未知字段拒绝:TimingView",
+      "passed": true
+    },
+    {
+      "check": "无Scope终态摘要:cancelled",
+      "passed": true
+    },
+    {
+      "check": "无Scope终态摘要:failed",
+      "passed": true
+    },
+    {
+      "check": "无Scope终态摘要:budget_exceeded",
+      "passed": true
+    },
+    {
+      "check": "无Scope终态摘要:insufficient_evidence",
+      "passed": true
+    },
+    {
+      "check": "completed空Scope拒绝",
+      "passed": true
+    },
+    {
+      "check": "无Scope摘要拒绝:业务Claim",
+      "passed": true
+    },
+    {
+      "check": "无Scope摘要拒绝:业务证据",
+      "passed": true
+    },
+    {
+      "check": "无Scope摘要拒绝:无局限说明",
+      "passed": true
+    },
+    {
+      "check": "Task完成无Scope拒绝",
+      "passed": true
+    },
+    {
+      "check": "Task完成有Scope合法",
+      "passed": true
+    },
+    {
+      "check": "关联参考:无Scope取消摘要",
+      "passed": true
+    },
+    {
+      "check": "关联参考:Scope前failed",
+      "passed": true
+    },
+    {
+      "check": "关联参考:Scope前insufficient_evidence",
+      "passed": true
+    },
+    {
+      "check": "关联参考:Scope前budget_exceeded",
+      "passed": true
+    },
+    {
+      "check": "形式合法伪hash可过Schema但不得过关联",
+      "passed": true
+    },
+    {
+      "check": "关联参考:真实Scope完成",
+      "passed": true
+    },
+    {
+      "check": "关联参考:串Scope拒绝",
+      "passed": true
+    },
+    {
+      "check": "pending_requeue无需重复问题的Task正例",
+      "passed": true
+    },
+    {
+      "check": "pending_requeue拒绝:错误公开状态",
+      "passed": true
+    },
+    {
+      "check": "pending_requeue拒绝:重复用户问题",
+      "passed": true
+    },
+    {
+      "check": "pending_requeue拒绝:伪终态时间",
+      "passed": true
+    },
+    {
+      "check": "awaiting_user无提示拒绝",
+      "passed": true
+    },
+    {
+      "check": "awaiting_user有问题合法",
+      "passed": true
+    },
+    {
+      "check": "满队充分答案200接受",
+      "passed": true
+    },
+    {
+      "check": "答案后5秒容量等待计queue/人工停表",
+      "passed": true
+    },
+    {
+      "check": "同答案重放200不重启等待",
+      "passed": true
+    },
+    {
+      "check": "异答案409",
+      "passed": true
+    },
+    {
+      "check": "无需客户端重答自动持槽",
+      "passed": true
+    },
+    {
+      "check": "重复调度不会第二次启动",
+      "passed": true
+    },
+    {
+      "check": "已满人工期限之后不误过期",
+      "passed": true
+    },
+    {
+      "check": "pending队列累计到界用QUEUE_WAIT_TIMEOUT",
+      "passed": true
+    },
+    {
+      "check": "队列超时后不能复活",
+      "passed": true
+    },
+    {
+      "check": "无效答案400",
+      "passed": true
+    },
+    {
+      "check": "无效答案仍计人工而不计新queue",
+      "passed": true
+    },
+    {
+      "check": "合法部分答案200仍待用户",
+      "passed": true
+    },
+    {
+      "check": "恰人工到界答案拒绝/不重置",
+      "passed": true
+    },
+    {
+      "check": "pending取消后自动调度不能复活",
+      "passed": true
+    },
+    {
+      "check": "取消先提交则答案拒绝",
+      "passed": true
+    },
+    {
+      "check": "实际完成吞吐只计测量窗终态2/60",
+      "passed": true
+    },
+    {
+      "check": "接收cohort完成率为3/6而非吞吐",
+      "passed": true
+    },
+    {
+      "check": "窗末60秒完成计drain不计吞吐",
+      "passed": true
+    },
+    {
+      "check": "预热受理/测量完成计吞吐且披露来源",
+      "passed": true
+    },
+    {
+      "check": "截止恰120迟到不计cohort成功",
+      "passed": true
+    },
+    {
+      "check": "排空观察耗时单列",
+      "passed": true
+    },
+    {
+      "check": "零接收完成率N/A不假通过",
+      "passed": true
+    },
+    {
+      "check": "accepted_at恰窗末不入cohort",
+      "passed": true
+    },
+    {
+      "check": "config吞吐排除drain",
+      "passed": true
+    },
+    {
+      "check": "原三时限保持且不增加预算",
+      "passed": true
+    },
+    {
+      "check": "需求34及25-6-3保持",
+      "passed": true
+    },
+    {
+      "check": "充分答案不返回重入容量429",
+      "passed": true
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_SRS_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_需求优先级清单_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_需求评审记录_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_总体设计方案_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_指标目录与数据契约_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_设计总册与完成性评审_v1.2.1.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD01_身份权限与生命周期_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD03_Runtime与Provider_v1.2.1.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD04_检索证据与报告_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD05_存储接口与集成_v1.2.1.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD08_增强功能与扩展设计_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD06_评测与验收设计_v1.2.1.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_DD07_部署运维与交付设计_v1.2.1.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_求职能力与工程证据矩阵_v1.2.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_需求补充与变更记录_v1.2.1.md",
+      "passed": true,
+      "details": []
+    },
+    {
+      "check": "发布文档相对链接:DataAgentX_设计发布说明_v1.2.1.md",
+      "passed": true,
+      "details": []
+    }
+  ],
+  "throughput_boundary_reference": {
+    "window": [
+      0,
+      60
+    ],
+    "drain_deadline_exclusive": 120,
+    "tasks": [
+      {
+        "id": "warmup",
+        "accepted": -1,
+        "terminal": 10,
+        "status": "completed"
+      },
+      {
+        "id": "a",
+        "accepted": 0,
+        "terminal": 20,
+        "status": "completed"
+      },
+      {
+        "id": "b",
+        "accepted": 30,
+        "terminal": 60,
+        "status": "completed"
+      },
+      {
+        "id": "c",
+        "accepted": 50,
+        "terminal": 90,
+        "status": "completed"
+      },
+      {
+        "id": "late",
+        "accepted": 55,
+        "terminal": 120,
+        "status": "completed"
+      },
+      {
+        "id": "running",
+        "accepted": 59,
+        "terminal": null,
+        "status": "running"
+      },
+      {
+        "id": "failed",
+        "accepted": 10,
+        "terminal": 40,
+        "status": "failed"
+      }
+    ],
+    "expected_metrics": {
+      "completed_throughput": 0.03333333333333333,
+      "measurement_completed": 2,
+      "measurement_completed_from_warmup": 1,
+      "accepted_cohort_size": 6,
+      "accepted_cohort_completed": 3,
+      "cohort_completion_rate": 0.5,
+      "drain_completed": 2,
+      "late_completed": 1,
+      "drain_observation_seconds": 60
+    }
+  },
+  "pending_requeue_reference": {
+    "queue_ms": 17000,
+    "human_ms": 1795000,
+    "active_ms": 22000,
+    "events": [
+      "answer_accepted",
+      "automatic_start"
+    ]
+  }
+}

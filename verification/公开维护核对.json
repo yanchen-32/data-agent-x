@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-09",
+  "baseline": "DAX-RB-1.2.1",
+  "edition": "public",
+  "passed": true,
+  "dd07_requested_wording_verified": true,
+  "fixed_markdown_files": 17,
+  "static_and_reference_checks": 125,
+  "historical_results_preserved": {
+    "original_internal_independent_package": 116,
+    "original_internal_full_archive": 125,
+    "passed": true
+  },
+  "scan_scope_verification": [
+    {
+      "scenario": "独立公开目录",
+      "checks": 125,
+      "passed": true
+    },
+    {
+      "scenario": "完整工作归档",
+      "checks": 125,
+      "passed": true
+    },
+    {
+      "scenario": "增加历史副本",
+      "checks": 125,
+      "passed": true
+    }
+  ],
+  "current_document_missing_link_detected": true,
+  "production_application_tests_executed": false,
+  "privacy_scope": "发布目录内全部文件内容与文件名，包含URL解码、JSON字符串解码后的本机用户名/绝对路径/附件定位信息；内部原件与历史不进入公开包",
+  "local_identifiers_found": 0,
+  "release_integrity": "RELEASE_MANIFEST.json/.md互不自引用，其余全部文件按SHA-256登记"
+}

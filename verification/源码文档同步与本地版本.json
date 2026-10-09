@@ -1,0 +1,12 @@
+{
+  "baseline": "DAX-RB-1.2.1",
+  "edition": "public",
+  "date": "2026-10-09",
+  "record_type": "公开版边界说明",
+  "technical_files": 25,
+  "original_internal_release_preserved": true,
+  "local_environment_details_included": false,
+  "application_runtime_tests_executed": false,
+  "remote_push_performed": false,
+  "note": "本记录说明公开包范围；内部同步证据不随公开包提供，逐文件完整性以SYNC_MANIFEST和RELEASE_MANIFEST为准。"
+}
