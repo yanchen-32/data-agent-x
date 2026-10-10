@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-10",
+  "baseline": "DAX-RB-1.2.1",
+  "scope": "公开分支基础API与独立订单字段校验",
+  "passed": true,
+  "application_tests": 49,
+  "existing_tests": 22,
+  "order_validation_tests": 27,
+  "public_worktree_source_import_verified": true,
+  "provider_included": false,
+  "design_checks_reexecuted": false,
+  "production_investigation_acceptance_performed": false,
+  "validation_scope": "单行字段完整性、字符串ID、带时区datetime、严格布尔值及UTC规范化",
+  "boundaries": "不校验批次唯一性、域授权、维度目录关联、退款、成熟期、水位或导入批准状态；不解析外部RFC3339字符串",
+  "test_coverage": [
+    "正常记录及输入不被修改",
+    "非法ID类型、空字符串与纯空白",
+    "九个必填字段分别缺失",
+    "空时间、字符串时间和无时区时间拒绝",
+    "显式偏移转UTC并保留微秒",
+    "非布尔支付有效性拒绝",
+    "False及__unknown__保留",
+    "额外字段拒绝"
+  ],
+  "tag_policy": "dax-public-v1.2.1保持冻结；订单校验作为公开分支后续提交"
+}

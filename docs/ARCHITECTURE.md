@@ -1,6 +1,8 @@
 # DataAgentX 当前实现架构
 
-本文描述此公开快照中已实现的基础API。规划能力见ROADMAP.md，项目边界见PROJECT_CHARTER.md。当前开发工作区的未提交Provider不属于本快照。
+本文描述此公开分支中已实现的基础 API 和独立订单字段校验。规划能力见 ROADMAP.md，项目边界见 PROJECT_CHARTER.md。当前开发工作区的未提交 Provider 不属于本分支。
+
+- **最小订单字段校验**：`order_validation.py` 的 `validate_order()` 接收单行 Python 字段映射，合法时返回不可变的 `OrderRecord`，非法时抛出带字段说明的 `ValueError`。这是依据 DD02 v1.2 和 SRS §4.1 定义的局部实现，不是已冻结的外部 API 或完整导入契约。必填字符串字段为 `source_row_id/domain_id/snapshot_id/order_id/product_id/region_id/channel_id`，须非空且非纯空白；支付有效性在本实现中命名为 `is_payment_valid`，只接收布尔值，False 保留供后续规则筛选；必填 `paid_at` 只接收带时区的 `datetime` 并转 UTC，保留微秒，不解析外部 RFC3339 字符串。缺失或额外字段拒绝，`__unknown__` 维度保留，输入不被修改。本函数仅覆盖带支付时间的订单行，不处理未支付且时间为空的原始记录；不验证重复主键、单品/单次支付事实、域授权、维度目录关联、退款关系、成熟期、水位或导入批准状态，尚未接入 API/数据库。`tests/test_order_validation.py` 覆盖正常输入、非法类型/空值、缺失/额外字段、无时区时间、偏移转 UTC、False 和未知维度保留。
 
 - **src layout**：业务包放在 `src/dataagentx/`，与项目根目录和测试分开，减少从当前目录误导入源码的问题，让开发和测试通过安装后的包访问代码。
 - **pyproject.toml**：统一声明构建方式、项目元数据、Python 版本、运行与开发依赖、`dataagentx` 命令入口及 pytest 配置。

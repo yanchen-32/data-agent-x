@@ -2,17 +2,17 @@
   "version": "1.2.1",
   "baseline": "DAX-RB-1.2.1",
   "edition": "public-github-source",
-  "date": "2026-10-09",
-  "type": "公开设计及既有基础API源码快照",
+  "date": "2026-10-10",
+  "type": "公开设计、基础API与独立订单字段校验",
   "source_code_included": true,
   "uncommitted_provider_included": false,
   "application_version": "0.1.0",
   "application_runtime_tests_executed": true,
   "design_checks": 125,
-  "file_count": 52,
+  "file_count": 55,
   "public_branch": "release/public-v1.2.1",
   "public_tag": "dax-public-v1.2.1",
-  "history_policy": "独立根提交；不含内部旧提交历史",
+  "history_policy": "独立公开根提交及后续公开开发提交；不含内部旧提交历史",
   "self_excluded": [
     "RELEASE_MANIFEST.json",
     "RELEASE_MANIFEST.md"
@@ -29,9 +29,24 @@
       "sha256": "c4e35d3bd54f33c506875c11d5c4d0ede5661c9959fbc0adb06091e0b2f20f87"
     },
     {
+      "relative_path": "README.md",
+      "bytes": 3446,
+      "sha256": "f29d5752688058fd1157c05ecb0e5402259c9b01123d1df27523710e729a8682"
+    },
+    {
       "relative_path": "docs/ARCHITECTURE.md",
-      "bytes": 2548,
-      "sha256": "c767c2bc59e02380d050d2bb260e0b419b970e415b9ffabf5407e9931d705e79"
+      "bytes": 3780,
+      "sha256": "09cb6fd0bbb371e30963674c6d1df20237874e81201b9a39882ace9ab9a769b1"
+    },
+    {
+      "relative_path": "docs/PROJECT_CHARTER.md",
+      "bytes": 4841,
+      "sha256": "ee2936241874900bcb04c7d30864321e9170f39162d6521d08787e8db4993d08"
+    },
+    {
+      "relative_path": "docs/ROADMAP.md",
+      "bytes": 1354,
+      "sha256": "7f444fc1e224ae0292f7c02bda562522ae982f4756f1eea67ba3a28858fcbf6f"
     },
     {
       "relative_path": "docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
@@ -174,24 +189,9 @@
       "sha256": "2abcce20ffd7913ead20640891d75b8ae435245d5617872e24cf843e21d20fe5"
     },
     {
-      "relative_path": "docs/PROJECT_CHARTER.md",
-      "bytes": 4841,
-      "sha256": "ee2936241874900bcb04c7d30864321e9170f39162d6521d08787e8db4993d08"
-    },
-    {
-      "relative_path": "docs/ROADMAP.md",
-      "bytes": 1354,
-      "sha256": "7f444fc1e224ae0292f7c02bda562522ae982f4756f1eea67ba3a28858fcbf6f"
-    },
-    {
       "relative_path": "pyproject.toml",
       "bytes": 732,
       "sha256": "5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0"
-    },
-    {
-      "relative_path": "README.md",
-      "bytes": 2501,
-      "sha256": "8dda2358d2f3e4cf96dea2e3694dd07726cd31994fe0d06bf61a94b9d9de13fd"
     },
     {
       "relative_path": "src/dataagentx/__init__.py",
@@ -219,6 +219,11 @@
       "sha256": "794fbea861887e9386fa6e254ebd028b114f8e4619a4e51ce01c617d861cfcbf"
     },
     {
+      "relative_path": "src/dataagentx/order_validation.py",
+      "bytes": 2222,
+      "sha256": "00a4dc76080aa266f79371647bd3ca2ea90dfe913ef1c45f1368c4fe40da7e3e"
+    },
+    {
       "relative_path": "src/dataagentx/schemas.py",
       "bytes": 389,
       "sha256": "90a4c685e77eb4f90859772272585bbab920365a9d3ad3cbde40c107e6bc0e91"
@@ -244,6 +249,11 @@
       "sha256": "c9d88a4849f77bd35b9b03ac1e5ba75e65684f0e48e5d76bb7688417a124ea3d"
     },
     {
+      "relative_path": "tests/test_order_validation.py",
+      "bytes": 3695,
+      "sha256": "a558495d620a21e8b754c1a03e3493ca2df46a3652b5eb3b1c805776565c6187"
+    },
+    {
       "relative_path": "tests/test_service.py",
       "bytes": 927,
       "sha256": "192a21250385f0f02bc9976a6fca9f4c42cb18d90d11ea46198e031b5d947f72"
@@ -267,6 +277,11 @@
       "relative_path": "verification/源码文档同步与本地版本.json",
       "bytes": 473,
       "sha256": "d90521ef81cd9043d5b3f42cf11859ee48b0e49be4f136c0f3ba0152b27a7ecd"
+    },
+    {
+      "relative_path": "verification/订单校验核对.json",
+      "bytes": 1116,
+      "sha256": "4d8f45d464775f677ebdf657b057a1d95f174310b2eee5872fee8d3d1b23dd1d"
     }
   ],
   "application_test_scope": "仅基础FastAPI API，调查系统未验收",
@@ -274,5 +289,9 @@
   "public_commit_identity": {
     "name": "yanchen-32",
     "email": "322025221+yanchen-32@users.noreply.github.com"
-  }
+  },
+  "application_test_count": 49,
+  "order_validation_tests": 27,
+  "design_checks_reexecuted": false,
+  "public_tag_scope": "冻结初始设计与基础API快照；不包含后续订单校验提交"
 }

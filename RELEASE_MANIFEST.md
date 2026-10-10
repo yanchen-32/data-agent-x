@@ -1,12 +1,15 @@
-# DataAgentX v1.2.1 GitHub公开快照清单
+# DataAgentX v1.2.1 公开分支文件清单
 
-25份技术设计与独立公开设计ZIP同hash。基础API的22项现有测试实跑通过；设计静态契约/独立参考核对125项通过，调查系统尚未运行验收。两份清单互不自引用，其余文件全部登记。
+25份技术设计与冻结公开设计同hash。初始设计125项静态契约/独立参考核对结果保留，本次未复跑设计核对。公开分支新增独立订单字段校验，全量49项测试通过（基础22项、订单校验27项），调查系统仍未运行验收。标签dax-public-v1.2.1保持冻结，订单校验在公开分支后续提交。两份清单互不自引用，其余文件全部登记。
 
 | 相对路径 | 字节数 | SHA-256 |
 | --- | ---: | --- |
 | `.gitignore` | 427 | `2131f1f5ddd85db6f46c10fba32cd28569c7b18e148a5683bdfb651deb5b9eab` |
 | `AGENTS.md` | 1885 | `c4e35d3bd54f33c506875c11d5c4d0ede5661c9959fbc0adb06091e0b2f20f87` |
-| `docs/ARCHITECTURE.md` | 2548 | `c767c2bc59e02380d050d2bb260e0b419b970e415b9ffabf5407e9931d705e79` |
+| `README.md` | 3446 | `f29d5752688058fd1157c05ecb0e5402259c9b01123d1df27523710e729a8682` |
+| `docs/ARCHITECTURE.md` | 3780 | `09cb6fd0bbb371e30963674c6d1df20237874e81201b9a39882ace9ab9a769b1` |
+| `docs/PROJECT_CHARTER.md` | 4841 | `ee2936241874900bcb04c7d30864321e9170f39162d6521d08787e8db4993d08` |
+| `docs/ROADMAP.md` | 1354 | `7f444fc1e224ae0292f7c02bda562522ae982f4756f1eea67ba3a28858fcbf6f` |
 | `docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md` | 54381 | `8440318ebaea1565dc02fd9096e09cbe23e10f0c961dad4762ea74d605fc7950` |
 | `docs/engineering/01_需求基线/DataAgentX_需求优先级清单_v1.2.md` | 14369 | `dc0e0b10b40084960ea3c4e86b587ef5a66f9dfbf1705a890c218bb1cadbf0ed` |
 | `docs/engineering/01_需求基线/DataAgentX_需求补充与变更记录_v1.2.1.md` | 2894 | `130c3667f8ded2bbc17604bfde6c37e6e923fdf1d199fda0fb1940a44d9084d8` |
@@ -35,22 +38,22 @@
 | `docs/engineering/AGENTS.md` | 881 | `35ff6f9be035478e82013f3b013f8dc71fb7550acb3c8a133b1390eba4eb83e9` |
 | `docs/engineering/BASELINE.md` | 4968 | `ce1c4568d0079ff909ebd2d58a50681092e8d55010d925180ad7133505bc1496` |
 | `docs/engineering/SYNC_MANIFEST.json` | 8935 | `2abcce20ffd7913ead20640891d75b8ae435245d5617872e24cf843e21d20fe5` |
-| `docs/PROJECT_CHARTER.md` | 4841 | `ee2936241874900bcb04c7d30864321e9170f39162d6521d08787e8db4993d08` |
-| `docs/ROADMAP.md` | 1354 | `7f444fc1e224ae0292f7c02bda562522ae982f4756f1eea67ba3a28858fcbf6f` |
 | `pyproject.toml` | 732 | `5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0` |
-| `README.md` | 2501 | `8dda2358d2f3e4cf96dea2e3694dd07726cd31994fe0d06bf61a94b9d9de13fd` |
 | `src/dataagentx/__init__.py` | 21 | `3ebbb4065141012142168ecc70776886d2a452d80c3c3c1b19fc94665136fd5c` |
 | `src/dataagentx/config.py` | 656 | `f8c396b00e855ccb1640edd35cb171196ce32d77fb9833a222c481b460c7ce4b` |
 | `src/dataagentx/logging_config.py` | 434 | `5b5019c7057594af3123e57d548df3b8c9b822a87cf20086ddbb0be1c5f346c9` |
 | `src/dataagentx/main.py` | 1171 | `70909a2abb94fa55a94ebf1be6218843f9c729551f6c8b8aab1dee2e9512d63b` |
 | `src/dataagentx/models.py` | 326 | `794fbea861887e9386fa6e254ebd028b114f8e4619a4e51ce01c617d861cfcbf` |
+| `src/dataagentx/order_validation.py` | 2222 | `00a4dc76080aa266f79371647bd3ca2ea90dfe913ef1c45f1368c4fe40da7e3e` |
 | `src/dataagentx/schemas.py` | 389 | `90a4c685e77eb4f90859772272585bbab920365a9d3ad3cbde40c107e6bc0e91` |
 | `src/dataagentx/service.py` | 718 | `bb7f27ce448673af4259bbe52a7b63f57ea7e2ce2dc591b90e59290f5c5f2555` |
 | `tests/test_config.py` | 2069 | `b3c6636b8895b1788f19eb612e3baff6e463c76583e7d4172b08a8a98aacff40` |
 | `tests/test_health.py` | 335 | `eda6a4fb3fd1dd9a7ef81e7c9faacc5c215ae0ee4a9b9c7a9ad7a2723cd6d4c9` |
 | `tests/test_items.py` | 741 | `c9d88a4849f77bd35b9b03ac1e5ba75e65684f0e48e5d76bb7688417a124ea3d` |
+| `tests/test_order_validation.py` | 3695 | `a558495d620a21e8b754c1a03e3493ca2df46a3652b5eb3b1c805776565c6187` |
 | `tests/test_service.py` | 927 | `192a21250385f0f02bc9976a6fca9f4c42cb18d90d11ea46198e031b5d947f72` |
 | `verification/公开维护核对.json` | 1121 | `b4048921fe0eef7495bb1dec64479dcda3bc9d3599296b9470fdea1e5eb14131` |
 | `verification/基础API核对.json` | 1450 | `16f3b4ae6637b7ddb09c74421378447c05e82171a2834514e25764b7631d27cd` |
 | `verification/契约与独立参考核对.json` | 15374 | `1b6a778250f55867c1a1fc4108cc3d47d61a2b1122cbaec4f65c6e8010c493fd` |
 | `verification/源码文档同步与本地版本.json` | 473 | `d90521ef81cd9043d5b3f42cf11859ee48b0e49be4f136c0f3ba0152b27a7ecd` |
+| `verification/订单校验核对.json` | 1116 | `4d8f45d464775f677ebdf657b057a1d95f174310b2eee5872fee8d3d1b23dd1d` |
