@@ -1,0 +1,176 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开开发边界样例；非正式盲测集、非生产导入批准记录",
+  "metric_version": null,
+  "oracle_origin": "按业务规则逐行列举并静态填写预期；未调用待测代码生成，尚待用户人工复核",
+  "oracle_record": "ORACLE.md",
+  "sources": [
+    {
+      "title": "DD02 数据质量与退款队列口径",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献"
+      ]
+    },
+    {
+      "title": "SRS 队列时间与质量处置",
+      "path": "../../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sections": [
+        "§4.2 退款率定义与时间边界",
+        "§4.4 数据质量处置与一致性"
+      ]
+    }
+  ],
+  "case_id": "A3-03",
+  "title": "相同域/快照内重复订单阻断，保留原始来源行",
+  "business_rules": [
+    "订单身份为(domain_id,snapshot_id,order_id)，source_row_id仅作原始行追溯。",
+    "重复订单是关键质量异常，必须阻断或经新快照修复再核验，不得默默去重后发布原结论。",
+    "不同source_row_id不能让重复订单变成不同业务订单。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_duplicate",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-22T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-22T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": []
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "d-row-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_duplicate",
+        "order_id": "D-B",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-01T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "d-row-2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_duplicate",
+        "order_id": "D-B",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-01T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "d-row-3",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_duplicate",
+        "order_id": "D-C",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-08T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "d-refund-row-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_duplicate",
+        "refund_id": "DR-1",
+        "order_id": "D-C",
+        "refund_at": "2026-09-10T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "product_id": "product_book",
+          "category_id": "category_books",
+          "snapshot_id": "fixture_duplicate"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "region_id": "region_northwest",
+          "label": "西北",
+          "snapshot_id": "fixture_duplicate"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "channel_id": "channel_web",
+          "label": "网页",
+          "snapshot_id": "fixture_duplicate"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "blocked_by_quality",
+    "reasons": [
+      "重复订单主键"
+    ],
+    "duplicate_order_groups": [
+      {
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_duplicate",
+        "order_id": "D-B",
+        "source_row_ids": [
+          "d-row-1",
+          "d-row-2"
+        ],
+        "row_count": 2
+      }
+    ],
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_key_count": 1
+    },
+    "metrics": {
+      "baseline": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "current": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "absolute_change_ratio": null,
+      "relative_change": null
+    }
+  },
+  "calculation_basis": [
+    "原始3行的业务键为D-B、D-B、D-C，同域同快照下D-B出现2次。",
+    "重复键组数1，关联来源行d-row-1/d-row-2；不能因来源行ID不同计成两单。",
+    "虽时间及水位满足要求，关键DQ失败后两窗N/U/率及变化均不发布。"
+  ]
+}

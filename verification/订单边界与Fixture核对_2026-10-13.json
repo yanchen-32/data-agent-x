@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-13",
+  "baseline": "DAX-RB-1.2.1",
+  "scope": "公开分支订单字段边界、首批业务Fixture及既有基础功能",
+  "passed": true,
+  "application_test_count": 63,
+  "existing_test_count": 22,
+  "order_validation_test_count": 38,
+  "fixture_integrity_test_count": 3,
+  "public_worktree_source_import_verified": true,
+  "fixture_count": 3,
+  "control_variant_count": 2,
+  "fixtures": [
+    "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+    "tests/fixtures/order_boundaries/02_utc_boundaries.json",
+    "tests/fixtures/order_boundaries/03_duplicate_orders.json"
+  ],
+  "oracle_record": "tests/fixtures/order_boundaries/ORACLE.md",
+  "expected_results_generated_by_code_under_test": false,
+  "independent_user_review_completed": false,
+  "provider_included": false,
+  "new_framework_added": false,
+  "design_contract_files_changed": false,
+  "design_checks_reexecuted": false,
+  "production_investigation_acceptance_performed": false,
+  "validation_changes": [
+    "域与快照ID的256字符上限及257字符拒绝",
+    "UTC转换溢出统一报告ValueError",
+    "非映射输入拒绝",
+    "严格布尔值拒绝整数0/1",
+    "有tzinfo但实际时区偏移为空的时间拒绝"
+  ],
+  "fixture_check_limit": "检查可读取性、引用、追溯字段和静态预期算术；不证明业务计算器、批次DQ或SQL实现通过",
+  "history_policy": "保留旧核对记录和冻结标签；本轮作为脱敏公开分支后续提交"
+}

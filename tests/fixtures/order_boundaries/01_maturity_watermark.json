@@ -1,0 +1,229 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开开发边界样例；非正式盲测集、非生产导入批准记录",
+  "metric_version": null,
+  "oracle_origin": "按业务规则逐行列举并静态填写预期；未调用待测代码生成，尚待用户人工复核",
+  "oracle_record": "ORACLE.md",
+  "sources": [
+    {
+      "title": "DD02 数据质量与退款队列口径",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献"
+      ]
+    },
+    {
+      "title": "SRS 队列时间与质量处置",
+      "path": "../../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sections": [
+        "§4.2 退款率定义与时间边界",
+        "§4.4 数据质量处置与一致性"
+      ]
+    }
+  ],
+  "case_id": "A3-01",
+  "title": "成熟期恰到界但退款水位短1微秒",
+  "business_rules": [
+    "支付窗口采用[start,end)。",
+    "每个纳入订单须满足paid_at+H<=as_of；等号允许。",
+    "支付水位须覆盖窗口end，退款水位须覆盖纳入订单最大的paid_at+H；等号允许。",
+    "水位不足时阻断受影响比较，不把缺少退款记录解释为0。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_maturity",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-15T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-14T23:59:59.999999Z"
+      },
+      "filters": {
+        "region_ids": []
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "m-row-b",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_maturity",
+        "order_id": "M-B",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-01T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "m-row-c",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_maturity",
+        "order_id": "M-C",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-08T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "product_id": "product_book",
+          "category_id": "category_books",
+          "snapshot_id": "fixture_maturity"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "region_id": "region_northwest",
+          "label": "西北",
+          "snapshot_id": "fixture_maturity"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "channel_id": "channel_web",
+          "label": "网页",
+          "snapshot_id": "fixture_maturity"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "insufficient_evidence",
+    "reasons": [
+      "退款水位不足"
+    ],
+    "cohort_source_row_ids": {
+      "baseline": [
+        "m-row-b"
+      ],
+      "current": [
+        "m-row-c"
+      ]
+    },
+    "maturity_deadlines_utc": {
+      "M-B": "2026-09-08T00:00:00.000000Z",
+      "M-C": "2026-09-15T00:00:00.000000Z"
+    },
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": false,
+      "duplicate_order_keys": []
+    },
+    "metrics": {
+      "baseline": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "current": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "absolute_change_ratio": null,
+      "relative_change": null
+    }
+  },
+  "calculation_basis": [
+    "H=7天；M-B成熟于09-08 00:00Z，M-C成熟于09-15 00:00Z。",
+    "as_of恰等于M-C成熟时刻，因此成熟检查通过。",
+    "退款水位距离必须覆盖的09-15 00:00Z尚差1微秒，因此不发布两窗N/U/退款率或变化。"
+  ],
+  "variants": [
+    {
+      "variant_id": "A3-01-EQUAL",
+      "title": "退款水位恰覆盖的独立控制场景",
+      "input_overrides": {
+        "context.watermark.refunds_through": "2026-09-15T00:00:00Z"
+      },
+      "expected": {
+        "outcome": "ready",
+        "reasons": [],
+        "quality_checks": {
+          "all_orders_mature": true,
+          "payments_watermark_covered": true,
+          "refunds_watermark_covered": true
+        },
+        "metrics": {
+          "baseline": {
+            "N": 1,
+            "U": 0,
+            "rate": "0"
+          },
+          "current": {
+            "N": 1,
+            "U": 0,
+            "rate": "0"
+          },
+          "absolute_change_ratio": "0",
+          "relative_change": null
+        }
+      },
+      "calculation_basis": [
+        "水位和as_of均覆盖两单完整7天观察期，空退款集合在这一前提下才可解释为零合格退款。",
+        "两窗各一单、均无成功退款：0/1=0，绝对差0；基期率为0，相对变化未定义。"
+      ]
+    },
+    {
+      "variant_id": "A3-01-IMMATURE",
+      "title": "as_of提前1微秒的独立未成熟场景",
+      "input_overrides": {
+        "context.as_of": "2026-09-14T23:59:59.999999Z"
+      },
+      "expected": {
+        "outcome": "insufficient_evidence",
+        "reasons": [
+          "观察期未成熟",
+          "退款水位不足"
+        ],
+        "quality_checks": {
+          "all_orders_mature": false,
+          "payments_watermark_covered": true,
+          "refunds_watermark_covered": false
+        },
+        "metrics": {
+          "baseline": {
+            "N": null,
+            "U": null,
+            "rate": null
+          },
+          "current": {
+            "N": null,
+            "U": null,
+            "rate": null
+          },
+          "absolute_change_ratio": null,
+          "relative_change": null
+        }
+      },
+      "calculation_basis": [
+        "M-C的paid_at+H比as_of晚1微秒，不能删掉这一单或缩短H后计算。",
+        "退款水位仍比完整观察期截止时刻早1微秒，成熟与水位两个问题均需披露。"
+      ]
+    }
+  ]
+}

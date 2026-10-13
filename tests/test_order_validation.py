@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, tzinfo
 
 import pytest
 
@@ -101,7 +101,7 @@ def test_offset_payment_time_is_normalized_to_utc(
     assert order.paid_at.tzinfo is timezone.utc
 
 
-@pytest.mark.parametrize("value", ["true", 1, None])
+@pytest.mark.parametrize("value", ["true", 0, 1, None])
 def test_payment_validity_requires_a_boolean(
     order_data: dict[str, object], value: object
 ) -> None:
@@ -127,4 +127,56 @@ def test_undeclared_field_is_rejected(order_data: dict[str, object]) -> None:
     order_data["unexpected"] = "value"
 
     with pytest.raises(ValueError, match="未声明字段"):
+        validate_order(order_data)
+
+
+@pytest.mark.parametrize("field", ["domain_id", "snapshot_id"])
+def test_scoped_identifier_accepts_schema_length_limit(
+    order_data: dict[str, object], field: str
+) -> None:
+    order_data[field] = "a" * 256
+
+    assert getattr(validate_order(order_data), field) == "a" * 256
+
+
+@pytest.mark.parametrize("field", ["domain_id", "snapshot_id"])
+def test_scoped_identifier_rejects_value_over_schema_length_limit(
+    order_data: dict[str, object], field: str
+) -> None:
+    order_data[field] = "a" * 257
+
+    with pytest.raises(ValueError, match=field):
+        validate_order(order_data)
+
+
+@pytest.mark.parametrize("data", [None, [], "order"])
+def test_non_mapping_input_is_rejected(data: object) -> None:
+    with pytest.raises(ValueError, match="订单必须是字段映射"):
+        validate_order(data)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize(
+    "paid_at",
+    [
+        datetime.min.replace(tzinfo=timezone(timedelta(hours=8))),
+        datetime.max.replace(tzinfo=timezone(timedelta(hours=-8))),
+    ],
+)
+def test_unrepresentable_utc_time_raises_validation_error(
+    order_data: dict[str, object], paid_at: datetime
+) -> None:
+    order_data["paid_at"] = paid_at
+
+    with pytest.raises(ValueError, match="paid_at 转为 UTC 后超出"):
+        validate_order(order_data)
+
+
+def test_time_with_unknown_offset_is_rejected(order_data: dict[str, object]) -> None:
+    class UnknownOffset(tzinfo):
+        def utcoffset(self, dt: datetime | None) -> timedelta | None:
+            return None
+
+    order_data["paid_at"] = datetime(2026, 9, 1, tzinfo=UnknownOffset())
+
+    with pytest.raises(ValueError, match="paid_at 必须是带时区的 datetime"):
         validate_order(order_data)

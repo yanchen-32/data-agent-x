@@ -12,3 +12,21 @@
 - **dataclass**：`models.py` 中的 `Item` 表达内部领域数据，自动生成初始化等方法，使用 `frozen=True` 限制字段赋值；默认不校验字段类型，也不负责 HTTP 输入校验。
 - **测试组织**：`tests/test_health.py` 检查健康接口状态码与响应体，`tests/test_items.py` 检查创建成功、空名称拒绝和查询不存在；二者通过 FastAPI `TestClient` 调用接口。`tests/test_service.py` 使用函数级 pytest fixture 为每个测试创建独立的 `ItemService`，直接验证初始状态、创建与查询、缺失查询、合法 ID 下界和 ID 递增，不经过 HTTP 层。运行 `.venv/bin/python -m pytest` 执行全部测试。
 - **日志处理**：使用标准库 `logging`，`logging_config.py` 在根 logger 没有 handler 时添加 stdout 输出及时间、级别、模块名格式，默认级别为 INFO；业务模块通过 `getLogger(__name__)` 记录创建成功（INFO）和查询不存在（WARNING）。
+
+## 首批业务边界样例
+
+`tests/fixtures/order_boundaries/` 保存 3 份合成 JSON 样例及 `ORACLE.md` 独立人工推导记录，覆盖成熟期/退款水位、UTC 半开支付窗口/闭合退款观察期、重复订单阻断。成熟水位样例包含等号通过和提前 1 微秒未成熟两个控制变体。输入、业务规则、计算依据及预期结果一并保存，预期值静态填写，不调用待测代码生成。`tests/test_boundary_fixtures.py` 只验证样例完整性及预期算术一致性，不证明业务计算器、批次 DQ、SQL 或指标计算已实现；记录尚待用户独立人工复核。这里只完成首批样例，不将调查原型里程碑标记为完成。
+
+## 订单字段的依据与校验边界
+
+当前有效契约为 DAX-RB-1.2.1 清单中的 DD02 v1.2、SRS v1.2 和对象 Schema v1.2.1。对象 Schema 的 26 个定义描述调查接口和证据，尚无 `OrderRecord` 或原始 `orders` 行定义；本地结构不等于已冻结的订单导入 Schema。函数只使用标准库，不在运行时加载设计文件。
+
+| 字段 | 当前单行校验 | 依据 |
+| --- | --- | --- |
+| `source_row_id` | 必填、非空且非纯空白字符串 | DD02 §1 的原始来源追溯；字符串类型是局部实现约定 |
+| `domain_id`、`snapshot_id` | 必填、非空且非纯空白字符串，最多 256 字符 | DD02 的域/快照隔离语义；共享标识长度与有效 `ScopeSpec` 的 `minLength=1/maxLength=256` 一致 |
+| `order_id`、`product_id`、`region_id`、`channel_id` | 必填、非空且非纯空白字符串 | SRS §4.1 的订单语义；字符串类型是局部实现约定 |
+| `paid_at` | 必填、带时区的 Python `datetime`；转 UTC 并保留微秒；转换超出可表示范围时抛出 `ValueError` | DD02 的必需支付时间及时间规范化语义；不实现外部 RFC3339 字符串解析 |
+| `is_payment_valid` | 必填、严格布尔值，False 保留 | SRS 的支付有效性语义；字段名和布尔类型是局部实现约定 |
+
+校验顺序为映射类型、字段完整性、额外字段、ID 类型与长度、支付时间、布尔值、UTC 转换；合法时构造不可变 `OrderRecord`，输入不被修改。`tests/test_order_validation.py` 分别验证正常输入、缺失必填字段、非法字段值，并覆盖 256/257 字符、UTC 日期上下界、整数 0/1 不能替代布尔值，以及已有 tzinfo 但实际偏移为空的时间。`__unknown__` 标识保留不等于验证过维度目录；单行字段校验不证明授权、唯一性、退款关联、成熟期、水位或批准状态已通过。

@@ -1,0 +1,269 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开开发边界样例；非正式盲测集、非生产导入批准记录",
+  "metric_version": null,
+  "oracle_origin": "按业务规则逐行列举并静态填写预期；未调用待测代码生成，尚待用户人工复核",
+  "oracle_record": "ORACLE.md",
+  "sources": [
+    {
+      "title": "DD02 数据质量与退款队列口径",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献"
+      ]
+    },
+    {
+      "title": "SRS 队列时间与质量处置",
+      "path": "../../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sections": [
+        "§4.2 退款率定义与时间边界",
+        "§4.4 数据质量处置与一致性"
+      ]
+    }
+  ],
+  "case_id": "A3-02",
+  "title": "UTC半开支付窗口、闭合退款观察期及同单多退款",
+  "business_rules": [
+    "显式+08:00偏移先换算为UTC，保留微秒。",
+    "支付时间属于[start,end)，起点包含、终点不包含。",
+    "成功退款在[paid_at,paid_at+H]且<=as_of时计入，两个端点均包含。",
+    "同单不同成功退款事件通过EXISTS只计一次；failed事件不计入。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_utc",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-22T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-22T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": []
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "u-row-before",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "order_id": "U-BEFORE",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-01T07:59:59.999999+08:00",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "u-row-b-start",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "order_id": "U-B-START",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-01T08:00:00+08:00",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "u-row-b-last",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "order_id": "U-B-LAST",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-08T07:59:59.999999+08:00",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "u-row-c-start",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "order_id": "U-C-START",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-08T08:00:00+08:00",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "u-row-c-last",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "order_id": "U-C-LAST",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-15T07:59:59.999999+08:00",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "u-row-end",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "order_id": "U-END",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-15T08:00:00+08:00",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "u-refund-row-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "refund_id": "UR-1",
+        "order_id": "U-B-START",
+        "refund_at": "2026-09-08T08:00:00+08:00",
+        "status": "success"
+      },
+      {
+        "source_row_id": "u-refund-row-2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "refund_id": "UR-2",
+        "order_id": "U-B-LAST",
+        "refund_at": "2026-09-15T08:00:00+08:00",
+        "status": "success"
+      },
+      {
+        "source_row_id": "u-refund-row-3",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "refund_id": "UR-3",
+        "order_id": "U-C-START",
+        "refund_at": "2026-09-08T08:00:00+08:00",
+        "status": "success"
+      },
+      {
+        "source_row_id": "u-refund-row-4",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "refund_id": "UR-4",
+        "order_id": "U-C-START",
+        "refund_at": "2026-09-09T08:00:00+08:00",
+        "status": "success"
+      },
+      {
+        "source_row_id": "u-refund-row-5",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_utc",
+        "refund_id": "UR-5",
+        "order_id": "U-C-LAST",
+        "refund_at": "2026-09-22T07:59:59.999999+08:00",
+        "status": "failed"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "product_id": "product_book",
+          "category_id": "category_books",
+          "snapshot_id": "fixture_utc"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "region_id": "region_northwest",
+          "label": "西北",
+          "snapshot_id": "fixture_utc"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "channel_id": "channel_web",
+          "label": "网页",
+          "snapshot_id": "fixture_utc"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "ready",
+    "reasons": [],
+    "normalized_paid_at_utc": {
+      "U-BEFORE": "2026-08-31T23:59:59.999999Z",
+      "U-B-START": "2026-09-01T00:00:00.000000Z",
+      "U-B-LAST": "2026-09-07T23:59:59.999999Z",
+      "U-C-START": "2026-09-08T00:00:00.000000Z",
+      "U-C-LAST": "2026-09-14T23:59:59.999999Z",
+      "U-END": "2026-09-15T00:00:00.000000Z"
+    },
+    "cohort_source_row_ids": {
+      "baseline": [
+        "u-row-b-start",
+        "u-row-b-last"
+      ],
+      "current": [
+        "u-row-c-start",
+        "u-row-c-last"
+      ]
+    },
+    "excluded_order_ids": [
+      "U-BEFORE",
+      "U-END"
+    ],
+    "counted_refund_order_ids": {
+      "baseline": [
+        "U-B-START"
+      ],
+      "current": [
+        "U-C-START"
+      ]
+    },
+    "refund_decisions": {
+      "UR-1": "恰到H上界，计入U-B-START",
+      "UR-2": "比U-B-LAST的H上界晚1微秒，排除",
+      "UR-3": "恰等于支付时刻，计入U-C-START",
+      "UR-4": "同一订单第二笔成功退款，不新增分子订单",
+      "UR-5": "failed事件，排除"
+    },
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_keys": []
+    },
+    "metrics": {
+      "baseline": {
+        "N": 2,
+        "U": 1,
+        "rate": "0.5"
+      },
+      "current": {
+        "N": 2,
+        "U": 1,
+        "rate": "0.5"
+      },
+      "absolute_change_ratio": "0",
+      "relative_change": "0"
+    }
+  },
+  "calculation_basis": [
+    "将所有+08:00时刻减8小时，六单依次落在起点前、基期起点、基期末前1微秒、当前起点、当前末前1微秒、当前终点。",
+    "两窗分母各2，成功退款订单各1；U-C-START两笔事件只计一单。",
+    "1/2=0.5；绝对差0.5-0.5=0；相对变化0/0.5=0。"
+  ]
+}

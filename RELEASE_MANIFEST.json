@@ -2,14 +2,14 @@
   "version": "1.2.1",
   "baseline": "DAX-RB-1.2.1",
   "edition": "public-github-source",
-  "date": "2026-10-10",
-  "type": "公开设计、基础API与独立订单字段校验",
+  "date": "2026-10-13",
+  "type": "公开设计、基础API、订单字段校验与首批业务边界样例",
   "source_code_included": true,
   "uncommitted_provider_included": false,
   "application_version": "0.1.0",
   "application_runtime_tests_executed": true,
   "design_checks": 125,
-  "file_count": 55,
+  "file_count": 61,
   "public_branch": "release/public-v1.2.1",
   "public_tag": "dax-public-v1.2.1",
   "history_policy": "独立公开根提交及后续公开开发提交；不含内部旧提交历史",
@@ -30,13 +30,13 @@
     },
     {
       "relative_path": "README.md",
-      "bytes": 3446,
-      "sha256": "f29d5752688058fd1157c05ecb0e5402259c9b01123d1df27523710e729a8682"
+      "bytes": 4938,
+      "sha256": "7435863cae901971e59d4edfb73b8176ed228cfd368fb21d0d5d5707ef758f4a"
     },
     {
       "relative_path": "docs/ARCHITECTURE.md",
-      "bytes": 3780,
-      "sha256": "09cb6fd0bbb371e30963674c6d1df20237874e81201b9a39882ace9ab9a769b1"
+      "bytes": 6395,
+      "sha256": "c1878e38e9336df8f09452a3e7b351dbbf874f365e94b670dc26c55389576395"
     },
     {
       "relative_path": "docs/PROJECT_CHARTER.md",
@@ -220,8 +220,8 @@
     },
     {
       "relative_path": "src/dataagentx/order_validation.py",
-      "bytes": 2222,
-      "sha256": "00a4dc76080aa266f79371647bd3ca2ea90dfe913ef1c45f1368c4fe40da7e3e"
+      "bytes": 2746,
+      "sha256": "235f0e23da44a0a4276541e990fcb45ec4a690f118f4da57808df5efcccfa1c0"
     },
     {
       "relative_path": "src/dataagentx/schemas.py",
@@ -232,6 +232,31 @@
       "relative_path": "src/dataagentx/service.py",
       "bytes": 718,
       "sha256": "bb7f27ce448673af4259bbe52a7b63f57ea7e2ce2dc591b90e59290f5c5f2555"
+    },
+    {
+      "relative_path": "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+      "bytes": 6692,
+      "sha256": "115afb0b7d40387dc0ef39e22af64af7ede26854d7b923e5ca33ba921d9fadba"
+    },
+    {
+      "relative_path": "tests/fixtures/order_boundaries/02_utc_boundaries.json",
+      "bytes": 8139,
+      "sha256": "5c842684b3b917dc137607edd87fb558e79d777b94af845bb5edfcd580bf3b82"
+    },
+    {
+      "relative_path": "tests/fixtures/order_boundaries/03_duplicate_orders.json",
+      "bytes": 5196,
+      "sha256": "606d0c0aefaa385a59c81222e70f779a3a652af97c5bf27c17c8a26a5e0b85a7"
+    },
+    {
+      "relative_path": "tests/fixtures/order_boundaries/ORACLE.md",
+      "bytes": 7115,
+      "sha256": "4b4adaaf8faad9d4fc14b10ed48dcf4af522a7731a376c79c841f8b31900ac9b"
+    },
+    {
+      "relative_path": "tests/test_boundary_fixtures.py",
+      "bytes": 3222,
+      "sha256": "c160a0f2d2f285080a351166588ec8ebffaeb434691f9c571cdb1ce85031bfed"
     },
     {
       "relative_path": "tests/test_config.py",
@@ -250,8 +275,8 @@
     },
     {
       "relative_path": "tests/test_order_validation.py",
-      "bytes": 3695,
-      "sha256": "a558495d620a21e8b754c1a03e3493ca2df46a3652b5eb3b1c805776565c6187"
+      "bytes": 5413,
+      "sha256": "ec0d0d00b38fcfa4797d631e0689420d1dd1b46087ae283416f88d4c105dca38"
     },
     {
       "relative_path": "tests/test_service.py",
@@ -282,6 +307,11 @@
       "relative_path": "verification/订单校验核对.json",
       "bytes": 1116,
       "sha256": "4d8f45d464775f677ebdf657b057a1d95f174310b2eee5872fee8d3d1b23dd1d"
+    },
+    {
+      "relative_path": "verification/订单边界与Fixture核对_2026-10-13.json",
+      "bytes": 1491,
+      "sha256": "a7dcb0365bcfabd39b4caedcb5045dac6d23ea2b1f6ce0832cd239c0ca628293"
     }
   ],
   "application_test_scope": "仅基础FastAPI API，调查系统未验收",
@@ -290,8 +320,11 @@
     "name": "yanchen-32",
     "email": "322025221+yanchen-32@users.noreply.github.com"
   },
-  "application_test_count": 49,
-  "order_validation_tests": 27,
+  "application_test_count": 63,
+  "order_validation_tests": 38,
   "design_checks_reexecuted": false,
-  "public_tag_scope": "冻结初始设计与基础API快照；不包含后续订单校验提交"
+  "public_tag_scope": "冻结初始设计与基础API快照；不包含后续订单校验提交",
+  "fixture_integrity_tests": 3,
+  "fixture_count": 3,
+  "fixture_control_variants": 2
 }

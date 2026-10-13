@@ -29,6 +29,16 @@ python "docs/engineering/05_原型验证与实现/DataAgentX_v1.2.1契约边界�
 
 公开分支新增独立函数 `validate_order(data)` 和不可变对象 `OrderRecord`，详见[代码](src/dataagentx/order_validation.py)与[测试](tests/test_order_validation.py)。输入为单行 Python 字段映射：七个来源/域/快照/订单/维度 ID 必须是非空字符串，`paid_at` 必须是带时区的 `datetime`，`is_payment_valid` 必须是布尔值。缺失、额外及非法字段抛出 `ValueError`；时间统一转 UTC，输入不被修改，False 和 `__unknown__` 保留。
 
-本函数不校验批次唯一性、域权限、维度关联、退款关系、成熟期或水位，尚未接入调查 API。订单校验新增 27 项测试；本次公开分支的基础 API 与订单校验全量测试共 49 项通过，见[核对记录](verification/订单校验核对.json)。开发目录的 Provider 及其 5 项测试未纳入本分支。
+域与快照 ID 最长 256 字符，沿用有效 `ScopeSpec` 的共享标识约束；有效 Schema 尚未定义订单行。支付时间必须有实际时区偏移，UTC 转换溢出以 `ValueError` 报告。`is_payment_valid` 只接受布尔值，整数 0/1 不作隐式转换。
+
+本函数不校验批次唯一性、域权限、维度关联、退款关系、成熟期或水位，尚未接入调查 API。此前 49 项测试结果保留在[订单校验历史核对](verification/订单校验核对.json)。本次订单校验 38 项、Fixture 完整性 3 项、原有基础功能 22 项，全量共 63 项通过，见[本轮核对记录](verification/订单边界与Fixture核对_2026-10-13.json)。开发目录的 Provider 及其 5 项测试未纳入本分支。
+
+## 首批业务边界 Fixture
+
+- [成熟与水位](tests/fixtures/order_boundaries/01_maturity_watermark.json)：成熟恰到界但退款水位差 1 微秒时阻断；包含水位等号通过与 as_of 提前 1 微秒未成熟两个控制变体。
+- [UTC 时间边界](tests/fixtures/order_boundaries/02_utc_boundaries.json)：半开支付窗口和闭合退款观察期；两窗各 N=2/U=1、率为 0.5，同单多笔成功退款只计一次。
+- [重复订单](tests/fixtures/order_boundaries/03_duplicate_orders.json)：同域/快照业务键重复时阻断，保留两条来源行，不默默去重。
+
+每份包含输入、静态预期、业务规则和计算依据。[人工 Oracle 推导记录](tests/fixtures/order_boundaries/ORACLE.md)按逐行列举与算术推导填写，预期独立于待测代码，尚待用户独立人工复核。[Fixture 测试](tests/test_boundary_fixtures.py)只检查样例完整性和静态预期算术，不代表业务计算器或批次 DQ 已实现。当前仅 3 个主样例和 2 个变体，不能据此标记完整调查原型里程碑通过。
 
 公开清单见[RELEASE_MANIFEST](RELEASE_MANIFEST.json)。本分支不携带内部原始材料、个人计划、环境日志或旧 Git 历史。标签 `dax-public-v1.2.1` 冻结独立根提交的设计及基础 API 快照；分支 `release/public-v1.2.1` 在该公开历史上继续提交订单校验，既有标签保持不变。下一步建设固定数据/Oracle、真实 PG 最小权限与第一条可复算证据报告。
