@@ -1,13 +1,13 @@
 # DataAgentX v1.2.1 公开分支文件清单
 
-25份技术设计与冻结公开设计同hash。原设计125项核对记录保留，本轮未复跑设计核对。公开分支全量63项测试通过：基础功能22项、订单校验38项、Fixture完整性3项。首批3份样例及2个控制变体的预期独立于待测代码，用户人工复核仍待完成；业务计算器、批次DQ和调查系统尚未验收。标签dax-public-v1.2.1保持冻结，本轮是公开分支后续提交。两份清单互不自引用，其余文件全部登记。
+25份技术设计与冻结公开设计同hash，既有125项设计核对记录保留，本次未复跑。公开分支全量69项测试通过：基础功能22项、订单校验38项、Fixture完整性3项、独立参考计算6项。开发目录原74项还包含未发布Provider测试5项。两个主样例的逐单复算与参考计算一致，既有预期曾被阅读的限制已披露，用户独立人工复核仍待完成。参考函数不代表生产调查系统验收；冻结标签保持不变。两份清单互不自引用，其余文件全部登记。
 
 | 相对路径 | 字节数 | SHA-256 |
 | --- | ---: | --- |
 | `.gitignore` | 427 | `2131f1f5ddd85db6f46c10fba32cd28569c7b18e148a5683bdfb651deb5b9eab` |
 | `AGENTS.md` | 1885 | `c4e35d3bd54f33c506875c11d5c4d0ede5661c9959fbc0adb06091e0b2f20f87` |
-| `README.md` | 4938 | `7435863cae901971e59d4edfb73b8176ed228cfd368fb21d0d5d5707ef758f4a` |
-| `docs/ARCHITECTURE.md` | 6395 | `c1878e38e9336df8f09452a3e7b351dbbf874f365e94b670dc26c55389576395` |
+| `README.md` | 6116 | `d1f3bd916d798037713fd92e666e932a9ee2c74796902d56d5894d1553c044d1` |
+| `docs/ARCHITECTURE.md` | 7498 | `fe7bf87c8cd2f3ac093ab1c670ac701c251cb45ead773253f3af3c2991b2ca18` |
 | `docs/PROJECT_CHARTER.md` | 4841 | `ee2936241874900bcb04c7d30864321e9170f39162d6521d08787e8db4993d08` |
 | `docs/ROADMAP.md` | 1354 | `7f444fc1e224ae0292f7c02bda562522ae982f4756f1eea67ba3a28858fcbf6f` |
 | `docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md` | 54381 | `8440318ebaea1565dc02fd9096e09cbe23e10f0c961dad4762ea74d605fc7950` |
@@ -39,6 +39,11 @@
 | `docs/engineering/BASELINE.md` | 4968 | `ce1c4568d0079ff909ebd2d58a50681092e8d55010d925180ad7133505bc1496` |
 | `docs/engineering/SYNC_MANIFEST.json` | 8935 | `2abcce20ffd7913ead20640891d75b8ae435245d5617872e24cf843e21d20fe5` |
 | `pyproject.toml` | 732 | `5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0` |
+| `reference/README.md` | 1629 | `04d071fa7ae839e0341513268b84cdf5759439cff6c90474d8774e523a6f4744` |
+| `reference/__init__.py` | 76 | `48aa9aabb44a5512f257a576d4782550663cf51c4a5d9a39c6efeaaa18816bb9` |
+| `reference/cohort.py` | 5665 | `13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6` |
+| `reference/manual_checks/2026-10-14.json` | 2496 | `b3b05df4a7f69df8c4da86e92ad44b8260cc36870926906694b335fc6f5b605b` |
+| `reference/manual_checks/2026-10-14.md` | 5423 | `667b81c115e1ac9e0b63fcd0ba4feae1367d4b5dcae1ef72c9cee0035197208a` |
 | `src/dataagentx/__init__.py` | 21 | `3ebbb4065141012142168ecc70776886d2a452d80c3c3c1b19fc94665136fd5c` |
 | `src/dataagentx/config.py` | 656 | `f8c396b00e855ccb1640edd35cb171196ce32d77fb9833a222c481b460c7ce4b` |
 | `src/dataagentx/logging_config.py` | 434 | `5b5019c7057594af3123e57d548df3b8c9b822a87cf20086ddbb0be1c5f346c9` |
@@ -56,10 +61,12 @@
 | `tests/test_health.py` | 335 | `eda6a4fb3fd1dd9a7ef81e7c9faacc5c215ae0ee4a9b9c7a9ad7a2723cd6d4c9` |
 | `tests/test_items.py` | 741 | `c9d88a4849f77bd35b9b03ac1e5ba75e65684f0e48e5d76bb7688417a124ea3d` |
 | `tests/test_order_validation.py` | 5413 | `ec0d0d00b38fcfa4797d631e0689420d1dd1b46087ae283416f88d4c105dca38` |
+| `tests/test_reference_cohort.py` | 3618 | `fd46c238110b8a913aca80cc4375dd57faf0f179fb91bd43c9c0f8da9ef19ce8` |
 | `tests/test_service.py` | 927 | `192a21250385f0f02bc9976a6fca9f4c42cb18d90d11ea46198e031b5d947f72` |
 | `verification/公开维护核对.json` | 1121 | `b4048921fe0eef7495bb1dec64479dcda3bc9d3599296b9470fdea1e5eb14131` |
 | `verification/基础API核对.json` | 1450 | `16f3b4ae6637b7ddb09c74421378447c05e82171a2834514e25764b7631d27cd` |
 | `verification/契约与独立参考核对.json` | 15374 | `1b6a778250f55867c1a1fc4108cc3d47d61a2b1122cbaec4f65c6e8010c493fd` |
 | `verification/源码文档同步与本地版本.json` | 473 | `d90521ef81cd9043d5b3f42cf11859ee48b0e49be4f136c0f3ba0152b27a7ecd` |
+| `verification/独立参考计算核对_2026-10-15.json` | 1295 | `b269bb6f90625e45aaa5d8ef9037a972a24af0a6969d809d2767f82ef2c179b2` |
 | `verification/订单校验核对.json` | 1116 | `4d8f45d464775f677ebdf657b057a1d95f174310b2eee5872fee8d3d1b23dd1d` |
 | `verification/订单边界与Fixture核对_2026-10-13.json` | 1491 | `a7dcb0365bcfabd39b4caedcb5045dac6d23ea2b1f6ce0832cd239c0ca628293` |

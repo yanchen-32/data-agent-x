@@ -41,4 +41,12 @@ python "docs/engineering/05_原型验证与实现/DataAgentX_v1.2.1契约边界�
 
 每份包含输入、静态预期、业务规则和计算依据。[人工 Oracle 推导记录](tests/fixtures/order_boundaries/ORACLE.md)按逐行列举与算术推导填写，预期独立于待测代码，尚待用户独立人工复核。[Fixture 测试](tests/test_boundary_fixtures.py)只检查样例完整性和静态预期算术，不代表业务计算器或批次 DQ 已实现。当前仅 3 个主样例和 2 个变体，不能据此标记完整调查原型里程碑通过。
 
+## 独立参考计算与逐单复算
+
+[参考函数](reference/cohort.py)只使用标准库，位于生产包外，不导入 `dataagentx`、不读取 `expected`。它计算固定合成输入的支付窗口、成熟/水位、成功退款订单数和精确 `Fraction` 率；前提不足时阻断。完整目录和使用方式见[参考说明](reference/README.md)。
+
+[2026-10-14逐单复算](reference/manual_checks/2026-10-14.md)和[静态数值记录](reference/manual_checks/2026-10-14.json)先于参考函数保存，再与原预期对照，两个主样例语义差异为0。记录明确说明此前已读过预期，不能称为首次盲审，用户独立人工复核仍未完成；`Fraction(1,2)` 与文本 `0.5` 按精确值比较。
+
+公开分支本轮全量69项测试通过：基础功能22项、订单字段校验38项、Fixture完整性3项、参考计算6项，见[本轮公开核对](verification/独立参考计算核对_2026-10-15.json)。复算记录中的74项是先前开发目录的全量结果，包含未进入公开分支的Provider测试5项；二者测试范围不同。原Fixture和Oracle未改写，生产调查、数据库与权限等尚未验收。
+
 公开清单见[RELEASE_MANIFEST](RELEASE_MANIFEST.json)。本分支不携带内部原始材料、个人计划、环境日志或旧 Git 历史。标签 `dax-public-v1.2.1` 冻结独立根提交的设计及基础 API 快照；分支 `release/public-v1.2.1` 在该公开历史上继续提交订单校验，既有标签保持不变。下一步建设固定数据/Oracle、真实 PG 最小权限与第一条可复算证据报告。

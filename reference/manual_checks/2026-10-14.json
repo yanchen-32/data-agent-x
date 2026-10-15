@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-14",
+  "baseline": "DAX-RB-1.2.1",
+  "method": "只展开input，逐单推导后静态填写；先保存记录再实现参考函数并对照原预期",
+  "blind_review_limit": "此前已读过预期，本轮不构成首次盲审；用户独立人工复核仍待完成",
+  "comparison_status": "matched",
+  "frozen_before_reference_sha256": "0eade52c19deeac7558665c6407205aca60e6ad6b3435f44cd4f62df0e5a5d2e",
+  "comparison_report": {
+    "primary_fixture_count": 2,
+    "matched_fixture_count": 2,
+    "differences": [],
+    "checked_fields": ["候选订单集合及数量", "成熟/水位判断", "阻断原因", "N", "U", "退款率", "绝对变化", "相对变化"],
+    "representation_note": "参考函数返回Fraction，静态预期保存十进制文本；按精确数值比较，1/2与0.5相等",
+    "reference_pytest_passed": 6,
+    "full_pytest_passed": 74,
+    "production_investigation_acceptance_performed": false,
+    "independent_user_review_completed": false
+  },
+  "expected_generated_by_reference_code": false,
+  "cases": {
+    "01_maturity_watermark.json": {
+      "input_sha256": "2617971e97393b5ec170861321e9c903ff51d29e39e4b10d650d4a56844d6f9a",
+      "candidate_order_ids": {"baseline": ["M-B"], "current": ["M-C"]},
+      "candidate_N": {"baseline": 1, "current": 1},
+      "outcome": "insufficient_evidence",
+      "reasons": ["退款水位不足"],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": false},
+      "metrics": {
+        "baseline": {"N": null, "U": null, "rate": null},
+        "current": {"N": null, "U": null, "rate": null},
+        "absolute_change_ratio": null,
+        "relative_change": null
+      }
+    },
+    "02_utc_boundaries.json": {
+      "input_sha256": "4f8410306b8bc4039212c2ace5e8340fca0acb08d305b2497cfa40f667f61711",
+      "candidate_order_ids": {"baseline": ["U-B-START", "U-B-LAST"], "current": ["U-C-START", "U-C-LAST"]},
+      "candidate_N": {"baseline": 2, "current": 2},
+      "counted_refund_order_ids": {"baseline": ["U-B-START"], "current": ["U-C-START"]},
+      "outcome": "ready",
+      "reasons": [],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": true},
+      "metrics": {
+        "baseline": {"N": 2, "U": 1, "rate": "0.5"},
+        "current": {"N": 2, "U": 1, "rate": "0.5"},
+        "absolute_change_ratio": "0",
+        "relative_change": "0"
+      }
+    }
+  }
+}

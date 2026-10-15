@@ -13,6 +13,12 @@
 - **测试组织**：`tests/test_health.py` 检查健康接口状态码与响应体，`tests/test_items.py` 检查创建成功、空名称拒绝和查询不存在；二者通过 FastAPI `TestClient` 调用接口。`tests/test_service.py` 使用函数级 pytest fixture 为每个测试创建独立的 `ItemService`，直接验证初始状态、创建与查询、缺失查询、合法 ID 下界和 ID 递增，不经过 HTTP 层。运行 `.venv/bin/python -m pytest` 执行全部测试。
 - **日志处理**：使用标准库 `logging`，`logging_config.py` 在根 logger 没有 handler 时添加 stdout 输出及时间、级别、模块名格式，默认级别为 INFO；业务模块通过 `getLogger(__name__)` 记录创建成功（INFO）和查询不存在（WARNING）。
 
+## 独立参考计算
+
+`reference/cohort.py` 的 `calculate_reference(input)` 仅使用标准库，位于生产包外，不导入 `dataagentx` 或共享生产校验工具，也不读取 Fixture 的 `expected`。它对小型合成输入独立解析 UTC 时间、构造半开支付队列、检查逐单成熟与两类水位，按订单集合去重成功退款，使用 `Fraction` 计算率及变化。前提不足时业务指标为空，候选订单另列为诊断。重复订单/事件、域快照混入、孤立或支付前退款以 `ValueError` 拒绝；这不是生产 DQ 结果映射。授权、维度目录、批准导入、SQL/数据库和贡献分解均未实现。
+
+`reference/manual_checks/2026-10-14.md` 与 JSON 先于参考函数保存两个 Fixture 的输入驱动逐单推导及静态数值，标注输入 hash 和既有预期曾被阅读的限制；不声称首次盲审或用户独立验收。`tests/test_reference_cohort.py` 将实际参考计算与该记录、原静态预期对照，并验证水位/未成熟控制变体、重复订单拒绝、空队列阻断和输入不被修改。
+
 ## 首批业务边界样例
 
 `tests/fixtures/order_boundaries/` 保存 3 份合成 JSON 样例及 `ORACLE.md` 独立人工推导记录，覆盖成熟期/退款水位、UTC 半开支付窗口/闭合退款观察期、重复订单阻断。成熟水位样例包含等号通过和提前 1 微秒未成熟两个控制变体。输入、业务规则、计算依据及预期结果一并保存，预期值静态填写，不调用待测代码生成。`tests/test_boundary_fixtures.py` 只验证样例完整性及预期算术一致性，不证明业务计算器、批次 DQ、SQL 或指标计算已实现；记录尚待用户独立人工复核。这里只完成首批样例，不将调查原型里程碑标记为完成。
