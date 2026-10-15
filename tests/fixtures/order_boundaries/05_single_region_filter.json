@@ -1,0 +1,277 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开开发边界样例；非正式盲测集、非生产导入批准记录",
+  "metric_version": null,
+  "oracle_origin": "按业务规则逐行列举并静态填写预期；未调用待测代码生成，尚待用户人工复核",
+  "oracle_record": "ORACLE.md",
+  "sources": [
+    {
+      "title": "DD02 数据质量与退款队列口径",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献"
+      ]
+    },
+    {
+      "title": "SRS 队列时间、地区过滤与质量处置",
+      "path": "../../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sections": [
+        "§4.1.1 单地区过滤与Scope不变量",
+        "§4.2 退款率定义与时间边界",
+        "§4.4 数据质量处置与一致性"
+      ]
+    }
+  ],
+  "case_id": "A3-05",
+  "title": "只选西北地区，排除东南订单及其退款",
+  "business_rules": [
+    "filters.region_ids最多含一个已注册且获授权的地区ID；本例固定为[region_northwest]，不能静默扩大为全部地区。",
+    "先限定域/快照/地区及半开支付窗口，再按成功退款订单计数；地区过滤同时约束分子与分母。",
+    "退款按同域/快照/order_id关联，成功且在闭合观察期及as_of之内，同单最多计一次。",
+    "两窗纳入订单均成熟且支付/退款水位完整时才比较；绝对变化为当前率减基期率，相对变化再除基期率。",
+    "域内其他地区是漏过滤反例，不得混入当前Scope，也不能用全域汇总替代地区结果。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_region_filter",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-23T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-23T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": [
+          "region_northwest"
+        ]
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "f-row-nb1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "order_id": "F-N-B1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-02T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "f-row-nb2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "order_id": "F-N-B2",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-03T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "f-row-nc1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "order_id": "F-N-C1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-09T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "f-row-sb1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "order_id": "F-S-B1",
+        "product_id": "product_book",
+        "region_id": "region_southeast",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-03T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "f-row-sc1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "order_id": "F-S-C1",
+        "product_id": "product_book",
+        "region_id": "region_southeast",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-10T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "f-row-sc2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "order_id": "F-S-C2",
+        "product_id": "product_book",
+        "region_id": "region_southeast",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-11T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "f-refund-row-nb1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "refund_id": "FR-N-B1",
+        "order_id": "F-N-B1",
+        "refund_at": "2026-09-04T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "f-refund-row-nc1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "refund_id": "FR-N-C1",
+        "order_id": "F-N-C1",
+        "refund_at": "2026-09-12T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "f-refund-row-sb1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_region_filter",
+        "refund_id": "FR-S-B1",
+        "order_id": "F-S-B1",
+        "refund_at": "2026-09-05T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_region_filter",
+          "product_id": "product_book",
+          "category_id": "category_books"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_region_filter",
+          "region_id": "region_northwest",
+          "label": "西北"
+        },
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_region_filter",
+          "region_id": "region_southeast",
+          "label": "东南"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_region_filter",
+          "channel_id": "channel_web",
+          "label": "网页"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "ready",
+    "reasons": [],
+    "applied_filters": {
+      "region_ids": [
+        "region_northwest"
+      ]
+    },
+    "cohort_source_row_ids": {
+      "baseline": [
+        "f-row-nb1",
+        "f-row-nb2"
+      ],
+      "current": [
+        "f-row-nc1"
+      ]
+    },
+    "excluded_order_ids": [
+      "F-S-B1",
+      "F-S-C1",
+      "F-S-C2"
+    ],
+    "excluded_by_region_source_row_ids": [
+      "f-row-sb1",
+      "f-row-sc1",
+      "f-row-sc2"
+    ],
+    "counted_refund_order_ids": {
+      "baseline": [
+        "F-N-B1"
+      ],
+      "current": [
+        "F-N-C1"
+      ]
+    },
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_key_count": 0
+    },
+    "metrics": {
+      "baseline": {
+        "N": 2,
+        "U": 1,
+        "rate": "0.5"
+      },
+      "current": {
+        "N": 1,
+        "U": 1,
+        "rate": "1"
+      },
+      "absolute_change_ratio": "0.5",
+      "relative_change": "1"
+    },
+    "unfiltered_counterexample": {
+      "note": "未应用固定地区过滤的人工反例诊断，不是当前Scope的有效输出；用精确分数避免循环小数舍入。",
+      "baseline": {
+        "N": 3,
+        "U": 2,
+        "rate_fraction": "2/3"
+      },
+      "current": {
+        "N": 3,
+        "U": 1,
+        "rate_fraction": "1/3"
+      },
+      "absolute_change_fraction": "-1/3",
+      "relative_change_fraction": "-1/2"
+    }
+  },
+  "calculation_basis": [
+    "西北基期支付集合{F-N-B1,F-N-B2}，仅F-N-B1在09-04成功退款；N=2、U=1、rate=1/2=0.5。",
+    "西北当前支付集合{F-N-C1}，该单在09-12成功退款，落在[09-09,09-16]内；N=1、U=1、rate=1。",
+    "绝对变化=1-0.5=0.5 ratio，即上涨50个百分点；相对变化=0.5/0.5=1，即上涨100%。",
+    "纳入订单最晚成熟于09-16，as_of与退款水位09-23覆盖，支付水位09-15覆盖两窗末端，无重复键，outcome=ready。",
+    "东南来源行f-row-sb1/f-row-sc1/f-row-sc2及FR-S-B1全部排除，不能让其进入西北分子或分母。",
+    "人工漏过滤反例：全域基期N=3/U=2/率2/3，当前N=3/U=1/率1/3，绝对变化=-1/3，相对变化=-1/2；不使用此反例替代西北输出。"
+  ],
+  "assumptions": [
+    "region_northwest为当前域已注册且当前主体获授权的地区；这是合成场景前提，不代表应用已实现鉴权。"
+  ]
+}

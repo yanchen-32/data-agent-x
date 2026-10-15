@@ -1,0 +1,200 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开开发边界样例；非正式盲测集、非生产导入批准记录",
+  "metric_version": null,
+  "oracle_origin": "按业务规则逐行列举并静态填写预期；未调用待测代码生成，尚待用户人工复核",
+  "oracle_record": "ORACLE.md",
+  "sources": [
+    {
+      "title": "DD02 数据质量与退款队列口径",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献"
+      ]
+    },
+    {
+      "title": "SRS 队列时间、地区过滤与质量处置",
+      "path": "../../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sections": [
+        "§4.1.1 单地区过滤与Scope不变量",
+        "§4.2 退款率定义与时间边界",
+        "§4.4 数据质量处置与一致性"
+      ]
+    }
+  ],
+  "case_id": "A3-04",
+  "title": "基期有效支付分母为零，当前可计算但比较阻断",
+  "business_rules": [
+    "先按同域/快照及半开支付窗口筛选，仅is_payment_valid=true的订单进入分母。",
+    "N=0时退款率未定义，返回null及不足原因，不能把0/0写成0%。",
+    "只要一窗无有效样本，就阻断受影响的两窗比较；诊断值不等于已发布指标。",
+    "纳入订单必须paid_at+H<=as_of，支付水位覆盖窗口末端，退款水位覆盖最大成熟时刻。",
+    "成功退款在[paid_at,paid_at+H]且不晚于as_of时按订单计数，同单最多计一次。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_zero_denominator",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-23T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-23T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": []
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "z-row-b-invalid",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_zero_denominator",
+        "order_id": "Z-B-INVALID",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-02T00:00:00Z",
+        "is_payment_valid": false
+      },
+      {
+        "source_row_id": "z-row-c1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_zero_denominator",
+        "order_id": "Z-C-1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-09T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "z-row-c2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_zero_denominator",
+        "order_id": "Z-C-2",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-10T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "z-refund-row-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_zero_denominator",
+        "refund_id": "ZR-1",
+        "order_id": "Z-C-1",
+        "refund_at": "2026-09-11T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_zero_denominator",
+          "product_id": "product_book",
+          "category_id": "category_books"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_zero_denominator",
+          "region_id": "region_northwest",
+          "label": "西北"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_zero_denominator",
+          "channel_id": "channel_web",
+          "label": "网页"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "insufficient_evidence",
+    "reasons": [
+      "支付窗口无有效样本"
+    ],
+    "empty_windows": [
+      "baseline"
+    ],
+    "cohort_source_row_ids": {
+      "baseline": [],
+      "current": [
+        "z-row-c1",
+        "z-row-c2"
+      ]
+    },
+    "excluded_order_ids": [
+      "Z-B-INVALID"
+    ],
+    "counted_refund_order_ids": {
+      "baseline": [],
+      "current": [
+        "Z-C-1"
+      ]
+    },
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_key_count": 0
+    },
+    "diagnostic_cohort_metrics": {
+      "baseline": {
+        "N": 0,
+        "U": 0,
+        "rate": null
+      },
+      "current": {
+        "N": 2,
+        "U": 1,
+        "rate": "0.5"
+      }
+    },
+    "metrics": {
+      "baseline": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "current": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "absolute_change_ratio": null,
+      "relative_change": null
+    }
+  },
+  "calculation_basis": [
+    "基期原始行z-row-b-invalid的支付时间在窗口内，但支付无效；有效支付集合为空，N=0、U=0，0/0未定义，rate=null。",
+    "当前支付集合{Z-C-1,Z-C-2}，N=2；ZR-1于09-11成功退款，落在Z-C-1的[09-09,09-16]内，故U=1、rate=1/2=0.5。",
+    "当前两单成熟时刻为09-16/09-17，均早于as_of及退款水位09-23；支付水位09-15覆盖两窗末端。",
+    "时间与水位都通过，只有基期无有效样本；outcome=insufficient_evidence，empty_windows=[baseline]。",
+    "diagnostic_cohort_metrics仅保留人工诊断；本次比较不发布，两窗metrics和两项变化均为null，不能推导上涨50个百分点。"
+  ]
+}
