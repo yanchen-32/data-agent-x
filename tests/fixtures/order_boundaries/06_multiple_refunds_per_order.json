@@ -1,0 +1,240 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开开发边界样例；非正式盲测集、非生产导入批准记录",
+  "metric_version": null,
+  "oracle_origin": "先核对DD02并逐单手工推导，再静态填写双窗预期；未调用参考函数、生产代码或SQL生成，尚待用户人工复核",
+  "oracle_record": "ORACLE.md",
+  "sources": [
+    {
+      "title": "DD02 数据质量与退款队列口径",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献"
+      ]
+    },
+    {
+      "title": "SRS 订单退款计数与质量处置",
+      "path": "../../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sections": [
+        "§4.2 退款率定义与时间边界",
+        "§4.4 数据质量处置与一致性"
+      ]
+    }
+  ],
+  "case_id": "A3-06",
+  "title": "同单多笔不同事件ID成功退款，只计一个退款订单",
+  "business_rules": [
+    "退款率分母是固定Scope内支付窗[start,end)的有效支付订单数N；退款分子U是这些订单中存在至少一笔合格成功退款的订单数。",
+    "退款按(domain_id,snapshot_id,order_id)关联支付队列；success且refund_at在[paid_at,paid_at+H]内、并不晚于as_of时才合格。",
+    "同一订单可有多笔不同refund_id的成功退款事件，事件数增加但同单U最多增加1；不得直接把退款事件数当U。",
+    "不同refund_id的正常多次退款不等于重复事件ID；本例4个refund_id及所有source_row_id均唯一，无重复订单业务键。",
+    "两窗均非空，所有纳入订单成熟，支付水位覆盖两窗末端、退款水位覆盖最大成熟时刻，方可比较。",
+    "qualifying_refund_event_counts仅作局部诊断；metrics中的U始终为退款订单数，不冒充参考函数已返回事件诊断字段。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_multiple_refunds",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-23T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-23T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": []
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "r06-row-b1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "order_id": "R-B1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-02T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r06-row-b2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "order_id": "R-B2",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-03T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r06-row-c1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "order_id": "R-C1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-09T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r06-row-c2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "order_id": "R-C2",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-10T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "r06-refund-b1-a",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "refund_id": "RR-B1-A",
+        "order_id": "R-B1",
+        "refund_at": "2026-09-04T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r06-refund-b1-b",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "refund_id": "RR-B1-B",
+        "order_id": "R-B1",
+        "refund_at": "2026-09-05T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r06-refund-c1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "refund_id": "RR-C1",
+        "order_id": "R-C1",
+        "refund_at": "2026-09-11T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r06-refund-c2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_multiple_refunds",
+        "refund_id": "RR-C2",
+        "order_id": "R-C2",
+        "refund_at": "2026-09-12T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_multiple_refunds",
+          "product_id": "product_book",
+          "category_id": "category_books"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_multiple_refunds",
+          "region_id": "region_northwest",
+          "label": "西北"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_multiple_refunds",
+          "channel_id": "channel_web",
+          "label": "网页"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "ready",
+    "reasons": [],
+    "cohort_source_row_ids": {
+      "baseline": [
+        "r06-row-b1",
+        "r06-row-b2"
+      ],
+      "current": [
+        "r06-row-c1",
+        "r06-row-c2"
+      ]
+    },
+    "counted_refund_order_ids": {
+      "baseline": [
+        "R-B1"
+      ],
+      "current": [
+        "R-C1",
+        "R-C2"
+      ]
+    },
+    "qualifying_refund_event_ids": {
+      "baseline": [
+        "RR-B1-A",
+        "RR-B1-B"
+      ],
+      "current": [
+        "RR-C1",
+        "RR-C2"
+      ]
+    },
+    "qualifying_refund_event_counts": {
+      "baseline": 2,
+      "current": 2
+    },
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_key_count": 0,
+      "duplicate_refund_id_count": 0
+    },
+    "metrics": {
+      "baseline": {
+        "N": 2,
+        "U": 1,
+        "rate": "0.5"
+      },
+      "current": {
+        "N": 2,
+        "U": 2,
+        "rate": "1"
+      },
+      "absolute_change_ratio": "0.5",
+      "relative_change": "1"
+    }
+  },
+  "calculation_basis": [
+    "基期有效支付集合{R-B1,R-B2}，N=2；RR-B1-A与RR-B1-B分别于09-04/09-05成功退款，均在R-B1的[09-02,09-09]内。两笔事件仅涉及退款订单{R-B1}，故事件数2但U=1，率=1/2=0.5。",
+    "当前有效支付集合{R-C1,R-C2}，N=2；RR-C1于09-11、RR-C2于09-12成功退款，分别在[09-09,09-16]和[09-10,09-17]内。退款订单集合{R-C1,R-C2}，事件数2且U=2，率=2/2=1。",
+    "四单成熟时刻依次为09-09/09-10/09-16/09-17，均不晚于as_of及退款水位09-23；支付水位09-15覆盖基期09-08与当前09-15窗口末端。两窗非空，无质量阻断，outcome=ready。",
+    "绝对变化=1-1/2=1/2=0.5 ratio，即上涨50个百分点；相对变化=(1/2)/(1/2)=1，即100%。",
+    "两窗事件数同为2但退款订单数分别为1和2；若错误使用事件数作分子，两窗均得2/2=1且变化为0，会掩盖订单退款率上涨。",
+    "所有订单业务键、退款事件ID和来源行ID唯一；本例是正常同单多笔成功退款，不是重复refund_id或重复订单主键。预期由逐单手工推导静态填写，未调用参考函数。"
+  ]
+}

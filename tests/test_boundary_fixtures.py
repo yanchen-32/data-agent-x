@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 from fractions import Fraction
 from pathlib import Path
 
@@ -13,6 +13,7 @@ FIXTURE_FILES = (
     "03_duplicate_orders.json",
     "04_zero_denominator_window.json",
     "05_single_region_filter.json",
+    "06_multiple_refunds_per_order.json",
 )
 
 
@@ -133,6 +134,27 @@ def test_boundary_fixture_is_complete_and_expected_arithmetic_is_consistent(
         assert set(expected["excluded_order_ids"]) == {
             orders_by_source[row_id]["order_id"] for row_id in excluded_rows
         }
+    if "qualifying_refund_event_ids" in expected:
+        refunds_by_id = {row["refund_id"]: row for row in data["refunds"]}
+        assert len(refunds_by_id) == len(data["refunds"])
+        horizon = timedelta(seconds=context["horizon_seconds"])
+        as_of = datetime.fromisoformat(context["as_of"].replace("Z", "+00:00"))
+        for window, event_ids in expected["qualifying_refund_event_ids"].items():
+            count = expected["qualifying_refund_event_counts"][window]
+            assert type(count) is int
+            assert len(event_ids) == len(set(event_ids)) == count
+            assert {
+                refunds_by_id[event_id]["order_id"] for event_id in event_ids
+            } == set(expected["counted_refund_order_ids"][window])
+            for event_id in event_ids:
+                refund = refunds_by_id[event_id]
+                order = orders_by_id[refund["order_id"]]
+                assert order["source_row_id"] in expected["cohort_source_row_ids"][window]
+                assert refund["status"] == "success"
+                paid_at = datetime.fromisoformat(order["paid_at"].replace("Z", "+00:00"))
+                refund_at = datetime.fromisoformat(refund["refund_at"].replace("Z", "+00:00"))
+                assert paid_at <= refund_at <= paid_at + horizon
+                assert refund_at <= as_of
     assert_expected_arithmetic(expected)
     for variant in fixture.get("variants", []):
         assert variant["input_overrides"] and variant["calculation_basis"]

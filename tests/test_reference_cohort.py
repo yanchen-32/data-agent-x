@@ -171,3 +171,34 @@ def test_reference_matches_frozen_boundary_fixture(
         for key in ("absolute_change_ratio", "relative_change"):
             assert isinstance(actual["metrics"][key], Fraction)
     assert fixture == original
+
+
+def test_reference_a3_06_counts_refund_orders_not_events() -> None:
+    """两笔不同事件ID的成功退款仅计一单，实际结果对照原人工预期。"""
+    fixture = json.loads(
+        (FIXTURE_DIR / "06_multiple_refunds_per_order.json").read_text(encoding="utf-8")
+    )
+    original = copy.deepcopy(fixture)
+    data = fixture["input"]
+    baseline_refunds = [row for row in data["refunds"] if row["order_id"] == "R-B1"]
+    assert len(baseline_refunds) == 2
+    assert {row["refund_id"] for row in baseline_refunds} == {"RR-B1-A", "RR-B1-B"}
+    assert all(row["status"] == "success" for row in baseline_refunds)
+
+    actual = calculate_reference(data)
+
+    assert_matches_static_expected(actual, fixture["expected"])
+    assert actual["outcome"] == "ready"
+    assert actual["candidate_order_ids"] == {
+        "baseline": ["R-B1", "R-B2"],
+        "current": ["R-C1", "R-C2"],
+    }
+    assert actual["metrics"]["baseline"] == {"N": 2, "U": 1, "rate": Fraction(1, 2)}
+    assert actual["metrics"]["current"] == {"N": 2, "U": 2, "rate": Fraction(1)}
+    assert actual["metrics"]["absolute_change_ratio"] == Fraction(1, 2)
+    assert actual["metrics"]["relative_change"] == Fraction(1)
+    for window in ("baseline", "current"):
+        assert isinstance(actual["metrics"][window]["rate"], Fraction)
+    for key in ("absolute_change_ratio", "relative_change"):
+        assert isinstance(actual["metrics"][key], Fraction)
+    assert fixture == original
