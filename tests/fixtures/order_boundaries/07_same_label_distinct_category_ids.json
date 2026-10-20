@@ -1,0 +1,349 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开开发边界样例；非正式盲测集、非生产导入批准记录",
+  "metric_version": null,
+  "oracle_origin": "先在ORACLE.md逐单人工推导类别队列与双窗总计，再静态填写预期；未调用参考函数、生产代码或SQL生成，尚待用户人工复核",
+  "oracle_record": "ORACLE.md",
+  "sources": [
+    {
+      "title": "DD02 分组身份、复合关联与共享Scope",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§2 指标、过滤与贡献",
+        "§4 执行证据与评分边界"
+      ]
+    },
+    {
+      "title": "指标目录与数据契约",
+      "path": "../../../docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "sections": [
+        "分组维度",
+        "数据关联与质量约束"
+      ]
+    },
+    {
+      "title": "对象Schema v1.2.1",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json",
+      "sections": [
+        "$defs.AggregateRow"
+      ]
+    }
+  ],
+  "case_id": "A3-07",
+  "title": "同名展示类别按不同category_id独立计数",
+  "business_rules": [
+    "dimension_id=category时group_id取category_id，group_label只作展示；两个不同类别ID即使同名也不能合并。",
+    "订单按(domain_id,snapshot_id,product_id)关联唯一产品后获取category_id；类别目录按(domain_id,snapshot_id,category_id)取得label，不按名称关联。",
+    "分组与总计共享同一固定Scope，先按域、快照、地区和半开支付窗筛选有效支付，再按类别ID分组。",
+    "U按队列内存在至少一笔success且在[paid_at,paid_at+H]内并不晚于as_of的退款订单去重计数。",
+    "每个窗口的类别分组互斥且穷尽，分组N/U分别求和等于总计；总计率为总U/总N，不是分组率相加或简单平均。",
+    "每单paid_at+H<=as_of；支付水位覆盖窗口末端，退款水位覆盖最大成熟时刻；两窗及各类别队列均非空。",
+    "dimensions.categories及group_cohort_source_row_ids是本地合成目录和追溯约定；aggregate_rows沿用正式AggregateRow字段，不表示分组计算器已实现。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_same_label_categories",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-23T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-23T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": []
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "r07-row-a-b1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "order_id": "S-A-B1",
+        "product_id": "product_a",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-02T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r07-row-b-b1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "order_id": "S-B-B1",
+        "product_id": "product_b",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-03T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r07-row-a-c1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "order_id": "S-A-C1",
+        "product_id": "product_a",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-09T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r07-row-a-c2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "order_id": "S-A-C2",
+        "product_id": "product_a",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-10T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r07-row-b-c1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "order_id": "S-B-C1",
+        "product_id": "product_b",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-11T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r07-row-b-c2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "order_id": "S-B-C2",
+        "product_id": "product_b",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-12T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "r07-refund-b-b1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "refund_id": "SR-B-B1",
+        "order_id": "S-B-B1",
+        "refund_at": "2026-09-05T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r07-refund-a-c1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_same_label_categories",
+        "refund_id": "SR-A-C1",
+        "order_id": "S-A-C1",
+        "refund_at": "2026-09-11T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_same_label_categories",
+          "product_id": "product_a",
+          "category_id": "category_a"
+        },
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_same_label_categories",
+          "product_id": "product_b",
+          "category_id": "category_b"
+        }
+      ],
+      "categories": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_same_label_categories",
+          "category_id": "category_a",
+          "label": "图书"
+        },
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_same_label_categories",
+          "category_id": "category_b",
+          "label": "图书"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_same_label_categories",
+          "region_id": "region_northwest",
+          "label": "西北"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_same_label_categories",
+          "channel_id": "channel_web",
+          "label": "网页"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "ready",
+    "reasons": [],
+    "cohort_source_row_ids": {
+      "baseline": [
+        "r07-row-a-b1",
+        "r07-row-b-b1"
+      ],
+      "current": [
+        "r07-row-a-c1",
+        "r07-row-a-c2",
+        "r07-row-b-c1",
+        "r07-row-b-c2"
+      ]
+    },
+    "counted_refund_order_ids": {
+      "baseline": [
+        "S-B-B1"
+      ],
+      "current": [
+        "S-A-C1"
+      ]
+    },
+    "qualifying_refund_event_ids": {
+      "baseline": [
+        "SR-B-B1"
+      ],
+      "current": [
+        "SR-A-C1"
+      ]
+    },
+    "qualifying_refund_event_counts": {
+      "baseline": 1,
+      "current": 1
+    },
+    "group_cohort_source_row_ids": {
+      "category_a": {
+        "baseline": [
+          "r07-row-a-b1"
+        ],
+        "current": [
+          "r07-row-a-c1",
+          "r07-row-a-c2"
+        ]
+      },
+      "category_b": {
+        "baseline": [
+          "r07-row-b-b1"
+        ],
+        "current": [
+          "r07-row-b-c1",
+          "r07-row-b-c2"
+        ]
+      }
+    },
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_key_count": 0,
+      "duplicate_product_key_count": 0,
+      "duplicate_category_key_count": 0,
+      "missing_category_order_count": 0
+    },
+    "metrics": {
+      "baseline": {
+        "N": 2,
+        "U": 1,
+        "rate": "0.5"
+      },
+      "current": {
+        "N": 4,
+        "U": 1,
+        "rate": "0.25"
+      },
+      "absolute_change_ratio": "-0.25",
+      "relative_change": "-0.5"
+    },
+    "aggregate_rows": [
+      {
+        "window_index": 0,
+        "dimension_id": null,
+        "group_id": null,
+        "group_label": null,
+        "paid_orders": 2,
+        "refunded_orders": 1,
+        "rate": "0.5"
+      },
+      {
+        "window_index": 0,
+        "dimension_id": "category",
+        "group_id": "category_a",
+        "group_label": "图书",
+        "paid_orders": 1,
+        "refunded_orders": 0,
+        "rate": "0"
+      },
+      {
+        "window_index": 0,
+        "dimension_id": "category",
+        "group_id": "category_b",
+        "group_label": "图书",
+        "paid_orders": 1,
+        "refunded_orders": 1,
+        "rate": "1"
+      },
+      {
+        "window_index": 1,
+        "dimension_id": null,
+        "group_id": null,
+        "group_label": null,
+        "paid_orders": 4,
+        "refunded_orders": 1,
+        "rate": "0.25"
+      },
+      {
+        "window_index": 1,
+        "dimension_id": "category",
+        "group_id": "category_a",
+        "group_label": "图书",
+        "paid_orders": 2,
+        "refunded_orders": 1,
+        "rate": "0.5"
+      },
+      {
+        "window_index": 1,
+        "dimension_id": "category",
+        "group_id": "category_b",
+        "group_label": "图书",
+        "paid_orders": 2,
+        "refunded_orders": 0,
+        "rate": "0"
+      }
+    ]
+  },
+  "calculation_basis": [
+    "先在ORACLE.md逐行列出6单、2笔成功退款及两个产品到类别ID的唯一关联，再将下面的数值静态写入；没有运行参考函数或生产计算器生成预期。",
+    "category_a基期只有S-A-B1且无退款：N=1/U=0/率=0；category_b基期只有S-B-B1，SR-B-B1在支付后2天成功：N=1/U=1/率=1。",
+    "category_a当前有S-A-C1、S-A-C2，仅S-A-C1有合格退款SR-A-C1：N=2/U=1/率=0.5；category_b当前有S-B-C1、S-B-C2且均无退款：N=2/U=0/率=0。",
+    "基期总计N=1+1=2、U=0+1=1、率=1/2=0.5；当前总计N=2+2=4、U=1+0=1、率=1/4=0.25；绝对变化=-0.25，相对变化=-0.5。",
+    "六单成熟时刻依次为09-09、09-10、09-16、09-17、09-18、09-19 UTC；均早于09-23的as_of和退款水位，09-15支付水位覆盖双窗末端。",
+    "category_a/category_b的展示名同为图书，但每窗必须保留两个category组；按名称合并会丢失组身份，即使总计N/U仍能对上也不能验收。"
+  ]
+}

@@ -4,7 +4,7 @@
 
 ## 数据结构与独立性
 
-本目录包含 6 份固定 JSON 业务样例，其中 A3-04/A3-05 于 2026-10-15 新增，A3-06 于 2026-10-19 新增。每份都包含输入、静态预期输出、业务规则和逐项计算依据。订单沿用本地 `OrderRecord` 的九字段结构；退款额外约定 `refund_id/order_id/refund_at/status` 并保留来源行、域和快照；维度目录同样绑定域和快照。时间在文件中以带偏移字符串保存，读取后才能转换为 Python `datetime`。这不是新增的正式订单导入 Schema。
+本目录包含 7 份固定 JSON 业务样例，其中 A3-04/A3-05 于 2026-10-15 新增，A3-06 于 2026-10-19 新增，A3-07 于 2026-10-20 新增。每份都包含输入、静态预期输出、业务规则和逐项计算依据。订单沿用本地 `OrderRecord` 的九字段结构；退款额外约定 `refund_id/order_id/refund_at/status` 并保留来源行、域和快照；维度目录同样绑定域和快照。时间在文件中以带偏移字符串保存，读取后才能转换为 Python `datetime`。这不是新增的正式订单导入 Schema。
 
 预期结果依据下面的逐行列举和算术推导直接填写，未调用 `validate_order()`、SQL 编译器或任何待测指标代码生成。本文提供人工可复核的 Oracle；尚未经过用户独立人工复核，不宣称已有第二位审核者签字。JSON 使用标准序列化保存，不使用计算脚本生成预期值。
 
@@ -143,8 +143,110 @@
 
 保存后仅运行 `.venv/bin/python -B -m pytest tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider`，6项通过，检查样例完整性、退款事件台账到订单集合的关联及静态算术一致性。该检查不生成预期，也不调用参考函数；本轮未运行参考计算回归或全量pytest，不宣称A3-06已通过业务计算器验收。
 
+## A3-07：同名类别按不同 ID 独立分组
+
+新增日期：2026-10-20。输入：[07_same_label_distinct_category_ids.json](07_same_label_distinct_category_ids.json)。依据 DD02 §2/§4、指标目录的分组与关联约束，以及对象 Schema v1.2.1 的 `AggregateRow`：`dimension_id=category` 指定分组轴，`group_id` 取 `category_id`，`group_label` 只用于展示；展示名相同不能合并身份。
+
+先在此逐单推导，再静态填写 JSON。未调用 `calculate_reference()`、生产代码或 SQL 生成预期。样例的 `dimensions.categories` 是本地合成目录约定，字段为域、快照、`category_id/label`，不是新增正式导入 Schema。`category_a` 与 `category_b` 的 label 都为“图书”。产品 `product_a/product_b` 分别关联这两个类别；订单先按 `(domain_id,snapshot_id,product_id)` 关联产品，再取类别 ID，不能按 label 关联或分组。产品复合键与类别复合键均唯一。
+
+所有时间均为2026年UTC，快照为 `fixture_same_label_categories`。订单、退款、产品和类别共享同一域、快照；无地区限制，两窗分组与总计共享同一固定 Scope。
+
+| 来源行 | 订单 | 产品 → 类别 ID（展示名均为图书） | 支付时刻 | 成熟时刻（加7天） | 支付窗 | 合格成功退款 |
+| --- | --- | --- | --- | --- | --- | --- |
+| r07-row-a-b1 | S-A-B1 | product_a → category_a | 09-02 00:00 | 09-09 00:00 | 基期 | 无 |
+| r07-row-b-b1 | S-B-B1 | product_b → category_b | 09-03 00:00 | 09-10 00:00 | 基期 | SR-B-B1，09-05 00:00 |
+| r07-row-a-c1 | S-A-C1 | product_a → category_a | 09-09 00:00 | 09-16 00:00 | 当前 | SR-A-C1，09-11 00:00 |
+| r07-row-a-c2 | S-A-C2 | product_a → category_a | 09-10 00:00 | 09-17 00:00 | 当前 | 无 |
+| r07-row-b-c1 | S-B-C1 | product_b → category_b | 09-11 00:00 | 09-18 00:00 | 当前 | 无 |
+| r07-row-b-c2 | S-B-C2 | product_b → category_b | 09-12 00:00 | 09-19 00:00 | 当前 | 无 |
+
+退款来源 `r07-refund-b-b1` 的 SR-B-B1 成功退款在 [09-03,09-10] 内；`r07-refund-a-c1` 的 SR-A-C1 成功退款在 [09-09,09-16] 内，均早于 as_of。两笔退款沿订单支付队列继承类别与窗口，不另按退款日期分窗。
+
+| 窗口 | group_id | group_label | 支付订单集合 | 退款订单集合 | N | U | 率 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 基期 | category_a | 图书 | {S-A-B1} | {} | 1 | 0 | 0/1=0 |
+| 基期 | category_b | 图书 | {S-B-B1} | {S-B-B1} | 1 | 1 | 1/1=1 |
+| 当前 | category_a | 图书 | {S-A-C1,S-A-C2} | {S-A-C1} | 2 | 1 | 1/2=0.5 |
+| 当前 | category_b | 图书 | {S-B-C1,S-B-C2} | {} | 2 | 0 | 0/2=0 |
+
+基期总计 N=1+1=2、U=0+1=1、率=1/2=0.5；当前总计 N=2+2=4、U=1+0=1、率=1/4=0.25。绝对变化=0.25−0.5=−0.25 ratio，即下降25个百分点；相对变化=−0.25/0.5=−0.5，即下降50%。率由汇总的 U/N 求得，不把分组率直接相加。每窗两个分组互斥且穷尽，不存在未知类别或漏分组。
+
+`expected.aggregate_rows` 保存两窗各两条类别行及一条总计行，沿用 `AggregateRow` 的七个字段，`window_index=0/1` 分别对应基期/当前；总计的 `dimension_id/group_id/group_label` 全为 null。`group_cohort_source_row_ids` 是本地来源追溯台账，不是正式输出字段。若错误地按“图书”合并，尽管总计仍可能正确，却只剩一个组，丢失基期两类别0与1、当前0.5与0的差别，因此必须同时核对组身份与来源，不能只看总计。
+
+六单均为有效支付，均落在各自半开窗口内；最晚成熟于09-19，早于 as_of=09-23。支付水位09-15覆盖两窗末端09-08/09-15；退款水位09-23覆盖最大成熟时刻09-19。订单、退款事件、产品和类别的业务键均唯一，无缺失关联；两个窗口、四个类别队列的 N 都大于0。因此 outcome=`ready`，不存在成熟、水位、零分母或质量阻断。旧 A3-01～A3-06 JSON 及历史核验记录不改；A3-07 尚待用户独立人工复核。
+
+### A3-07 运行记录
+
+2026-10-20 保存后运行：
+
+```text
+.venv/bin/python -B -m pytest tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+8 passed in 0.05s
+
+.venv/bin/python -B -m pytest -o addopts='' -q -p no:cacheprovider
+82 passed in 0.26s
+```
+
+首条命令包括7份样例完整性检查和1项A3-07专用静态核验，检查复合键关联、同名不同ID、来源互斥穷尽、各组N/U/率、汇总、支付窗口、成熟与水位。它不生成预期、不调用参考函数。全量测试首次在沙箱中输出20个通过标记后停滞，主动中断（退出码130）；获准在沙箱外重跑后得到上述82项通过结果。全量回归会运行旧参考计算测试，但A3-07没有分组计算器回归，不将静态核验冒充正式SQL分组能力验收。
+
+保存前后核对旧6份JSON、`reference/cohort.py`、`tests/test_reference_cohort.py`、Provider及其测试的SHA-256，均未变化；没有修改旧预期迎合实现。`git diff --check` 通过。
+
+### A3-07 补充：按组追溯订单和退款来源
+
+以下台账沿用上文已手工填写的预期，不从参考计算器输出回填；这是对既有 Oracle 的补充，不宣称新的盲审或用户独立验收。产品按 `(domain_id,snapshot_id,product_id)` 唯一关联，类别按 `(domain_id,snapshot_id,category_id)` 唯一关联；两条产品关联分别是 `product_a → category_a`、`product_b → category_b`，两类别展示名均为“图书”。
+
+| 支付窗 / 类别 ID | 支付订单来源行 | 合格退款来源行 → 事件 → 订单 | 对 U 的逐单依据 |
+| --- | --- | --- | --- |
+| 基期 / category_a | r07-row-a-b1 | 无 | S-A-B1 无任何退款，U=0 |
+| 基期 / category_b | r07-row-b-b1 | r07-refund-b-b1 → SR-B-B1 → S-B-B1 | success，09-05 在该单[09-03,09-10]内且≤09-23，U=1 |
+| 当前 / category_a | r07-row-a-c1、r07-row-a-c2 | r07-refund-a-c1 → SR-A-C1 → S-A-C1 | S-A-C1 的 success 退款09-11在[09-09,09-16]内且≤09-23；S-A-C2 无退款，U=1 |
+| 当前 / category_b | r07-row-b-c1、r07-row-b-c2 | 无 | S-B-C1、S-B-C2 均无任何退款，U=0 |
+
+退款通过 `(domain_id,snapshot_id,order_id)` 继承上述支付订单的窗口和类别，不能按同名 label、退款日期或未限定域/快照的订单 ID 重新归组。两笔原始退款在本例都合格；两个“无退款”组必须与原始输入中的空关联一致，不能仅凭人工分子台账未列出事件就认定 U=0。
+
+基础检查分层如下：
+
+- 7份 Fixture 通用检查：来源行唯一、域/快照一致、事件到订单的关联、success及退款时间边界、静态 N/U/率和变化。
+- A3-07 结构检查：类别 ID 独立、产品和类别复合键唯一、订单到产品的类别关联、同名组身份不同、总计身份字段为 null、来源互斥穷尽、每窗分组 N/U 汇总及精确比率；另核对支付窗口、成熟与水位。
+- 四项参数化追溯检查：以上四个支付窗/类别组合逐一检查手工来源台账、原始退款关联和静态 N/U/率，包括两个无退款组。不实现通用分组计算器，也不从程序生成或修改冻结预期。
+
+### A3-07 尚待分组参考计算覆盖
+
+当前 `calculate_reference()` 仍仅计算总体队列，不要求其返回分组字段，也没有为此添加伪造结果或跳过断言。后续需独立实现并验证：
+
+- 从固定输入关联产品类别，按 `(dimension_id,group_id)` 实际聚合两窗的 N/U 和精确率，再与冻结的四条类别行对照；不能只检查标签或总计。
+- 实际输出两条总计行，验证同一 Scope 下各组互斥穷尽、N/U 汇总与总体结果一致，并核对 `AggregateRow` 的窗口、身份及展示字段。
+- 将上述业务计算回归与本地静态完整性检查分别记录；现有通过记录不等于 SQL 分组、过滤/授权执行或正式调查系统验收。未知、跨域、类别新增/退出等其他分组边界也不由本例覆盖。
+
+### A3-07 补充检查运行记录
+
+2026-10-20 补齐上述台账及四项来源追溯检查后，本地执行：
+
+```text
+.venv/bin/python -B -m pytest tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+12 passed in 0.06s
+
+.venv/bin/python -B -m pytest tests/test_boundary_fixtures.py tests/test_reference_cohort.py -o addopts='' -q -p no:cacheprovider
+21 passed in 0.09s
+```
+
+12项为7份通用完整性检查、1项A3-07结构及算术检查、4项按组退款来源追溯检查；21项另含9项既有参考计算回归，不含尚未实现的类别分组参考结果比较。本次没有重跑全量测试，上文82项通过是上一轮的历史运行结果，不作为本次全量记录。
+
+修改前后核对7份JSON、`reference/cohort.py`、`tests/test_reference_cohort.py`、Provider及其测试的SHA-256，全部保持一致。A3-07 输入与预期的文件SHA-256为 `e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac`。没有改写预期、参考函数接口或旧核验结果。`git diff --check` 通过。
+
+### A3-07 公开工作树提交前回归
+
+2026-10-20，仅同步本次Fixture、Oracle、基础测试与架构样例说明到干净的公开工作树后，使用已有测试环境的Python执行以下参数（不记录本机解释器绝对路径）：
+
+```text
+python -B -m pytest -o pythonpath=src -o addopts='' -q -p no:cacheprovider
+81 passed in 0.27s
+```
+
+`pythonpath=src` 确保优先导入公开工作树源码；公开分支不包含开发目录未提交的Provider及其测试，所以该81项与上文开发目录的82项历史结果不作同一测试范围比较。此处为公开工作树当前全量回归，仍没有A3-07分组参考计算覆盖。提交范围仅为本Fixture、本文、`tests/test_boundary_fixtures.py` 和 `docs/ARCHITECTURE.md` 的相关说明；不合并开发目录历史，不上传内部归档或环境日志，不移动冻结标签。
+
 ## 复核与后续使用
 
 `tests/test_boundary_fixtures.py` 只检查样例可读取、引用和字段完整、来源行可追溯，以及静态预期的算术一致性；不调用生产代码，也不按输入生成预期。测试通过只能证明样例完整性，不代表成熟/水位、退款率或批次去重已在应用中实现。
 
-后续业务计算器应读取这些固定输入，并将实际结果与 `expected` 对照。业务规则变更时，应先独立重算并记录新样例版本，再修改待测实现；不得通过复制实现输出来修正 Oracle。目前仅 6 个主样例和 2 个控制变体，不满足路线图中 10～20 个独立边界样例的完整门槛。
+后续业务计算器应读取这些固定输入，并将实际结果与 `expected` 对照。业务规则变更时，应先独立重算并记录新样例版本，再修改待测实现；不得通过复制实现输出来修正 Oracle。目前仅 7 个主样例和 2 个控制变体，不满足路线图中 10～20 个独立边界样例的完整门槛。
