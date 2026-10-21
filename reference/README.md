@@ -1,4 +1,4 @@
-# 独立订单队列参考计算
+# 独立订单队列与类别分组参考计算
 
 本目录供开发复核，不属于 `src/dataagentx` 生产包，也不作为模型可执行工具。
 
@@ -24,5 +24,32 @@ print(actual["metrics"]["baseline"])
 A3-04/05 的[人工可复核记录](manual_checks/A3-04_A3-05_review.md)复用既有证据，核对原始来源行、成熟与水位、地区 Scope、诊断值和发布值，并保存文件完整性核验信息；不代表用户已独立验收。
 
 输入约束：固定单域、单快照，字段结构已核验，支持全域或单地区过滤；重复订单/事件、域快照混入、孤立及支付前退款抛出 `ValueError`。函数不判断访问权限、维度目录、导入批准或完整质量规则，也没有数据库、SQL、生产状态机或贡献分解。返回结构仅用于本地参考，不是调查 API 契约。
+
+## 最小类别分组参考计算
+
+`category_cohort.py` 的 `calculate_category_reference(input)` 只依赖标准库及既有总体参考函数。它复用 `calculate_reference()` 的输入检查、候选支付队列、成熟/水位和空窗阻断，不修改旧函数的代码、返回结构或业务语义；然后从原始退款重建合格退款订单集合，并从订单及产品目录实际计算类别分组。两个参考函数共享总体前提，不宣称它们是两套完全独立的总体算法；它们与未来生产实现保持独立。
+
+订单按 `(domain_id,snapshot_id,product_id)` 关联产品，以 `category_id` 为分组键；退款按 `(domain_id,snapshot_id,order_id)` 归属订单，同单多笔合格退款只计一次。类别目录 `categories` 是本地展示名约定，通过类别复合键提供 `group_label`，不参与身份或计数。同名不同ID不合并；已知ID缺展示名时保留ID、label为None。缺失产品或类别ID进入 `__unknown__`，不丢弃订单。局部产品和类别目录须属于固定域/快照，重复键或范围混入抛出 `ValueError`，不是生产DQ状态映射。
+
+```python
+from reference.category_cohort import calculate_category_reference
+
+fixture = json.loads(Path(
+    "tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json"
+).read_text(encoding="utf-8"))
+actual = calculate_category_reference(fixture["input"])
+assert len(actual["aggregate_rows"]) == 6  # 四条类别行与两条总计行
+```
+
+新结果保留总体参考函数的字段，另增加：
+
+- `aggregate_rows`：按窗口排列，先总计，再按类别ID排序；字段沿用 `AggregateRow`，但率是内存中的 `Fraction`，尚未序列化成正式十进制字符串。总计三个身份字段均为None；只输出该窗口实际有候选订单的类别，不为缺席类别补造零率行。
+- `group_order_ids`、`group_refunded_order_ids`：按窗口、类别ID记录订单台账，供互斥穷尽、去重及来源追溯检查，不是正式API字段。
+
+比较前提不足时，`aggregate_rows=[]`、两个分组台账为空字典；总体 `metrics` 仍为空业务指标，候选订单仅作诊断，不借分组发布被阻断的比较。
+
+运行 `.venv/bin/python -B -m pytest tests/test_reference_category_cohort.py`。测试只把 `input` 传入计算函数，在测试端与冻结六行预期对照；通过深拷贝核对输入不变，并用拒绝访问 `expected` 的映射检查计算不依赖静态答案。覆盖同名组、产品关联、来源台账、汇总、退款去重与时间边界、地区过滤、未知保留、目录异常及比较阻断。实际运行与剩余边界见 [A3-07 分组回归记录](regression_checks/A3-07_category.md)。
+
+此处未实现生产SQL、授权、批准导入、目录服务、正式输出序列化或贡献分解，也未新增框架。创建阶段的静态检查及其历史待补清单保留原样，新增计算覆盖单独记录；不改写Fixture或先行人工预期来迎合实现。
 
 未来生产实现应独立编写，并与这些固定预期比较，不能导入本参考函数作为其业务实现，否则失去对照独立性。
