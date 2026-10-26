@@ -1,0 +1,243 @@
+{
+  "case_id": "A3-08",
+  "fixture_revision": "2",
+  "record_date": "2026-10-26",
+  "derivation": "仅依据原始 input 逐单推导并先行保存；未使用参考函数输出生成预期。本会话此前已接触目标数值，不属于首次盲审，也不代替用户独立人工签字。",
+  "source": "tests/fixtures/order_boundaries/08_category_entry_exit.json",
+  "source_sha256": "79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58",
+  "input_sha256": "4cf45c7f2404ffd854393e21936fb288981491d98d5cd2e9951bcfedf46f49fb",
+  "scope": {
+    "domain_id": "domain_a",
+    "snapshot_id": "fixture_category_entry_exit_v2",
+    "horizon_seconds": 604800,
+    "timezone": "UTC",
+    "regions": []
+  },
+  "rules": [
+    "支付窗口左闭右开；有效支付按订单复合业务键计数。",
+    "产品按 (domain_id,snapshot_id,product_id) 关联，使用稳定 category_id 分组，label 仅展示。",
+    "成熟时刻为 paid_at + 7 天，须不晚于 as_of，且支付与退款水位分别覆盖窗口和观察期限。",
+    "成功退款须在 [paid_at,paid_at+7天] 内且不晚于 as_of；U 按退款订单去重，不按退款事件数。",
+    "每窗仅输出实际存在的类别；缺席组既不补行，也不构造 0/0 或零退款率。",
+    "只核算分组、总计及两窗总计变化，不计算贡献分解。"
+  ],
+  "order_ledger": [
+    {
+      "window": "baseline",
+      "category_id": "category_a",
+      "product_id": "product_a",
+      "order_id": "E2-A-B1",
+      "source_row_id": "r08v2-row-a-b1",
+      "paid_at": "2026-09-02T00:00:00Z",
+      "matures_at": "2026-09-09T00:00:00Z",
+      "refund_ids": [],
+      "refund_source_rows": [],
+      "N": 1,
+      "U": 0
+    },
+    {
+      "window": "baseline",
+      "category_id": "category_a",
+      "product_id": "product_a",
+      "order_id": "E2-A-B2",
+      "source_row_id": "r08v2-row-a-b2",
+      "paid_at": "2026-09-03T00:00:00Z",
+      "matures_at": "2026-09-10T00:00:00Z",
+      "refund_ids": [],
+      "refund_source_rows": [],
+      "N": 1,
+      "U": 0
+    },
+    {
+      "window": "baseline",
+      "category_id": "category_b",
+      "product_id": "product_b",
+      "order_id": "E2-B-B1",
+      "source_row_id": "r08v2-row-b-b1",
+      "paid_at": "2026-09-04T00:00:00Z",
+      "matures_at": "2026-09-11T00:00:00Z",
+      "refund_ids": [
+        "ER2-B-B1"
+      ],
+      "refund_source_rows": [
+        "r08v2-refund-b-b1"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "baseline",
+      "category_id": "category_b",
+      "product_id": "product_b",
+      "order_id": "E2-B-B2",
+      "source_row_id": "r08v2-row-b-b2",
+      "paid_at": "2026-09-05T00:00:00Z",
+      "matures_at": "2026-09-12T00:00:00Z",
+      "refund_ids": [
+        "ER2-B-B2"
+      ],
+      "refund_source_rows": [
+        "r08v2-refund-b-b2"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "current",
+      "category_id": "category_a",
+      "product_id": "product_a",
+      "order_id": "E2-A-C1",
+      "source_row_id": "r08v2-row-a-c1",
+      "paid_at": "2026-09-09T00:00:00Z",
+      "matures_at": "2026-09-16T00:00:00Z",
+      "refund_ids": [
+        "ER2-A-C1"
+      ],
+      "refund_source_rows": [
+        "r08v2-refund-a-c1"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "current",
+      "category_id": "category_c",
+      "product_id": "product_c",
+      "order_id": "E2-C-C1",
+      "source_row_id": "r08v2-row-c-c1",
+      "paid_at": "2026-09-10T00:00:00Z",
+      "matures_at": "2026-09-17T00:00:00Z",
+      "refund_ids": [
+        "ER2-C-C1"
+      ],
+      "refund_source_rows": [
+        "r08v2-refund-c-c1"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "current",
+      "category_id": "category_c",
+      "product_id": "product_c",
+      "order_id": "E2-C-C2",
+      "source_row_id": "r08v2-row-c-c2",
+      "paid_at": "2026-09-11T00:00:00Z",
+      "matures_at": "2026-09-18T00:00:00Z",
+      "refund_ids": [
+        "ER2-C-C2"
+      ],
+      "refund_source_rows": [
+        "r08v2-refund-c-c2"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "current",
+      "category_id": "category_c",
+      "product_id": "product_c",
+      "order_id": "E2-C-C3",
+      "source_row_id": "r08v2-row-c-c3",
+      "paid_at": "2026-09-12T00:00:00Z",
+      "matures_at": "2026-09-19T00:00:00Z",
+      "refund_ids": [
+        "ER2-C-C3"
+      ],
+      "refund_source_rows": [
+        "r08v2-refund-c-c3"
+      ],
+      "N": 1,
+      "U": 1
+    }
+  ],
+  "aggregate_rows": [
+    {
+      "window_index": 0,
+      "dimension_id": null,
+      "group_id": null,
+      "group_label": null,
+      "paid_orders": 4,
+      "refunded_orders": 2,
+      "rate_fraction": "1/2"
+    },
+    {
+      "window_index": 0,
+      "dimension_id": "category",
+      "group_id": "category_a",
+      "group_label": "类别A",
+      "paid_orders": 2,
+      "refunded_orders": 0,
+      "rate_fraction": "0"
+    },
+    {
+      "window_index": 0,
+      "dimension_id": "category",
+      "group_id": "category_b",
+      "group_label": "类别B",
+      "paid_orders": 2,
+      "refunded_orders": 2,
+      "rate_fraction": "1"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": null,
+      "group_id": null,
+      "group_label": null,
+      "paid_orders": 4,
+      "refunded_orders": 4,
+      "rate_fraction": "1"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": "category",
+      "group_id": "category_a",
+      "group_label": "类别A",
+      "paid_orders": 1,
+      "refunded_orders": 1,
+      "rate_fraction": "1"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": "category",
+      "group_id": "category_c",
+      "group_label": "类别C",
+      "paid_orders": 3,
+      "refunded_orders": 3,
+      "rate_fraction": "1"
+    }
+  ],
+  "group_lifecycle": {
+    "shared": [
+      "category_a"
+    ],
+    "exit": [
+      "category_b"
+    ],
+    "entry": [
+      "category_c"
+    ]
+  },
+  "absent_group_ids": {
+    "baseline": [
+      "category_c"
+    ],
+    "current": [
+      "category_b"
+    ]
+  },
+  "absolute_change_fraction": "1/2",
+  "relative_change_fraction": "1",
+  "conservation": {
+    "baseline": {
+      "N": "2+2=4",
+      "U": "0+2=2"
+    },
+    "current": {
+      "N": "1+3=4",
+      "U": "1+3=4"
+    }
+  },
+  "maturity": "最晚成熟为2026-09-19；as_of和退款水位均为2026-09-23，支付水位为2026-09-15，覆盖两窗。",
+  "freeze_boundary": "这是参考对照前保存的独立算术预期；对照结果另记，不通过复制实际输出修正此文件。既有 v1 与 v2 创建台账保持原样。"
+}

@@ -1,4 +1,5 @@
 import copy
+import hashlib
 import json
 from fractions import Fraction
 from pathlib import Path
@@ -18,6 +19,14 @@ FIXTURE_PATH = (
 @pytest.fixture
 def category_fixture() -> dict:
     return json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+
+
+@pytest.fixture
+def entry_exit_fixture() -> dict:
+    """旧计算回归固定读取v1；当前v2输入另做静态核验，不混用预期。"""
+    return json.loads(
+        (FIXTURE_PATH.parent / "08_category_entry_exit.v1.json").read_text(encoding="utf-8")
+    )
 
 
 def category_rows(result: dict, index: int) -> dict:
@@ -316,3 +325,157 @@ def test_group_publication_inherits_overall_blocking_semantics(category_fixture:
     assert actual["group_order_ids"] == actual["group_refunded_order_ids"] == {}
     for key, value in calculate_reference(data).items():
         assert actual[key] == value
+
+
+def test_category_reference_a3_08_matches_frozen_rows_and_lifecycle(entry_exit_fixture: dict) -> None:
+    """直接计算固定输入，对照先行人工预期，不补造参考函数未返回的分类字段。"""
+    original = copy.deepcopy(entry_exit_fixture)
+    data, expected = entry_exit_fixture["input"], entry_exit_fixture["expected"]
+
+    actual = calculate_category_reference(data)
+
+    expected_rows = [
+        {**row, "rate": Fraction(row["rate"])} for row in expected["aggregate_rows"]
+    ]
+    assert actual["outcome"] == expected["outcome"] == "ready"
+    assert actual["reasons"] == expected["reasons"] == []
+    for check, value in actual["quality_checks"].items():
+        assert value == expected["quality_checks"][check]
+    assert actual["aggregate_rows"] == expected_rows
+    assert len(actual["aggregate_rows"]) == 6
+    assert sum(row["dimension_id"] == "category" for row in actual["aggregate_rows"]) == 4
+    assert sum(row["dimension_id"] is None for row in actual["aggregate_rows"]) == 2
+    assert_partition(actual)
+
+    baseline, current = category_rows(actual, 0), category_rows(actual, 1)
+    assert set(baseline) == {"category_a", "category_b"}
+    assert set(current) == {"category_a", "category_c"}
+    assert {
+        (baseline["category_a"]["dimension_id"], baseline["category_a"]["group_id"]),
+        (current["category_a"]["dimension_id"], current["category_a"]["group_id"]),
+    } == {("category", "category_a")}
+    # 分类只由实际出现组集合核对，不访问actual["group_lifecycle"]等不存在字段。
+    assert {
+        "shared": sorted(set(baseline) & set(current)),
+        "exit": sorted(set(baseline) - set(current)),
+        "entry": sorted(set(current) - set(baseline)),
+    } == expected["group_lifecycle"]
+    for window, rows in (("baseline", baseline), ("current", current)):
+        assert not set(expected["absent_group_ids"][window]) & set(rows)
+        assert set(actual["group_order_ids"][window]) == set(rows)
+        assert set(actual["group_refunded_order_ids"][window]) == set(rows)
+        assert all(row["paid_orders"] > 0 for row in rows.values())
+        wanted = expected["metrics"][window]
+        assert actual["metrics"][window] == {
+            "N": wanted["N"], "U": wanted["U"], "rate": Fraction(wanted["rate"]),
+        }
+    # 当前C是真实N>0的零退款率，不同于当前B缺席、根本没有一行。
+    assert current["category_c"]["paid_orders"] == 2
+    assert current["category_c"]["refunded_orders"] == 0
+    assert current["category_c"]["rate"] == Fraction(0)
+    for field in ("absolute_change_ratio", "relative_change"):
+        assert actual["metrics"][field] == Fraction(expected["metrics"][field])
+        assert isinstance(actual["metrics"][field], Fraction)
+    assert entry_exit_fixture == original
+
+
+@pytest.mark.parametrize("window_index,window", [(0, "baseline"), (1, "current")])
+def test_category_reference_a3_08_traces_order_and_refund_sources(
+    entry_exit_fixture: dict, window_index: int, window: str,
+) -> None:
+    """以实际归组订单反查原始来源行、产品复合键和退款来源，不重算业务Oracle。"""
+    original = copy.deepcopy(entry_exit_fixture)
+    data, expected = entry_exit_fixture["input"], entry_exit_fixture["expected"]
+    scope = data["context"]["domain_id"], data["context"]["snapshot_id"]
+    orders = {
+        (row["domain_id"], row["snapshot_id"], row["order_id"]): row
+        for row in data["orders"]
+    }
+    products = {
+        (row["domain_id"], row["snapshot_id"], row["product_id"]): row
+        for row in data["dimensions"]["products"]
+    }
+
+    actual = calculate_category_reference(data)
+
+    actual_sources, actual_refund_sources, actual_refunded_orders = set(), set(), set()
+    for group_id in category_rows(actual, window_index):
+        members = actual["group_order_ids"][window][group_id]
+        source_ids = {orders[(*scope, order_id)]["source_row_id"] for order_id in members}
+        assert source_ids == set(expected["group_cohort_source_row_ids"][group_id][window])
+        assert not actual_sources & source_ids
+        actual_sources.update(source_ids)
+        for order_id in members:
+            row = orders[(*scope, order_id)]
+            product_key = row["domain_id"], row["snapshot_id"], row["product_id"]
+            assert products[product_key]["category_id"] == group_id
+
+        refunded = actual["group_refunded_order_ids"][window][group_id]
+        assert set(refunded) <= set(members)
+        # 本固定样例两笔原始退款都合格；这里只追溯已返回的退款订单。
+        source_refunds = [
+            row for row in data["refunds"]
+            if (row["domain_id"], row["snapshot_id"], row["order_id"])
+            in {(*scope, order_id) for order_id in refunded}
+        ]
+        refund_sources = {row["source_row_id"] for row in source_refunds}
+        assert refund_sources == set(expected["group_refund_source_row_ids"][group_id][window])
+        assert {row["order_id"] for row in source_refunds} == set(refunded)
+        assert {row["refund_id"] for row in source_refunds} <= set(
+            expected["qualifying_refund_event_ids"][window]
+        )
+        assert all(row["status"] == "success" for row in source_refunds)
+        assert not actual_refund_sources & refund_sources
+        actual_refund_sources.update(refund_sources)
+        actual_refunded_orders.update(refunded)
+
+    assert actual_sources == set(expected["cohort_source_row_ids"][window])
+    assert actual_refunded_orders == set(expected["counted_refund_order_ids"][window])
+    assert actual_sources == {
+        orders[(*scope, order_id)]["source_row_id"]
+        for order_id in actual["candidate_order_ids"][window]
+    }
+    assert_partition(actual)
+    assert entry_exit_fixture == original
+
+
+def test_category_reference_a3_08_matches_frozen_manual_ledger(entry_exit_fixture: dict) -> None:
+    """绑定先行Fixture和手填台账快照，再核对实际计算；不重算hash来迎合变更。"""
+    fixture_path = FIXTURE_PATH.parent / "08_category_entry_exit.v1.json"
+    manual_path = (
+        Path(__file__).resolve().parent.parent / "reference" / "manual_checks" / "A3-08_review.json"
+    )
+    assert hashlib.sha256(fixture_path.read_bytes()).hexdigest() == (
+        "b2ffe9d156a9e010f28bbfda072589c95b8ee8dd426f98a0da8c1515ed0cb580"
+    )
+    assert hashlib.sha256(manual_path.read_bytes()).hexdigest() == (
+        "e6e0f2408aa31082232e7e8ccb74ecb48b76e06bdaced8266c790a96c97ddd3b"
+    )
+    manual = json.loads(manual_path.read_text(encoding="utf-8"))
+    assert manual["fixture_sha256"] == hashlib.sha256(fixture_path.read_bytes()).hexdigest()
+    data = entry_exit_fixture["input"]
+    canonical = json.dumps(data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    assert hashlib.sha256(canonical.encode("utf-8")).hexdigest() == manual["input_sha256"]
+    original = copy.deepcopy(entry_exit_fixture)
+
+    actual = calculate_category_reference(data)
+
+    wanted = [
+        {
+            **{key: value for key, value in row.items() if key != "rate_fraction"},
+            "rate": Fraction(row["rate_fraction"]),
+        }
+        for row in manual["aggregate_rows"]
+    ]
+    assert len(actual["aggregate_rows"]) == len(wanted) == 6
+    assert actual["aggregate_rows"] == wanted
+    assert all(isinstance(row["rate"], Fraction) for row in actual["aggregate_rows"])
+    assert actual["candidate_order_ids"] == manual["cohort_order_ids"]
+    assert actual["group_order_ids"] == manual["group_order_ids"]
+    assert actual["group_refunded_order_ids"] == manual["group_refunded_order_ids"]
+    assert actual["quality_checks"] == manual["quality_checks"]
+    assert actual["outcome"] == manual["outcome"] == "ready"
+    assert actual["metrics"]["absolute_change_ratio"] == Fraction(manual["absolute_change_fraction"])
+    assert actual["metrics"]["relative_change"] == Fraction(manual["relative_change_fraction"])
+    assert_partition(actual)
+    assert entry_exit_fixture == original

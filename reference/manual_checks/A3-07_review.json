@@ -1,0 +1,134 @@
+{
+  "case_id": "A3-07",
+  "review_date": "2026-10-22",
+  "review_type": "输入驱动的逐单人工可复核推导；非首次盲审，非用户本人签字验收",
+  "source": "tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json",
+  "fixture_sha256": "e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac",
+  "input_sha256": "cb458cfb0bc5555c8c680bab64885c0f2fd2e212951a12143260eb9ea3e339ca",
+  "computation_origin": "本轮仅查看input并逐单枚举后静态填写；保存本记录时尚未重新读取expected或ORACLE.md内容；未调用总体或分组参考函数",
+  "scope": {
+    "domain_id": "domain_a",
+    "snapshot_id": "fixture_same_label_categories",
+    "region_ids": [],
+    "horizon_seconds": 604800,
+    "business_timezone": "UTC"
+  },
+  "cohort_order_ids": {
+    "baseline": [
+      "S-A-B1",
+      "S-B-B1"
+    ],
+    "current": [
+      "S-A-C1",
+      "S-A-C2",
+      "S-B-C1",
+      "S-B-C2"
+    ]
+  },
+  "refunded_order_ids": {
+    "baseline": [
+      "S-B-B1"
+    ],
+    "current": [
+      "S-A-C1"
+    ]
+  },
+  "group_source_row_ids": {
+    "baseline": {
+      "category_a": [
+        "r07-row-a-b1"
+      ],
+      "category_b": [
+        "r07-row-b-b1"
+      ]
+    },
+    "current": {
+      "category_a": [
+        "r07-row-a-c1",
+        "r07-row-a-c2"
+      ],
+      "category_b": [
+        "r07-row-b-c1",
+        "r07-row-b-c2"
+      ]
+    }
+  },
+  "group_refund_source_row_ids": {
+    "baseline": {
+      "category_a": [],
+      "category_b": [
+        "r07-refund-b-b1"
+      ]
+    },
+    "current": {
+      "category_a": [
+        "r07-refund-a-c1"
+      ],
+      "category_b": []
+    }
+  },
+  "aggregate_rows": [
+    {
+      "window_index": 0,
+      "dimension_id": null,
+      "group_id": null,
+      "group_label": null,
+      "paid_orders": 2,
+      "refunded_orders": 1,
+      "rate_fraction": "1/2"
+    },
+    {
+      "window_index": 0,
+      "dimension_id": "category",
+      "group_id": "category_a",
+      "group_label": "图书",
+      "paid_orders": 1,
+      "refunded_orders": 0,
+      "rate_fraction": "0"
+    },
+    {
+      "window_index": 0,
+      "dimension_id": "category",
+      "group_id": "category_b",
+      "group_label": "图书",
+      "paid_orders": 1,
+      "refunded_orders": 1,
+      "rate_fraction": "1"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": null,
+      "group_id": null,
+      "group_label": null,
+      "paid_orders": 4,
+      "refunded_orders": 1,
+      "rate_fraction": "1/4"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": "category",
+      "group_id": "category_a",
+      "group_label": "图书",
+      "paid_orders": 2,
+      "refunded_orders": 1,
+      "rate_fraction": "1/2"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": "category",
+      "group_id": "category_b",
+      "group_label": "图书",
+      "paid_orders": 2,
+      "refunded_orders": 0,
+      "rate_fraction": "0"
+    }
+  ],
+  "absolute_change_fraction": "-1/4",
+  "relative_change_fraction": "-1/2",
+  "quality_checks": {
+    "all_orders_mature": true,
+    "payments_watermark_covered": true,
+    "refunds_watermark_covered": true
+  },
+  "outcome": "ready"
+}
