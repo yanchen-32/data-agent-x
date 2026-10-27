@@ -25,7 +25,7 @@
 
 `reference/category_cohort.py` 的 `calculate_category_reference(input)` 新增最小类别分组参考计算，仅依赖标准库和既有总体参考函数，不导入生产业务包或读取 `expected`。它复用总体参考函数的候选队列、输入检查和比较前提，保持 `reference/cohort.py` 不变；再按订单/退款复合键重建成功退款订单集合，通过 `(domain_id,snapshot_id,product_id)` 关联产品，以类别ID归组。类别目录只补展示名，同名ID不合并；缺失产品或类别ID归入 `__unknown__`，已知ID无展示名时保留ID，目录重复键或域/快照混入抛出 `ValueError`。结果保留总体字段，另返回率为 `Fraction` 的 `aggregate_rows` 及两种订单归组台账；每窗只输出有候选订单的类别，总计身份字段均为空，前提阻断时不发布聚合行。`tests/test_reference_category_cohort.py` 对照 A3-07 冻结四条类别行及两条总计行，验证来源追溯、互斥穷尽、N/U汇总、精确比率和关键控制变体。[运行记录](../reference/regression_checks/A3-07_category.md) 单独保存；未接入生产SQL、正式序列化、授权、批准导入或贡献分解，不将共享总体前提说成两套独立总体算法。
 
-A3-08 当前输入为修订v2：`08_category_entry_exit.json` 使用新快照、八笔支付和六笔有效退款，A两窗共享且退款率0→1、支付占比1/2→1/4，B仅基期、C仅当前且二者均有有效退款。来源与先行静态数值保存在 `reference/manual_checks/A3-08_v2.json/.md`，缺席组不补行，成熟水位、唯一复合键和分组N/U汇总由静态检查核对。另在 `reference/manual_checks/A3-08_v2_expected.json/.md` 保存仅据input逐单推导的预期后，实际调用既有类别参考函数，六条聚合行及总计变化与冻结expected全部一致；该记录包含可复现命令与hash。旧六单输入原字节保存在 `08_category_entry_exit.v1.json`；四项原计算回归仍绑定v1及原SHA-256，旧手填JSON不改。v2已完成单次参考对照，但尚待专门pytest计算回归及用户独立人工验收，不将v1通过记录冒称v2验收；本阶段未实现贡献分解，也未更新路线图完成状态。
+A3-08 当前输入为修订v2：`08_category_entry_exit.json` 使用新快照、八笔支付和六笔有效退款，A两窗共享且退款率0→1、支付占比1/2→1/4，B仅基期、C仅当前且二者均有有效退款。来源与先行静态数值保存在 `reference/manual_checks/A3-08_v2.json/.md`，缺席组不补行，成熟水位、唯一复合键和分组N/U汇总由静态检查核对。另在 `reference/manual_checks/A3-08_v2_expected.json/.md` 保存仅据input逐单推导的预期后，实际调用既有类别参考函数，六条聚合行及总计变化与冻结expected全部一致；该记录包含可复现命令与hash。旧六单输入原字节保存在 `08_category_entry_exit.v1.json`；四项原计算回归仍绑定v1及原SHA-256，旧手填JSON不改。v2已增加四项专门pytest计算回归，绑定先行冻结哈希，复用既有辅助函数核对六行精确结果、来源、生命周期与守恒，并逐项检查输入及预期不变；v1原四项保持不变且通过，运行证据见 `reference/regression_checks/A3-08_v2.md`。仍待用户独立人工验收，不将v1通过记录冒称v2验收；本阶段未实现贡献分解，也未更新路线图完成状态。
 
 ## 首批业务边界样例
 
