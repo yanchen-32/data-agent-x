@@ -1,0 +1,147 @@
+{
+  "case_id": "A3-10",
+  "record_date": "2026-10-29",
+  "derivation": "依据DD02关键DQ边界及本任务明确的缺失产品复合键阻断规则，先保存本台账及逐单说明再填写Fixture预期；未调用参考函数、生产代码或SQL反推答案。",
+  "scope": {
+    "domain_id": "domain_a",
+    "snapshot_id": "fixture_missing_product_join",
+    "horizon_seconds": 604800,
+    "business_timezone": "UTC",
+    "region_ids": []
+  },
+  "product_catalog_keys": [
+    [
+      "domain_a",
+      "fixture_missing_product_join",
+      "product_known"
+    ]
+  ],
+  "order_ledger": [
+    {
+      "order_id": "J10-B1",
+      "source_row_id": "r10-row-b1",
+      "window": "baseline",
+      "product_id": "product_known",
+      "paid_at": "2026-09-02T00:00:00Z",
+      "matures_at": "2026-09-09T00:00:00Z",
+      "product_join_status": "matched",
+      "category_id": "category_a",
+      "refund_ids": [
+        "JR10-B1"
+      ],
+      "refund_source_row_ids": [
+        "r10-refund-b1"
+      ]
+    },
+    {
+      "order_id": "J10-B2",
+      "source_row_id": "r10-row-b2",
+      "window": "baseline",
+      "product_id": "product_known",
+      "paid_at": "2026-09-04T00:00:00Z",
+      "matures_at": "2026-09-11T00:00:00Z",
+      "product_join_status": "matched",
+      "category_id": "category_a",
+      "refund_ids": [],
+      "refund_source_row_ids": []
+    },
+    {
+      "order_id": "J10-C1",
+      "source_row_id": "r10-row-c1",
+      "window": "current",
+      "product_id": "product_known",
+      "paid_at": "2026-09-09T00:00:00Z",
+      "matures_at": "2026-09-16T00:00:00Z",
+      "product_join_status": "matched",
+      "category_id": "category_a",
+      "refund_ids": [],
+      "refund_source_row_ids": []
+    },
+    {
+      "order_id": "J10-C2",
+      "source_row_id": "r10-row-c2",
+      "window": "current",
+      "product_id": "product_missing",
+      "paid_at": "2026-09-12T00:00:00Z",
+      "matures_at": "2026-09-19T00:00:00Z",
+      "product_join_status": "missing",
+      "group_assignment": "禁止归组；不得使用__unknown__",
+      "refund_ids": [
+        "JR10-C2"
+      ],
+      "refund_source_row_ids": [
+        "r10-refund-c2"
+      ]
+    }
+  ],
+  "refund_ledger": [
+    {
+      "refund_id": "JR10-B1",
+      "source_row_id": "r10-refund-b1",
+      "order_id": "J10-B1",
+      "refund_at": "2026-09-04T00:00:00Z",
+      "status": "success",
+      "payment_window": "baseline"
+    },
+    {
+      "refund_id": "JR10-C2",
+      "source_row_id": "r10-refund-c2",
+      "order_id": "J10-C2",
+      "refund_at": "2026-09-14T00:00:00Z",
+      "status": "success",
+      "payment_window": "current"
+    }
+  ],
+  "missing_product_joins": [
+    {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_missing_product_join",
+      "product_id": "product_missing",
+      "order_id": "J10-C2",
+      "source_row_id": "r10-row-c2",
+      "window": "current"
+    }
+  ],
+  "quality_checks": {
+    "all_orders_mature": true,
+    "payments_watermark_covered": true,
+    "refunds_watermark_covered": true,
+    "duplicate_order_key_count": 0,
+    "duplicate_refund_key_count": 0,
+    "duplicate_product_key_count": 0,
+    "duplicate_category_key_count": 0,
+    "scope_mismatch_count": 0,
+    "orphan_refund_count": 0,
+    "missing_product_order_count": 1
+  },
+  "expected": {
+    "outcome": "blocked_by_quality",
+    "reasons": [
+      "订单产品复合键关联缺失"
+    ],
+    "metrics": {
+      "baseline": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "current": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "absolute_change_ratio": null,
+      "relative_change": null
+    },
+    "aggregate_rows": [],
+    "group_order_ids": {},
+    "group_refunded_order_ids": {}
+  },
+  "boundaries": [
+    "原始候选支付两窗各两笔，仅证明非空，不作为发布N；时间、水位、支付有效性、业务键、退款关联均合法。",
+    "缺失的是产品实体复合键，不是合法产品的category_id=null；不归入__unknown__，也不静默丢弃故障订单后发布剩余组。",
+    "本例按现有阻断样例粒度阻断整次双窗比较；两窗指标及变化均不发布，全部聚合行和归组台账为空。",
+    "outcome等为本地Oracle预期，不宣称生产TaskView错误码或DQ状态映射已经实现。现有参考函数缺失产品时仍归unknown是已知差异，本轮不修改。",
+    "修复应建立新快照并重做DQ，不能在冻结输入内补产品或换成category_id=null来使当前实现通过。"
+  ]
+}

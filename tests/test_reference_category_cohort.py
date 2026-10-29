@@ -255,15 +255,12 @@ def test_single_region_filters_denominator_and_refunds_before_grouping(category_
     assert_partition(actual)
 
 
-@pytest.mark.parametrize("missing", ("product", "category_id"))
 def test_unknown_category_preserves_orders_instead_of_dropping_them(
-    category_fixture: dict, missing: str,
+    category_fixture: dict,
 ) -> None:
+    """合法产品存在，只有非关键category_id缺失；产品缺失改由关键拒绝测试覆盖。"""
     data = category_fixture["input"]
-    if missing == "product":
-        data["dimensions"]["products"].pop(0)
-    else:
-        data["dimensions"]["products"][0]["category_id"] = None
+    data["dimensions"]["products"][0]["category_id"] = None
 
     actual = calculate_category_reference(data)
 
@@ -271,6 +268,23 @@ def test_unknown_category_preserves_orders_instead_of_dropping_them(
     assert category_rows(actual, 1)["__unknown__"]["paid_orders"] == 2
     assert category_rows(actual, 1)["__unknown__"]["refunded_orders"] == 1
     assert_partition(actual)
+
+
+@pytest.mark.parametrize("comparison", ("ready", "immature"))
+def test_missing_product_join_is_rejected_before_comparison_gate(
+    category_fixture: dict, comparison: str,
+) -> None:
+    """将原missing=product变体更正为拒绝；比较前提不足也不能绕过关键关联检查。"""
+    data = category_fixture["input"]
+    data["dimensions"]["products"].pop(0)
+    if comparison == "immature":
+        data["context"]["as_of"] = "2026-09-18T23:59:59.999999Z"
+    original = copy.deepcopy(category_fixture)
+
+    with pytest.raises(ValueError, match="订单产品复合键关联缺失"):
+        calculate_category_reference(data)
+
+    assert category_fixture == original
 
 
 def test_missing_display_catalog_preserves_known_category_id(category_fixture: dict) -> None:
@@ -517,6 +531,39 @@ def entry_exit_v2_case() -> Iterator[tuple[dict, dict]]:
     assert manual == original_manual
     assert fixture_path.read_bytes() == fixture_bytes
     assert manual_path.read_bytes() == manual_bytes
+
+
+def test_category_reference_a3_10_rejects_missing_product_join() -> None:
+    """固定A3-10关键关联异常必须拒绝，不生成或回写blocked_by_quality预期。"""
+    fixture_path = FIXTURE_PATH.parent / "10_missing_product_join_blocks.json"
+    manual_path = (
+        Path(__file__).resolve().parent.parent / "reference" / "manual_checks" / "A3-10.json"
+    )
+    fixture_bytes, manual_bytes = fixture_path.read_bytes(), manual_path.read_bytes()
+    assert hashlib.sha256(fixture_bytes).hexdigest() == (
+        "4f2b8b097451cdbf2c3b7f97ff115235c58dea2de2a45b147d93a02bf0371cc3"
+    )
+    assert hashlib.sha256(manual_bytes).hexdigest() == (
+        "ce3e4aca7f5213792f0936df40bf61acb7505e84ad4bcbc8c7937845347b4fde"
+    )
+    fixture = json.loads(fixture_bytes.decode("utf-8"))
+    manual = json.loads(manual_bytes.decode("utf-8"))
+    original = copy.deepcopy((fixture, manual))
+    expected = fixture["expected"]
+    assert expected["outcome"] == manual["expected"]["outcome"] == "blocked_by_quality"
+    assert expected["aggregate_rows"] == []
+    try:
+        with pytest.raises(ValueError, match="订单产品复合键关联缺失") as caught:
+            calculate_category_reference(fixture["input"])
+        # 参考层拒绝须能定位故障业务键与原始来源，不要求返回生产质量状态。
+        for identifier in (
+            "domain_a", "fixture_missing_product_join", "product_missing", "J10-C2", "r10-row-c2",
+        ):
+            assert identifier in str(caught.value)
+    finally:
+        assert (fixture, manual) == original
+        assert fixture_path.read_bytes() == fixture_bytes
+        assert manual_path.read_bytes() == manual_bytes
 
 
 def test_category_reference_a3_08_v2_matches_frozen_rows_and_metrics(

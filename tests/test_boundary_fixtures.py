@@ -18,6 +18,7 @@ FIXTURE_FILES = (
     "08_category_entry_exit.json",
     "08_category_entry_exit.v1.json",
     "09_unknown_category_preserved.json",
+    "10_missing_product_join_blocks.json",
 )
 
 
@@ -539,3 +540,107 @@ def test_unknown_category_fixture_has_valid_product_joins_and_static_source_part
     assert len(all_refund_sources) == len(set(all_refund_sources)) == 5
     assert set(all_refund_sources) == {row["source_row_id"] for row in data["refunds"]}
     assert_expected_arithmetic(expected)
+
+
+def test_missing_product_join_fixture_isolates_critical_dq_and_suppresses_publication() -> None:
+    """只核验A3-10固定输入与先行阻断台账，不调用会将缺失产品降级的参考函数。"""
+    fixture = json.loads(
+        (FIXTURE_DIR / "10_missing_product_join_blocks.json").read_text(encoding="utf-8")
+    )
+    ledger = json.loads((FIXTURE_DIR / fixture["source_ledger"]).read_text(encoding="utf-8"))
+    assert (FIXTURE_DIR / fixture["manual_record"]).is_file()
+    data, expected = fixture["input"], fixture["expected"]
+    context = data["context"]
+    scope = context["domain_id"], context["snapshot_id"]
+    assert scope == ("domain_a", "fixture_missing_product_join")
+    assert context["horizon_seconds"] == 604800
+    assert context["business_timezone"] == "UTC"
+    assert context["filters"]["region_ids"] == []
+
+    def key(row: dict, field: str) -> tuple[str, str, str]:
+        return row["domain_id"], row["snapshot_id"], row[field]
+
+    def utc(value: str) -> datetime:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        assert parsed.utcoffset() is not None
+        return parsed
+
+    catalogs = {}
+    for catalog, field in (
+        ("products", "product_id"), ("categories", "category_id"),
+        ("regions", "region_id"), ("channels", "channel_id"),
+    ):
+        rows = data["dimensions"][catalog]
+        assert len({key(row, field) for row in rows}) == len(rows) == 1
+        assert all((row["domain_id"], row["snapshot_id"]) == scope for row in rows)
+        catalogs[catalog] = {key(row, field): row for row in rows}
+    products = catalogs["products"]
+    assert sorted(products) == [tuple(item) for item in ledger["product_catalog_keys"]]
+    assert products[(*scope, "product_known")]["category_id"] == "category_a"
+    assert catalogs["categories"][(*scope, "category_a")]["label"] == "已知类别A"
+    orders = {key(row, "order_id"): row for row in data["orders"]}
+    refunds = {key(row, "refund_id"): row for row in data["refunds"]}
+    assert len(orders) == len(data["orders"]) == len(ledger["order_ledger"]) == 4
+    assert len(refunds) == len(data["refunds"]) == len(ledger["refund_ledger"]) == 2
+    all_rows = [*orders.values(), *refunds.values()]
+    assert len({row["source_row_id"] for row in all_rows}) == 6
+    assert all((row["domain_id"], row["snapshot_id"]) == scope for row in all_rows)
+    by_id = {item["order_id"]: item for item in ledger["order_ledger"]}
+    missing, all_sources = [], []
+    for window in ("baseline", "current"):
+        start, end = (utc(context["windows"][window][field]) for field in ("start", "end"))
+        assert start < end <= utc(context["watermark"]["payments_through"])
+        candidates = [row for row in orders.values() if start <= utc(row["paid_at"]) < end]
+        assert len(candidates) == 2  # 仅核验候选非空，不发布N。
+        assert {row["source_row_id"] for row in candidates} == set(expected["cohort_source_row_ids"][window])
+        for order in candidates:
+            assert order["is_payment_valid"] is True
+            item = by_id[order["order_id"]]
+            assert item["window"] == window
+            assert all(order[field] == item[field] for field in ("source_row_id", "product_id", "paid_at"))
+            mature_at = utc(order["paid_at"]) + timedelta(seconds=604800)
+            assert mature_at == utc(item["matures_at"])
+            assert mature_at <= utc(context["as_of"])
+            assert mature_at <= utc(context["watermark"]["refunds_through"])
+            assert key(order, "region_id") in catalogs["regions"]
+            assert key(order, "channel_id") in catalogs["channels"]
+            if key(order, "product_id") not in products:
+                missing.append({
+                    "domain_id": scope[0], "snapshot_id": scope[1],
+                    "product_id": order["product_id"], "order_id": order["order_id"],
+                    "source_row_id": order["source_row_id"], "window": window,
+                })
+                assert item["product_join_status"] == "missing"
+                assert "category_id" not in item  # 不伪造category_id=null来冒充A3-09。
+            else:
+                assert item["product_join_status"] == "matched"
+                assert products[key(order, "product_id")]["category_id"] == item["category_id"] == "category_a"
+            source_refunds = [row for row in refunds.values() if key(row, "order_id") == key(order, "order_id")]
+            assert {row["refund_id"] for row in source_refunds} == set(item["refund_ids"])
+            assert {row["source_row_id"] for row in source_refunds} == set(item["refund_source_row_ids"])
+            all_sources.append(order["source_row_id"])
+    assert len(all_sources) == len(set(all_sources)) == 4
+    assert missing == expected["missing_product_joins"] == ledger["missing_product_joins"]
+    assert len(missing) == expected["quality_checks"]["missing_product_order_count"] == 1
+    assert missing[0]["order_id"] == "J10-C2" and missing[0]["source_row_id"] == "r10-row-c2"
+    for item in ledger["refund_ledger"]:
+        refund = refunds[(*scope, item["refund_id"])]
+        assert all(refund[field] == item[field] for field in ("source_row_id", "order_id", "refund_at", "status"))
+        assert refund["status"] == "success"
+        order = orders[key(refund, "order_id")]
+        assert utc(order["paid_at"]) <= utc(refund["refund_at"]) <= utc(order["paid_at"]) + timedelta(days=7)
+        assert utc(refund["refund_at"]) <= utc(context["as_of"])
+        assert item["payment_window"] == by_id[refund["order_id"]]["window"]
+    assert expected["quality_checks"] == ledger["quality_checks"]
+    assert all(expected["quality_checks"][name] is True for name in (
+        "all_orders_mature", "payments_watermark_covered", "refunds_watermark_covered",
+    ))
+    assert all(value == 0 for name, value in expected["quality_checks"].items()
+               if name.endswith("_count") and name != "missing_product_order_count")
+    assert expected["outcome"] == ledger["expected"]["outcome"] == "blocked_by_quality"
+    assert expected["reasons"] == ledger["expected"]["reasons"] == ["订单产品复合键关联缺失"]
+    assert expected["metrics"] == ledger["expected"]["metrics"]
+    assert expected["aggregate_rows"] == ledger["expected"]["aggregate_rows"] == []
+    assert expected["group_order_ids"] == ledger["expected"]["group_order_ids"] == {}
+    assert expected["group_refunded_order_ids"] == ledger["expected"]["group_refunded_order_ids"] == {}
+    assert_expected_arithmetic(expected)  # 正式两窗N/U/率和变化均为null。

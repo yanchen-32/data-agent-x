@@ -35,7 +35,8 @@ def calculate_category_reference(data: Mapping[str, Any]) -> dict[str, Any]:
 
     总体 Oracle 提供原有输入检查、支付队列和比较前提；此处不改变它。
     分组按产品复合键关联后取 category_id，展示目录只提供 label。
-    缺失产品或类别ID归入 __unknown__；已知ID缺展示名仍保留ID、label=None。
+    所有输入订单须唯一关联产品，缺失关联抛出ValueError，不能降级为未知类别。
+    合法产品的类别ID缺失归入 __unknown__；已知ID缺展示名仍保留ID、label=None。
     输入结构须先核验；本函数不是生产导入、鉴权或正式 AggregateRow 序列化器。
     比较前提不足时不发布任何聚合行，仅保留总体候选订单诊断。
     """
@@ -55,6 +56,16 @@ def calculate_category_reference(data: Mapping[str, Any]) -> dict[str, Any]:
         label = category.get("label")
         if label is not None and (not isinstance(label, str) or not label.strip()):
             raise ValueError("类别label必须为非空字符串或null")
+
+    # 与总体输入检查、目录检查一致：关键关联覆盖全部固定Scope输入，先于比较门槛。
+    for order in data["orders"]:
+        product_key = _key(order, "product_id")
+        if product_key not in products:
+            raise ValueError(
+                "订单产品复合键关联缺失："
+                f"order_id={order['order_id']}, source_row_id={order['source_row_id']}, "
+                f"product_key={product_key!r}"
+            )
 
     result = {
         **overall,
@@ -89,8 +100,8 @@ def calculate_category_reference(data: Mapping[str, Any]) -> dict[str, Any]:
         cohort = {(*scope, order_id) for order_id in overall["candidate_order_ids"][window]}
         groups: dict[str, set[tuple[str, str, str]]] = {}
         for order_key in sorted(cohort):
-            product = products.get(_key(orders[order_key], "product_id"))
-            category_id = product.get("category_id") if product is not None else None
+            product = products[_key(orders[order_key], "product_id")]
+            category_id = product.get("category_id")
             groups.setdefault(category_id or "__unknown__", set()).add(order_key)
 
         n, u = len(cohort), len(cohort & refunded)

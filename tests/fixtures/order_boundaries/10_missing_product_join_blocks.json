@@ -1,0 +1,240 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开合成开发阻断样例；非真实授权、生产导入批准或正式盲测记录",
+  "metric_version": null,
+  "draft_status": "先行关键DQ阻断预期；尚待业务计算器实现及用户独立人工验收",
+  "oracle_origin": "先保存reference/manual_checks/A3-10.json及A3-10.md，依据冻结规则静态填写阻断预期；未调用现有参考函数反推答案",
+  "oracle_record": "ORACLE.md",
+  "manual_record": "../../../reference/manual_checks/A3-10.md",
+  "source_ledger": "../../../reference/manual_checks/A3-10.json",
+  "sources": [
+    {
+      "title": "DD02 关键质量阻断与指标可比前提",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献"
+      ]
+    },
+    {
+      "title": "指标目录与复合关联契约",
+      "path": "../../../docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "sections": [
+        "分组",
+        "数据关联与质量约束"
+      ]
+    },
+    {
+      "title": "SRS 关键质量与非关键维度缺失边界",
+      "path": "../../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sections": [
+        "§4.4 数据质量处置与一致性"
+      ]
+    }
+  ],
+  "case_id": "A3-10",
+  "title": "支付订单缺失产品复合键关联，关键DQ阻断而非未知类别",
+  "business_rules": [
+    "所有事实与目录固定在合成授权前提domain_a / fixture_missing_product_join中；地区过滤为空，无域/快照混入。",
+    "J10-C2 / r10-row-c2引用(domain_a,fixture_missing_product_join,product_missing)，但产品目录不存在该完整复合键。",
+    "这是关键产品关联缺失，不是合法产品的category_id=null；不得将该订单降级为(category,__unknown__)，也不得静默丢弃后发布正常剩余组。",
+    "唯一质量异常为一笔订单缺失产品关联；支付/退款业务键及来源行唯一，退款关联订单合法，已注册目录键唯一，时间、成熟、水位及正候选样本均合法。",
+    "DQ失败按本样例整次双窗比较阻断：两窗N/U/率及变化均为null，所有聚合行和归组台账为空。",
+    "cohort_source_row_ids仅定位支付候选，不是发布指标；null不代表原始候选分母为零，不输出诊断退款率冒充正式结果。",
+    "outcome等为本地Oracle预期，不宣称正式API错误码或生产DQ状态映射；当前参考函数缺失产品归unknown的行为是已知待修差异。",
+    "修复必须创建新快照重新DQ，不修改此输入或预期来迎合现有参考函数；本轮不修改参考函数或旧Fixture。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_missing_product_join",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-23T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-23T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": []
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "r10-row-b1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_missing_product_join",
+        "order_id": "J10-B1",
+        "product_id": "product_known",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-02T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r10-row-b2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_missing_product_join",
+        "order_id": "J10-B2",
+        "product_id": "product_known",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-04T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r10-row-c1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_missing_product_join",
+        "order_id": "J10-C1",
+        "product_id": "product_known",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-09T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r10-row-c2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_missing_product_join",
+        "order_id": "J10-C2",
+        "product_id": "product_missing",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-12T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "r10-refund-b1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_missing_product_join",
+        "refund_id": "JR10-B1",
+        "order_id": "J10-B1",
+        "refund_at": "2026-09-04T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r10-refund-c2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_missing_product_join",
+        "refund_id": "JR10-C2",
+        "order_id": "J10-C2",
+        "refund_at": "2026-09-14T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_missing_product_join",
+          "product_id": "product_known",
+          "category_id": "category_a"
+        }
+      ],
+      "categories": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_missing_product_join",
+          "category_id": "category_a",
+          "label": "已知类别A"
+        }
+      ],
+      "regions": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_missing_product_join",
+          "region_id": "region_northwest",
+          "label": "西北"
+        }
+      ],
+      "channels": [
+        {
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_missing_product_join",
+          "channel_id": "channel_web",
+          "label": "网页"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "blocked_by_quality",
+    "reasons": [
+      "订单产品复合键关联缺失"
+    ],
+    "cohort_source_row_ids": {
+      "baseline": [
+        "r10-row-b1",
+        "r10-row-b2"
+      ],
+      "current": [
+        "r10-row-c1",
+        "r10-row-c2"
+      ]
+    },
+    "missing_product_joins": [
+      {
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_missing_product_join",
+        "product_id": "product_missing",
+        "order_id": "J10-C2",
+        "source_row_id": "r10-row-c2",
+        "window": "current"
+      }
+    ],
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_key_count": 0,
+      "duplicate_refund_key_count": 0,
+      "duplicate_product_key_count": 0,
+      "duplicate_category_key_count": 0,
+      "scope_mismatch_count": 0,
+      "orphan_refund_count": 0,
+      "missing_product_order_count": 1
+    },
+    "metrics": {
+      "baseline": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "current": {
+        "N": null,
+        "U": null,
+        "rate": null
+      },
+      "absolute_change_ratio": null,
+      "relative_change": null
+    },
+    "aggregate_rows": [],
+    "group_order_ids": {},
+    "group_refunded_order_ids": {}
+  },
+  "calculation_basis": [
+    "先保存独立来源台账与阻断说明，再填写expected；不调用参考函数、生产代码或SQL生成阻断答案。",
+    "四笔有效支付分别为J10-B1/B2与J10-C1/C2，两窗各有两笔候选，订单与六条来源行唯一。",
+    "产品目录只有product_known；J10-C2 / r10-row-c2引用product_missing，完整复合键未匹配，缺失关联数为1。",
+    "两笔success退款JR10-B1、JR10-C2分别关联存在的J10-B1、J10-C2，均为支付后2天，故不是孤立或观察期异常退款。",
+    "四单成熟日依次09-09、09-11、09-16、09-19，as_of与退款水位09-23覆盖，支付水位09-15覆盖双窗end。",
+    "其余DQ均合法，但关键产品关联缺失足以阻断整次比较；两窗正式N/U/率及变化均为null，不输出任何类别或unknown行。",
+    "A3-09产品真实存在但category_id=null可进入未知组；本例产品实体缺失，不能复用其非关键未知处理。"
+  ]
+}
