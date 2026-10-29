@@ -54,4 +54,6 @@ assert len(actual["aggregate_rows"]) == 6  # 四条类别行与两条总计行
 
 A3-08 版本定位：当前 `08_category_entry_exit.json` 是面向后续非平凡贡献测试的v2新快照，先行逐单输入与来源见 [v2台账](manual_checks/A3-08_v2.md)。旧版原字节保存在 `08_category_entry_exit.v1.json`，原有3项计算回归加1项SHA-256绑定继续核对v1及其独立JSON台账，不修改冻结hash或旧数值。两版均保留A/shared、B/exit、C/entry；v2让共享组的率及支付占比变化，并让退出、新增组均有有效退款。v2已先保存独立预期，再实际调用参考函数核对六行结果及总计变化，全部一致，见 [v2冻结与执行记录](manual_checks/A3-08_v2_expected.md)；现已新增四项v2专门pytest计算回归，复用既有辅助函数并绑定冻结哈希，执行证据见 [v2回归记录](regression_checks/A3-08_v2.md)，v1原四项保持通过。旧数值与执行证据见 [v1回归记录](regression_checks/A3-08.md)。缺席组不补行，暂不计算贡献分解，也不代表生产批准或用户签字。
 
+A3-09 固定样例 `09_unknown_category_preserved.json` 保存合法产品关联下的非关键未知类别：product_unknown存在且复合键唯一，仅category_id为null；两窗同时包含已知组与__unknown__组且退款率不同。先行逐单预期、来源和实际静态运行记录见 [A3-09说明](manual_checks/A3-09.md)。现已新增一项固定Fixture参考计算回归：先保存 [独立台账](manual_checks/A3-09_expected.json)，再直接从input计算并与台账/静态预期三方比较，六行精确分数、总计变化、来源与守恒一致，且输入和预期不变；冻结指纹和实际运行记录见 [A3-09回归](regression_checks/A3-09.md)。不重复既有unknown变体，不把产品关联关键DQ异常混入本例或静默降级。
+
 未来生产实现应独立编写，并与这些固定预期比较，不能导入本参考函数作为其业务实现，否则失去对照独立性。

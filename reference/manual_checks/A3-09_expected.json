@@ -1,0 +1,361 @@
+{
+  "case_id": "A3-09",
+  "record_date": "2026-10-28",
+  "derivation": "本轮仅提取原始input逐单推导并先保存此台账，再重新读取既有expected及调用参考函数；本会话此前已知目标值，非首次盲审、非用户签字。",
+  "source": "tests/fixtures/order_boundaries/09_unknown_category_preserved.json",
+  "source_sha256": "d9677959c20e91b6965e984035742a6524592896fbf9ce40728192a43bd8439e",
+  "input_sha256": "6d504013cfcf21f98b4cac416ac2acc39283136212ee867f83d837fa6801ed56",
+  "scope": {
+    "domain_id": "domain_a",
+    "snapshot_id": "fixture_unknown_category_preserved",
+    "horizon_seconds": 604800,
+    "business_timezone": "UTC",
+    "region_ids": []
+  },
+  "rules": [
+    "产品按完整域/快照/product_id唯一关联；product_unknown存在，仅category_id=null。未知组为(category,__unknown__)，label=null。",
+    "两窗支付集合左闭右开，全部支付有效；退款按订单支付队列归属，不按退款日期分窗。",
+    "7天成熟与支付/退款水位完整；success退款须在[paid_at,paid_at+H]且<=as_of，U按订单去重。",
+    "已知/未知组互斥穷尽，各窗ΣN组=N总计、ΣU组=U总计；未知订单和退款不得静默丢弃。",
+    "产品关联异常或已知ID缺展示名不属于本Fixture；不新增DQ映射或贡献分解。"
+  ],
+  "order_ledger": [
+    {
+      "window": "baseline",
+      "order_id": "K9-B1",
+      "source_row_id": "r09-row-k-b1",
+      "product_id": "product_known",
+      "category_id": "category_a",
+      "group_id": "category_a",
+      "paid_at": "2026-09-01T00:00:00Z",
+      "matures_at": "2026-09-08T00:00:00Z",
+      "refund_ids": [],
+      "refund_source_rows": [],
+      "N": 1,
+      "U": 0
+    },
+    {
+      "window": "baseline",
+      "order_id": "K9-B2",
+      "source_row_id": "r09-row-k-b2",
+      "product_id": "product_known",
+      "category_id": "category_a",
+      "group_id": "category_a",
+      "paid_at": "2026-09-03T00:00:00Z",
+      "matures_at": "2026-09-10T00:00:00Z",
+      "refund_ids": [],
+      "refund_source_rows": [],
+      "N": 1,
+      "U": 0
+    },
+    {
+      "window": "baseline",
+      "order_id": "U9-B1",
+      "source_row_id": "r09-row-u-b1",
+      "product_id": "product_unknown",
+      "category_id": null,
+      "group_id": "__unknown__",
+      "paid_at": "2026-09-04T00:00:00Z",
+      "matures_at": "2026-09-11T00:00:00Z",
+      "refund_ids": [
+        "R9-U-B1"
+      ],
+      "refund_source_rows": [
+        "r09-refund-u-b1"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "baseline",
+      "order_id": "U9-B2",
+      "source_row_id": "r09-row-u-b2",
+      "product_id": "product_unknown",
+      "category_id": null,
+      "group_id": "__unknown__",
+      "paid_at": "2026-09-07T00:00:00Z",
+      "matures_at": "2026-09-14T00:00:00Z",
+      "refund_ids": [
+        "R9-U-B2"
+      ],
+      "refund_source_rows": [
+        "r09-refund-u-b2"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "current",
+      "order_id": "K9-C1",
+      "source_row_id": "r09-row-k-c1",
+      "product_id": "product_known",
+      "category_id": "category_a",
+      "group_id": "category_a",
+      "paid_at": "2026-09-08T00:00:00Z",
+      "matures_at": "2026-09-15T00:00:00Z",
+      "refund_ids": [
+        "R9-K-C1"
+      ],
+      "refund_source_rows": [
+        "r09-refund-k-c1"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "current",
+      "order_id": "K9-C2",
+      "source_row_id": "r09-row-k-c2",
+      "product_id": "product_known",
+      "category_id": "category_a",
+      "group_id": "category_a",
+      "paid_at": "2026-09-10T00:00:00Z",
+      "matures_at": "2026-09-17T00:00:00Z",
+      "refund_ids": [],
+      "refund_source_rows": [],
+      "N": 1,
+      "U": 0
+    },
+    {
+      "window": "current",
+      "order_id": "U9-C1",
+      "source_row_id": "r09-row-u-c1",
+      "product_id": "product_unknown",
+      "category_id": null,
+      "group_id": "__unknown__",
+      "paid_at": "2026-09-11T00:00:00Z",
+      "matures_at": "2026-09-18T00:00:00Z",
+      "refund_ids": [
+        "R9-U-C1"
+      ],
+      "refund_source_rows": [
+        "r09-refund-u-c1"
+      ],
+      "N": 1,
+      "U": 1
+    },
+    {
+      "window": "current",
+      "order_id": "U9-C2",
+      "source_row_id": "r09-row-u-c2",
+      "product_id": "product_unknown",
+      "category_id": null,
+      "group_id": "__unknown__",
+      "paid_at": "2026-09-14T00:00:00Z",
+      "matures_at": "2026-09-21T00:00:00Z",
+      "refund_ids": [
+        "R9-U-C2"
+      ],
+      "refund_source_rows": [
+        "r09-refund-u-c2"
+      ],
+      "N": 1,
+      "U": 1
+    }
+  ],
+  "refund_ledger": [
+    {
+      "refund_id": "R9-U-B1",
+      "source_row_id": "r09-refund-u-b1",
+      "order_id": "U9-B1",
+      "refund_at": "2026-09-06T00:00:00Z",
+      "window": "baseline",
+      "group_id": "__unknown__"
+    },
+    {
+      "refund_id": "R9-U-B2",
+      "source_row_id": "r09-refund-u-b2",
+      "order_id": "U9-B2",
+      "refund_at": "2026-09-09T00:00:00Z",
+      "window": "baseline",
+      "group_id": "__unknown__"
+    },
+    {
+      "refund_id": "R9-K-C1",
+      "source_row_id": "r09-refund-k-c1",
+      "order_id": "K9-C1",
+      "refund_at": "2026-09-10T00:00:00Z",
+      "window": "current",
+      "group_id": "category_a"
+    },
+    {
+      "refund_id": "R9-U-C1",
+      "source_row_id": "r09-refund-u-c1",
+      "order_id": "U9-C1",
+      "refund_at": "2026-09-13T00:00:00Z",
+      "window": "current",
+      "group_id": "__unknown__"
+    },
+    {
+      "refund_id": "R9-U-C2",
+      "source_row_id": "r09-refund-u-c2",
+      "order_id": "U9-C2",
+      "refund_at": "2026-09-16T00:00:00Z",
+      "window": "current",
+      "group_id": "__unknown__"
+    }
+  ],
+  "aggregate_rows": [
+    {
+      "window_index": 0,
+      "dimension_id": null,
+      "group_id": null,
+      "group_label": null,
+      "paid_orders": 4,
+      "refunded_orders": 2,
+      "rate_fraction": "1/2"
+    },
+    {
+      "window_index": 0,
+      "dimension_id": "category",
+      "group_id": "__unknown__",
+      "group_label": null,
+      "paid_orders": 2,
+      "refunded_orders": 2,
+      "rate_fraction": "1"
+    },
+    {
+      "window_index": 0,
+      "dimension_id": "category",
+      "group_id": "category_a",
+      "group_label": "已知类别A",
+      "paid_orders": 2,
+      "refunded_orders": 0,
+      "rate_fraction": "0"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": null,
+      "group_id": null,
+      "group_label": null,
+      "paid_orders": 4,
+      "refunded_orders": 3,
+      "rate_fraction": "3/4"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": "category",
+      "group_id": "__unknown__",
+      "group_label": null,
+      "paid_orders": 2,
+      "refunded_orders": 2,
+      "rate_fraction": "1"
+    },
+    {
+      "window_index": 1,
+      "dimension_id": "category",
+      "group_id": "category_a",
+      "group_label": "已知类别A",
+      "paid_orders": 2,
+      "refunded_orders": 1,
+      "rate_fraction": "1/2"
+    }
+  ],
+  "cohort_order_ids": {
+    "baseline": [
+      "K9-B1",
+      "K9-B2",
+      "U9-B1",
+      "U9-B2"
+    ],
+    "current": [
+      "K9-C1",
+      "K9-C2",
+      "U9-C1",
+      "U9-C2"
+    ]
+  },
+  "group_order_ids": {
+    "baseline": {
+      "__unknown__": [
+        "U9-B1",
+        "U9-B2"
+      ],
+      "category_a": [
+        "K9-B1",
+        "K9-B2"
+      ]
+    },
+    "current": {
+      "__unknown__": [
+        "U9-C1",
+        "U9-C2"
+      ],
+      "category_a": [
+        "K9-C1",
+        "K9-C2"
+      ]
+    }
+  },
+  "group_refunded_order_ids": {
+    "baseline": {
+      "__unknown__": [
+        "U9-B1",
+        "U9-B2"
+      ],
+      "category_a": []
+    },
+    "current": {
+      "__unknown__": [
+        "U9-C1",
+        "U9-C2"
+      ],
+      "category_a": [
+        "K9-C1"
+      ]
+    }
+  },
+  "metrics": {
+    "baseline": {
+      "N": 4,
+      "U": 2,
+      "rate_fraction": "1/2"
+    },
+    "current": {
+      "N": 4,
+      "U": 3,
+      "rate_fraction": "3/4"
+    }
+  },
+  "absolute_change_fraction": "1/4",
+  "relative_change_fraction": "1/2",
+  "group_lifecycle": {
+    "shared": [
+      "__unknown__",
+      "category_a"
+    ],
+    "exit": [],
+    "entry": []
+  },
+  "quality_checks": {
+    "all_orders_mature": true,
+    "payments_watermark_covered": true,
+    "refunds_watermark_covered": true
+  },
+  "conservation": {
+    "baseline": {
+      "N": "2+2=4",
+      "U": "0+2=2"
+    },
+    "current": {
+      "N": "2+2=4",
+      "U": "1+2=3"
+    }
+  },
+  "maturity": "最晚09-21成熟，as_of/退款水位09-23覆盖，支付水位09-15覆盖两窗end。",
+  "dropped_unknown_counterexample": {
+    "baseline": {
+      "N": 2,
+      "U": 0,
+      "rate_fraction": "0"
+    },
+    "current": {
+      "N": 2,
+      "U": 1,
+      "rate_fraction": "1/2"
+    },
+    "absolute_change_fraction": "1/2",
+    "relative_change_fraction": null
+  },
+  "freeze_boundary": "仅冻结开发数值快照，不改既有Fixture与创建阶段说明；事后对照另记，不通过参考输出修正本台账。"
+}

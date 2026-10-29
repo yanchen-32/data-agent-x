@@ -665,3 +665,117 @@ def test_category_reference_a3_08_v2_traces_order_and_refund_sources(
     assert refund_events == set(expected["qualifying_refund_event_ids"][window])
     assert len(refund_events) == expected["qualifying_refund_event_counts"][window]
     assert_partition(actual)
+
+
+def test_category_reference_a3_09_matches_frozen_unknown_category_oracle() -> None:
+    """从固定input计算，对照先行台账与静态expected；不生成答案、不丢未知单。"""
+    fixture_path = FIXTURE_PATH.parent / "09_unknown_category_preserved.json"
+    manual_path = (
+        Path(__file__).resolve().parent.parent / "reference" / "manual_checks"
+        / "A3-09_expected.json"
+    )
+    fixture_bytes, manual_bytes = fixture_path.read_bytes(), manual_path.read_bytes()
+    assert hashlib.sha256(fixture_bytes).hexdigest() == (
+        "d9677959c20e91b6965e984035742a6524592896fbf9ce40728192a43bd8439e"
+    )
+    assert hashlib.sha256(manual_bytes).hexdigest() == (
+        "07dca84a024330d35ff1bfb68ff8159d2d7cf52a953926ee76afd1e07b7ae35f"
+    )
+    fixture = json.loads(fixture_bytes.decode("utf-8"))
+    manual = json.loads(manual_bytes.decode("utf-8"))
+    data, expected = fixture["input"], fixture["expected"]
+    original = copy.deepcopy((fixture, manual))
+    canonical = json.dumps(data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    assert hashlib.sha256(canonical.encode("utf-8")).hexdigest() == manual["input_sha256"] == (
+        "6d504013cfcf21f98b4cac416ac2acc39283136212ee867f83d837fa6801ed56"
+    )
+    assert manual["source_sha256"] == hashlib.sha256(fixture_bytes).hexdigest()
+
+    actual = calculate_category_reference(data)
+
+    wanted = [
+        {**{key: value for key, value in row.items() if key != "rate_fraction"},
+         "rate": Fraction(row["rate_fraction"])}
+        for row in manual["aggregate_rows"]
+    ]
+    static = [{**row, "rate": Fraction(row["rate"])} for row in expected["aggregate_rows"]]
+    assert len(actual["aggregate_rows"]) == len(wanted) == len(static) == 6
+    assert actual["aggregate_rows"] == wanted == static
+    assert actual["outcome"] == expected["outcome"] == "ready"
+    assert actual["reasons"] == expected["reasons"] == []
+    assert actual["quality_checks"] == manual["quality_checks"]
+    assert actual["candidate_order_ids"] == manual["cohort_order_ids"]
+    assert actual["group_order_ids"] == manual["group_order_ids"]
+    assert actual["group_refunded_order_ids"] == manual["group_refunded_order_ids"]
+    assert_partition(actual)
+
+    scope = data["context"]["domain_id"], data["context"]["snapshot_id"]
+    orders = {row["order_id"]: row for row in data["orders"]}
+    products = {
+        (row["domain_id"], row["snapshot_id"], row["product_id"]): row
+        for row in data["dimensions"]["products"]
+    }
+    refunds = {row["refund_id"]: row for row in data["refunds"]}
+    assert len(products) == 2 and len(orders) == len(manual["order_ledger"]) == 8
+    assert len(refunds) == len(manual["refund_ledger"]) == 5
+    assert set(orders) == {order_id for ids in actual["candidate_order_ids"].values() for order_id in ids}
+    for item in manual["order_ledger"]:
+        raw = orders[item["order_id"]]
+        for field in ("source_row_id", "product_id", "paid_at"):
+            assert raw[field] == item[field]
+        assert (raw["domain_id"], raw["snapshot_id"]) == scope
+        # 必须有合法产品关联；仅category_id=None可成为本样例的unknown。
+        product = products[(*scope, raw["product_id"])]
+        assert product["category_id"] == item["category_id"]
+        assert item["group_id"] == (
+            "__unknown__" if product["category_id"] is None else product["category_id"]
+        )
+    for item in manual["refund_ledger"]:
+        raw = refunds[item["refund_id"]]
+        for field in ("source_row_id", "order_id", "refund_at"):
+            assert raw[field] == item[field]
+        assert (raw["domain_id"], raw["snapshot_id"]) == scope
+        assert raw["status"] == "success"
+
+    for index, window in enumerate(("baseline", "current")):
+        groups = category_rows(actual, index)
+        assert set(groups) == {"category_a", "__unknown__"}
+        assert groups["__unknown__"]["group_label"] is None
+        assert groups["__unknown__"]["rate"] == Fraction(1)
+        assert isinstance(groups["__unknown__"]["rate"], Fraction)
+        wanted_metrics = manual["metrics"][window]
+        assert actual["metrics"][window] == {
+            "N": wanted_metrics["N"], "U": wanted_metrics["U"],
+            "rate": Fraction(wanted_metrics["rate_fraction"]),
+        }
+        assert actual["metrics"][window] == {
+            **expected["metrics"][window], "rate": Fraction(expected["metrics"][window]["rate"]),
+        }
+        assert isinstance(actual["metrics"][window]["rate"], Fraction)
+        for group_id in groups:
+            members = actual["group_order_ids"][window][group_id]
+            source_ids = {orders[order_id]["source_row_id"] for order_id in members}
+            assert source_ids == set(expected["group_cohort_source_row_ids"][group_id][window])
+            refunded = actual["group_refunded_order_ids"][window][group_id]
+            ledger = [row for row in manual["order_ledger"]
+                      if row["window"] == window and row["group_id"] == group_id]
+            assert set(refunded) == {row["order_id"] for row in ledger if row["U"]}
+            events = [row for row in manual["refund_ledger"]
+                      if row["window"] == window and row["group_id"] == group_id]
+            assert {row["order_id"] for row in events} == set(refunded)
+            assert {row["source_row_id"] for row in events} == set(
+                expected["group_refund_source_row_ids"][group_id][window]
+            )
+        assert {row["refund_id"] for row in manual["refund_ledger"] if row["window"] == window} == set(
+            expected["qualifying_refund_event_ids"][window]
+        )
+    for field, manual_field in (
+        ("absolute_change_ratio", "absolute_change_fraction"),
+        ("relative_change", "relative_change_fraction"),
+    ):
+        assert actual["metrics"][field] == Fraction(manual[manual_field])
+        assert actual["metrics"][field] == Fraction(expected["metrics"][field])
+        assert isinstance(actual["metrics"][field], Fraction)
+    assert (fixture, manual) == original
+    assert fixture_path.read_bytes() == fixture_bytes
+    assert manual_path.read_bytes() == manual_bytes

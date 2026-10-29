@@ -17,6 +17,7 @@ FIXTURE_FILES = (
     "07_same_label_distinct_category_ids.json",
     "08_category_entry_exit.json",
     "08_category_entry_exit.v1.json",
+    "09_unknown_category_preserved.json",
 )
 
 
@@ -425,3 +426,116 @@ def test_entry_exit_fixture_has_only_present_groups_and_consistent_static_totals
                 k: v for k, v in static.items() if k != "rate"
             }
             assert Fraction(manual["rate_fraction"]) == Fraction(static["rate"])
+
+
+def test_unknown_category_fixture_has_valid_product_joins_and_static_source_partition() -> None:
+    """核对A3-09固定输入的合法性与静态台账，不调用参考函数或生成预期。"""
+    fixture = json.loads(
+        (FIXTURE_DIR / "09_unknown_category_preserved.json").read_text(encoding="utf-8")
+    )
+    data, expected = fixture["input"], fixture["expected"]
+    context = data["context"]
+    scope = context["domain_id"], context["snapshot_id"]
+    assert (FIXTURE_DIR / fixture["manual_record"]).is_file()
+    assert context["horizon_seconds"] == 604800
+    assert context["business_timezone"] == "UTC"
+    assert context["filters"]["region_ids"] == []
+
+    def key(row: dict, field: str) -> tuple[str, str, str]:
+        return row["domain_id"], row["snapshot_id"], row[field]
+
+    def utc(value: str) -> datetime:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+    for catalog, field in (
+        ("products", "product_id"), ("categories", "category_id"),
+        ("regions", "region_id"), ("channels", "channel_id"),
+    ):
+        rows = data["dimensions"][catalog]
+        assert len({key(row, field) for row in rows}) == len(rows)
+        assert all((row["domain_id"], row["snapshot_id"]) == scope for row in rows)
+    products = {key(row, "product_id"): row for row in data["dimensions"]["products"]}
+    assert len(products) == 2
+    assert products[(*scope, "product_unknown")]["category_id"] is None
+    assert products[(*scope, "product_known")]["category_id"] == "category_a"
+    assert data["dimensions"]["categories"] == [
+        {"domain_id": scope[0], "snapshot_id": scope[1],
+         "category_id": "category_a", "label": "已知类别A"}
+    ]
+    orders = {row["source_row_id"]: row for row in data["orders"]}
+    assert len(orders) == len({key(row, "order_id") for row in data["orders"]}) == 8
+    assert len({key(row, "refund_id") for row in data["refunds"]}) == len(data["refunds"]) == 5
+    all_rows = [*data["orders"], *data["refunds"]]
+    assert len({row["source_row_id"] for row in all_rows}) == len(all_rows) == 13
+    assert all((row["domain_id"], row["snapshot_id"]) == scope for row in all_rows)
+    orders_by_key = {key(row, "order_id"): row for row in data["orders"]}
+    for refund in data["refunds"]:
+        assert key(refund, "order_id") in orders_by_key
+        paid_at = utc(orders_by_key[key(refund, "order_id")]["paid_at"])
+        assert refund["status"] == "success"
+        assert paid_at <= utc(refund["refund_at"]) <= paid_at + timedelta(days=7)
+        assert utc(refund["refund_at"]) <= utc(context["as_of"])
+    for order in orders.values():
+        assert key(order, "product_id") in products  # 关联失败必须失败，不能静默转unknown。
+        for catalog, field in (("regions", "region_id"), ("channels", "channel_id")):
+            assert key(order, field) in {key(row, field) for row in data["dimensions"][catalog]}
+
+    rows = expected["aggregate_rows"]
+    assert len(rows) == len({
+        (row["window_index"], row["dimension_id"], row["group_id"]) for row in rows
+    }) == 6
+    all_sources, all_refund_sources = [], []
+    for index, window in enumerate(("baseline", "current")):
+        window_rows = [row for row in rows if row["window_index"] == index]
+        groups = [row for row in window_rows if row["dimension_id"] == "category"]
+        totals = [row for row in window_rows if row["dimension_id"] is None]
+        assert len(window_rows) == 3 and len(groups) == 2 and len(totals) == 1
+        assert {row["group_id"] for row in groups} == {"category_a", "__unknown__"}
+        assert totals[0]["group_id"] is None and totals[0]["group_label"] is None
+        sources = []
+        for group in groups:
+            group_id = group["group_id"]
+            assert group["group_label"] == (None if group_id == "__unknown__" else "已知类别A")
+            source_ids = expected["group_cohort_source_row_ids"][group_id][window]
+            assert len(source_ids) == group["paid_orders"] == 2
+            group_orders = [orders[source_id] for source_id in source_ids]
+            for order in group_orders:
+                category_id = products[key(order, "product_id")]["category_id"]
+                assert ("__unknown__" if category_id is None else category_id) == group_id
+                assert order["is_payment_valid"] is True
+                paid_at = utc(order["paid_at"])
+                assert utc(context["windows"][window]["start"]) <= paid_at < utc(
+                    context["windows"][window]["end"]
+                )
+                mature_at = paid_at + timedelta(seconds=context["horizon_seconds"])
+                assert mature_at <= utc(context["as_of"])
+                assert mature_at <= utc(context["watermark"]["refunds_through"])
+            order_keys = {key(order, "order_id") for order in group_orders}
+            refunds = [row for row in data["refunds"] if key(row, "order_id") in order_keys]
+            refund_sources = {row["source_row_id"] for row in refunds}
+            assert refund_sources == set(expected["group_refund_source_row_ids"][group_id][window])
+            assert group["refunded_orders"] == len({key(row, "order_id") for row in refunds})
+            assert_cohort_arithmetic({
+                "N": group["paid_orders"], "U": group["refunded_orders"], "rate": group["rate"],
+            })
+            sources.extend(source_ids)
+            all_refund_sources.extend(refund_sources)
+        assert len(sources) == len(set(sources)) == 4
+        assert set(sources) == set(expected["cohort_source_row_ids"][window])
+        assert len({Fraction(row["rate"]) for row in groups}) == 2
+        for field, metric in (("paid_orders", "N"), ("refunded_orders", "U")):
+            assert sum(row[field] for row in groups) == totals[0][field] == expected["metrics"][window][metric]
+        assert Fraction(totals[0]["rate"]) == Fraction(expected["metrics"][window]["rate"])
+        assert utc(context["watermark"]["payments_through"]) >= utc(context["windows"][window]["end"])
+        unknown = next(row for row in groups if row["group_id"] == "__unknown__")
+        disclosure = expected["unknown_category_diagnostics"][window]
+        assert disclosure["N"] == unknown["paid_orders"] == 2
+        assert disclosure["U"] == unknown["refunded_orders"] == 2
+        assert Fraction(disclosure["paid_order_share_fraction"]) == Fraction(2, totals[0]["paid_orders"])
+        assert Fraction(disclosure["refunded_order_share_fraction"]) == Fraction(2, totals[0]["refunded_orders"])
+        all_sources.extend(sources)
+    assert len(all_sources) == len(set(all_sources)) == 8
+    assert set(all_sources) == set(orders)
+    assert len(all_refund_sources) == len(set(all_refund_sources)) == 5
+    assert set(all_refund_sources) == {row["source_row_id"] for row in data["refunds"]}
+    assert_expected_arithmetic(expected)
