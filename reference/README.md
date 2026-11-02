@@ -59,3 +59,5 @@ A3-09 固定样例 `09_unknown_category_preserved.json` 保存合法产品关联
 A3-10 固定样例 `10_missing_product_join_blocks.json` 专门覆盖关键产品关联缺失，先行Oracle及来源见 [A3-10说明](manual_checks/A3-10.md) 和 [台账](manual_checks/A3-10.json)。J10-C2引用不存在的产品复合键，其他条件合法；预期整次比较blocked_by_quality，两窗指标及变化为null，不发布类别或unknown行。它与A3-09合法产品category_id=null明确区分。现已完成参考层最小修复：缺失产品关联以ValueError拒绝，合法category_id=null仍保留；原missing=product冲突变体改为拒绝检查。真实红灯、规则更正与绿灯回归见 [A3-10回归记录](regression_checks/A3-10.md)。先行Fixture与Oracle不改，ValueError不等于生产blocked_by_quality状态映射，未宣称生产DQ已实现。
 
 未来生产实现应独立编写，并与这些固定预期比较，不能导入本参考函数作为其业务实现，否则失去对照独立性。
+
+A3-11新增固定开发样例[单地区渠道分组](../tests/fixtures/order_boundaries/11_single_region_channel_grouping.json)。已先按原始输入复核并保存[独立expected](manual_checks/A3-11_expected.json)，冻结西北地区两个渠道和总计的六行、精确Fraction、来源集合及漏过滤反例；input与原草案相同，旧草案/初稿原字节保留，未发现数值或来源差异。冻结指纹、审核限制及实际21项静态pytest见[冻结审核记录](manual_checks/A3-11_freeze_review.md)。这只完成先行Oracle，当前category_cohort.py仍仅做类别分组；独立渠道计算及实际计算回归尚待实现，不宣称用户本人验收或G0通过。

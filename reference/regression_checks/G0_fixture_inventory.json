@@ -1,0 +1,506 @@
+{
+  "audit_date": "2026-10-30",
+  "public_commit_anchor": "d7b702a6ea517d5e3e0ff437d39c714e8155023c",
+  "purpose": "G0覆盖审查输入清单与只读检查结果；不是新的Oracle、dataset_manifest或正式验收签收。",
+  "scope": "10个主Fixture、A3-08 v1历史副本、两个A3-01嵌入控制；核心输入及参考代码/测试另与公开提交对象比对。",
+  "main_count": 10,
+  "historical_count": 1,
+  "embedded_variant_count": 2,
+  "notes": [
+    "diagnostic_totals仅为本轮独立标准库检查的诊断值，01/04仍不发布正式指标；不冒充参考函数返回字段。",
+    "03/10只定位关键错误并确认冻结不发布预期；参考层用ValueError拒绝，不实现生产blocked_by_quality对象。",
+    "全部主例均有原始source_row_id、业务规则和静态独立预期；独立性不等于首次盲审或用户本人签字。",
+    "当前仅category分组有固定聚合行；region过滤不等于region分组；channel事实输入均为channel_web。",
+    "未改任何Fixture、Oracle、源码、测试、宪章或路线图，不新增业务功能。"
+  ],
+  "current_execution": {
+    "scope": "开发工作树，本地非CI",
+    "command": ".venv/bin/python -B -m pytest tests/test_reference_category_cohort.py tests/test_reference_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider",
+    "exit_code": 0,
+    "result": "67 passed in 0.28s",
+    "tests": {
+      "category": 38,
+      "overall": 9,
+      "static": 20
+    },
+    "not_run": [
+      "全量pytest",
+      "公开工作树pytest",
+      "生产SQL",
+      "CI"
+    ]
+  },
+  "results": [
+    {
+      "file": "01_maturity_watermark.json",
+      "case_id": "A3-01",
+      "raw_orders": 2,
+      "raw_refunds": 0,
+      "outcome": "insufficient_evidence",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [],
+      "variant_ids": [
+        "A3-01-EQUAL",
+        "A3-01-IMMATURE"
+      ],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 1,
+          "U": 0,
+          "rate": "0"
+        },
+        "current": {
+          "N": 1,
+          "U": 0,
+          "rate": "0"
+        }
+      },
+      "sha256": "115afb0b7d40387dc0ef39e22af64af7ede26854d7b923e5ca33ba921d9fadba",
+      "historical_version": false,
+      "variants": [
+        {
+          "file": "A3-01-EQUAL",
+          "case_id": "A3-01",
+          "raw_orders": 2,
+          "raw_refunds": 0,
+          "outcome": "ready",
+          "duplicate_order_groups": 0,
+          "missing_product_sources": [],
+          "group_dimensions": [],
+          "variant_ids": [],
+          "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+          "diagnostic_totals": {
+            "baseline": {
+              "N": 1,
+              "U": 0,
+              "rate": "0"
+            },
+            "current": {
+              "N": 1,
+              "U": 0,
+              "rate": "0"
+            }
+          }
+        },
+        {
+          "file": "A3-01-IMMATURE",
+          "case_id": "A3-01",
+          "raw_orders": 2,
+          "raw_refunds": 0,
+          "outcome": "insufficient_evidence",
+          "duplicate_order_groups": 0,
+          "missing_product_sources": [],
+          "group_dimensions": [],
+          "variant_ids": [],
+          "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+          "diagnostic_totals": {
+            "baseline": {
+              "N": 1,
+              "U": 0,
+              "rate": "0"
+            },
+            "current": {
+              "N": 1,
+              "U": 0,
+              "rate": "0"
+            }
+          }
+        }
+      ],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_cohort.py"
+        ],
+        "tests": [
+          "test_reference_matches_precomputed_manual_record_and_fixture[01_maturity_watermark.json]",
+          "test_reference_matches_existing_control_variant"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/2026-10-14.json"
+        ]
+      }
+    },
+    {
+      "file": "02_utc_boundaries.json",
+      "case_id": "A3-02",
+      "raw_orders": 6,
+      "raw_refunds": 5,
+      "outcome": "ready",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 2,
+          "U": 1,
+          "rate": "1/2"
+        },
+        "current": {
+          "N": 2,
+          "U": 1,
+          "rate": "1/2"
+        }
+      },
+      "sha256": "5c842684b3b917dc137607edd87fb558e79d777b94af845bb5edfcd580bf3b82",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_cohort.py"
+        ],
+        "tests": [
+          "test_reference_matches_precomputed_manual_record_and_fixture[02_utc_boundaries.json]"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/2026-10-14.json"
+        ]
+      }
+    },
+    {
+      "file": "03_duplicate_orders.json",
+      "case_id": "A3-03",
+      "raw_orders": 3,
+      "raw_refunds": 1,
+      "outcome": "blocked_by_quality",
+      "duplicate_order_groups": 1,
+      "missing_product_sources": [],
+      "group_dimensions": [],
+      "variant_ids": [],
+      "independent_check": "关键错误定位及不发布预期一致；不默默去重或归组",
+      "sha256": "606d0c0aefaa385a59c81222e70f779a3a652af97c5bf27c17c8a26a5e0b85a7",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_cohort.py"
+        ],
+        "tests": [
+          "test_reference_rejects_duplicate_orders_instead_of_silent_deduplication"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md"
+        ]
+      }
+    },
+    {
+      "file": "04_zero_denominator_window.json",
+      "case_id": "A3-04",
+      "raw_orders": 3,
+      "raw_refunds": 1,
+      "outcome": "insufficient_evidence",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 0,
+          "U": 0,
+          "rate": null
+        },
+        "current": {
+          "N": 2,
+          "U": 1,
+          "rate": "1/2"
+        }
+      },
+      "sha256": "5d2da96ec1dded382eb454fe68ee24f6bedaffeffbd45887e3526072a7d924c2",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_cohort.py"
+        ],
+        "tests": [
+          "test_reference_matches_frozen_boundary_fixture[A3-04]"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-04_A3-05_review.md"
+        ]
+      }
+    },
+    {
+      "file": "05_single_region_filter.json",
+      "case_id": "A3-05",
+      "raw_orders": 6,
+      "raw_refunds": 3,
+      "outcome": "ready",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 2,
+          "U": 1,
+          "rate": "1/2"
+        },
+        "current": {
+          "N": 1,
+          "U": 1,
+          "rate": "1"
+        }
+      },
+      "sha256": "d9f621f17385f2b7dcf2e58da70f79627adbf850e56e419f17de7e8baa233da8",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_cohort.py"
+        ],
+        "tests": [
+          "test_reference_matches_frozen_boundary_fixture[A3-05]"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-04_A3-05_review.md"
+        ]
+      }
+    },
+    {
+      "file": "06_multiple_refunds_per_order.json",
+      "case_id": "A3-06",
+      "raw_orders": 4,
+      "raw_refunds": 4,
+      "outcome": "ready",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 2,
+          "U": 1,
+          "rate": "1/2"
+        },
+        "current": {
+          "N": 2,
+          "U": 2,
+          "rate": "1"
+        }
+      },
+      "sha256": "a7fdc991ce7df027cc48630f76da1f733bc3a11742ea046d219b7acee1ed66fd",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_cohort.py"
+        ],
+        "tests": [
+          "test_reference_a3_06_counts_refund_orders_not_events"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/regression_checks/A3-06.md"
+        ]
+      }
+    },
+    {
+      "file": "07_same_label_distinct_category_ids.json",
+      "case_id": "A3-07",
+      "raw_orders": 6,
+      "raw_refunds": 2,
+      "outcome": "ready",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [
+        "category"
+      ],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 2,
+          "U": 1,
+          "rate": "1/2"
+        },
+        "current": {
+          "N": 4,
+          "U": 1,
+          "rate": "1/4"
+        }
+      },
+      "sha256": "e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_category_cohort.py",
+          "tests/test_boundary_fixtures.py"
+        ],
+        "tests": [
+          "test_category_reference_matches_six_frozen_rows_and_manual_sources",
+          "test_same_label_category_group_refunds_trace_to_source_rows"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-07_review.json"
+        ]
+      }
+    },
+    {
+      "file": "08_category_entry_exit.json",
+      "case_id": "A3-08",
+      "raw_orders": 8,
+      "raw_refunds": 6,
+      "outcome": "ready",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [
+        "category"
+      ],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 4,
+          "U": 2,
+          "rate": "1/2"
+        },
+        "current": {
+          "N": 4,
+          "U": 4,
+          "rate": "1"
+        }
+      },
+      "sha256": "79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_category_cohort.py"
+        ],
+        "tests": [
+          "test_category_reference_a3_08_v2_matches_frozen_rows_and_metrics",
+          "test_category_reference_a3_08_v2_lifecycle_omits_absent_groups",
+          "test_category_reference_a3_08_v2_traces_order_and_refund_sources"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-08_v2_expected.json"
+        ]
+      }
+    },
+    {
+      "file": "08_category_entry_exit.v1.json",
+      "case_id": "A3-08",
+      "raw_orders": 6,
+      "raw_refunds": 2,
+      "outcome": "ready",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [
+        "category"
+      ],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 2,
+          "U": 1,
+          "rate": "1/2"
+        },
+        "current": {
+          "N": 4,
+          "U": 1,
+          "rate": "1/4"
+        }
+      },
+      "sha256": "b2ffe9d156a9e010f28bbfda072589c95b8ee8dd426f98a0da8c1515ed0cb580",
+      "historical_version": true,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_category_cohort.py"
+        ],
+        "tests": [
+          "test_category_reference_a3_08_matches_frozen_manual_ledger"
+        ],
+        "manual": [
+          "reference/manual_checks/A3-08_review.json"
+        ]
+      }
+    },
+    {
+      "file": "09_unknown_category_preserved.json",
+      "case_id": "A3-09",
+      "raw_orders": 8,
+      "raw_refunds": 5,
+      "outcome": "ready",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [],
+      "group_dimensions": [
+        "category"
+      ],
+      "variant_ids": [],
+      "independent_check": "候选集合、计数/分数、门槛、已有类别分组对齐",
+      "diagnostic_totals": {
+        "baseline": {
+          "N": 4,
+          "U": 2,
+          "rate": "1/2"
+        },
+        "current": {
+          "N": 4,
+          "U": 3,
+          "rate": "3/4"
+        }
+      },
+      "sha256": "d9677959c20e91b6965e984035742a6524592896fbf9ce40728192a43bd8439e",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_category_cohort.py"
+        ],
+        "tests": [
+          "test_category_reference_a3_09_matches_frozen_unknown_category_oracle"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-09_expected.json"
+        ]
+      }
+    },
+    {
+      "file": "10_missing_product_join_blocks.json",
+      "case_id": "A3-10",
+      "raw_orders": 4,
+      "raw_refunds": 2,
+      "outcome": "blocked_by_quality",
+      "duplicate_order_groups": 0,
+      "missing_product_sources": [
+        "r10-row-c2"
+      ],
+      "group_dimensions": [],
+      "variant_ids": [],
+      "independent_check": "关键错误定位及不发布预期一致；不默默去重或归组",
+      "sha256": "4f2b8b097451cdbf2c3b7f97ff115235c58dea2de2a45b147d93a02bf0371cc3",
+      "historical_version": false,
+      "variants": [],
+      "evidence_mapping": {
+        "files": [
+          "tests/test_reference_category_cohort.py"
+        ],
+        "tests": [
+          "test_category_reference_a3_10_rejects_missing_product_join",
+          "test_missing_product_join_is_rejected_before_comparison_gate"
+        ],
+        "manual": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-10.json"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,703 @@
+{
+  "fixture_format_version": "1",
+  "baseline": "DAX-RB-1.2.1",
+  "synthetic": true,
+  "usage": "公开合成开发边界样例；开发数值预期已冻结，非正式盲测、生产批准或用户本人验收",
+  "metric_version": null,
+  "freeze_version": "1",
+  "frozen_on": "2026-11-02",
+  "freeze_status": "先行静态预期已冻结；独立渠道参考计算及固定计算回归待实现",
+  "oracle_origin": "先保存原始输入复核A3-11_input_review.md，再对照旧台账、手工保存A3-11_expected.json；本文件仅机械复制input及静态expected，不调用待测或参考计算器生成答案。",
+  "oracle_record": "ORACLE.md",
+  "manual_record": "../../../reference/manual_checks/A3-11_expected.json",
+  "review_record": "../../../reference/manual_checks/A3-11_freeze_review.md",
+  "source_draft": "../../../reference/fixture_drafts/11_single_region_channel_grouping.json",
+  "input_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257",
+  "numeric_representation": "rate及变化为可由Fraction精确解析的有理数字符串，不是正式API十进制序列化结果。",
+  "sources": [
+    {
+      "title": "DD02固定Scope、成熟水位、先地区过滤后分组及退款订单口径",
+      "path": "../../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sections": [
+        "§1 数据与质量",
+        "§2 指标、过滤与贡献",
+        "§4 执行证据与评分边界"
+      ]
+    },
+    {
+      "title": "指标目录分组身份、复合关联与精确数值",
+      "path": "../../../docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "sections": [
+        "单地区过滤",
+        "分组",
+        "数据关联与质量约束"
+      ]
+    }
+  ],
+  "case_id": "A3-11",
+  "title": "固定西北地区先过滤再按channel_id分组，总计与分组共享Scope",
+  "grouping_dimension": "channel",
+  "grouping_dimension_note": "仅为本地Fixture目标元数据；不向context或正式QuerySpec添加接口字段。",
+  "business_rules": [
+    "全部事实和目录固定domain_a与原始快照fixture_single_region_channel_v1_draft；保留原ID确保input指纹不变，名称含draft不代表生产批准。",
+    "假定固定合成域和地区已授权注册，filters.region_ids仅含region_northwest；东南四单与两笔合法退款必须同时排除于分子和分母。",
+    "先固定域/快照/地区，再取有效支付半开队列；退款按同域/快照/order_id关联，success且处于闭合7天观察期并不晚于as_of，同单U最多加1。",
+    "各订单通过完整复合键合法关联产品、地区、渠道；group_id直接取订单channel_id，dimension_id=channel，label只显示，不从产品类别推断渠道。",
+    "每窗实际存在网页和移动应用两个渠道；分组互斥穷尽，两个渠道的N/U之和分别等于同Scope总计，不平均组率。",
+    "双窗非空、全部订单成熟且支付/退款水位覆盖，复合键唯一、关联完整；本例不注入其他关键DQ故障。",
+    "六条聚合行、来源集合和精确分数先人工冻结，漏过滤/单侧过滤反例仅为错误路径诊断，不是当前Scope有效输出或已运行控制测试。",
+    "静态预期不是渠道参考函数的实际输出；本阶段不实现生产Runtime、SQL、授权、贡献分解或正式序列化。"
+  ],
+  "input": {
+    "context": {
+      "domain_id": "domain_a",
+      "snapshot_id": "fixture_single_region_channel_v1_draft",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-23T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-23T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": [
+          "region_northwest"
+        ]
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "r11-order-n-b-web-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-N-B-W1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-02T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-n-b-web-2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-N-B-W2",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-03T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-n-b-app-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-N-B-A1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_app",
+        "paid_at": "2026-09-04T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-n-c-web-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-N-C-W1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-09T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-n-c-app-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-N-C-A1",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_app",
+        "paid_at": "2026-09-10T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-n-c-app-2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-N-C-A2",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_app",
+        "paid_at": "2026-09-11T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-n-c-app-3",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-N-C-A3",
+        "product_id": "product_book",
+        "region_id": "region_northwest",
+        "channel_id": "channel_app",
+        "paid_at": "2026-09-12T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-s-b-web-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-S-B-W1",
+        "product_id": "product_book",
+        "region_id": "region_southeast",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-05T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-s-b-app-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-S-B-A1",
+        "product_id": "product_book",
+        "region_id": "region_southeast",
+        "channel_id": "channel_app",
+        "paid_at": "2026-09-06T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-s-c-web-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-S-C-W1",
+        "product_id": "product_book",
+        "region_id": "region_southeast",
+        "channel_id": "channel_web",
+        "paid_at": "2026-09-13T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "r11-order-s-c-app-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "order_id": "K11-S-C-A1",
+        "product_id": "product_book",
+        "region_id": "region_southeast",
+        "channel_id": "channel_app",
+        "paid_at": "2026-09-14T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "r11-refund-n-b-app-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "refund_id": "KR11-N-B-A1",
+        "order_id": "K11-N-B-A1",
+        "refund_at": "2026-09-05T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r11-refund-n-c-web-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "refund_id": "KR11-N-C-W1",
+        "order_id": "K11-N-C-W1",
+        "refund_at": "2026-09-10T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r11-refund-n-c-app-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "refund_id": "KR11-N-C-A1",
+        "order_id": "K11-N-C-A1",
+        "refund_at": "2026-09-11T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r11-refund-n-c-app-2",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "refund_id": "KR11-N-C-A2",
+        "order_id": "K11-N-C-A2",
+        "refund_at": "2026-09-12T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r11-refund-s-b-web-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "refund_id": "KR11-S-B-W1",
+        "order_id": "K11-S-B-W1",
+        "refund_at": "2026-09-06T00:00:00Z",
+        "status": "success"
+      },
+      {
+        "source_row_id": "r11-refund-s-c-app-1",
+        "domain_id": "domain_a",
+        "snapshot_id": "fixture_single_region_channel_v1_draft",
+        "refund_id": "KR11-S-C-A1",
+        "order_id": "K11-S-C-A1",
+        "refund_at": "2026-09-15T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "source_row_id": "r11-product-book",
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_single_region_channel_v1_draft",
+          "product_id": "product_book",
+          "category_id": "category_books"
+        }
+      ],
+      "categories": [
+        {
+          "source_row_id": "r11-category-books",
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_single_region_channel_v1_draft",
+          "category_id": "category_books",
+          "label": "图书"
+        }
+      ],
+      "regions": [
+        {
+          "source_row_id": "r11-region-northwest",
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_single_region_channel_v1_draft",
+          "region_id": "region_northwest",
+          "label": "西北"
+        },
+        {
+          "source_row_id": "r11-region-southeast",
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_single_region_channel_v1_draft",
+          "region_id": "region_southeast",
+          "label": "东南"
+        }
+      ],
+      "channels": [
+        {
+          "source_row_id": "r11-channel-web",
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_single_region_channel_v1_draft",
+          "channel_id": "channel_web",
+          "label": "网页"
+        },
+        {
+          "source_row_id": "r11-channel-app",
+          "domain_id": "domain_a",
+          "snapshot_id": "fixture_single_region_channel_v1_draft",
+          "channel_id": "channel_app",
+          "label": "移动应用"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "outcome": "ready",
+    "reasons": [],
+    "applied_filters": {
+      "region_ids": [
+        "region_northwest"
+      ]
+    },
+    "candidate_order_ids": {
+      "baseline": [
+        "K11-N-B-W1",
+        "K11-N-B-W2",
+        "K11-N-B-A1"
+      ],
+      "current": [
+        "K11-N-C-W1",
+        "K11-N-C-A1",
+        "K11-N-C-A2",
+        "K11-N-C-A3"
+      ]
+    },
+    "cohort_source_row_ids": {
+      "baseline": [
+        "r11-order-n-b-web-1",
+        "r11-order-n-b-web-2",
+        "r11-order-n-b-app-1"
+      ],
+      "current": [
+        "r11-order-n-c-web-1",
+        "r11-order-n-c-app-1",
+        "r11-order-n-c-app-2",
+        "r11-order-n-c-app-3"
+      ]
+    },
+    "counted_refund_order_ids": {
+      "baseline": [
+        "K11-N-B-A1"
+      ],
+      "current": [
+        "K11-N-C-W1",
+        "K11-N-C-A1",
+        "K11-N-C-A2"
+      ]
+    },
+    "qualifying_refund_event_ids": {
+      "baseline": [
+        "KR11-N-B-A1"
+      ],
+      "current": [
+        "KR11-N-C-W1",
+        "KR11-N-C-A1",
+        "KR11-N-C-A2"
+      ]
+    },
+    "qualifying_refund_source_row_ids": {
+      "baseline": [
+        "r11-refund-n-b-app-1"
+      ],
+      "current": [
+        "r11-refund-n-c-web-1",
+        "r11-refund-n-c-app-1",
+        "r11-refund-n-c-app-2"
+      ]
+    },
+    "qualifying_refund_event_counts": {
+      "baseline": 1,
+      "current": 3
+    },
+    "group_order_ids": {
+      "baseline": {
+        "channel_web": [
+          "K11-N-B-W1",
+          "K11-N-B-W2"
+        ],
+        "channel_app": [
+          "K11-N-B-A1"
+        ]
+      },
+      "current": {
+        "channel_web": [
+          "K11-N-C-W1"
+        ],
+        "channel_app": [
+          "K11-N-C-A1",
+          "K11-N-C-A2",
+          "K11-N-C-A3"
+        ]
+      }
+    },
+    "group_refunded_order_ids": {
+      "baseline": {
+        "channel_web": [],
+        "channel_app": [
+          "K11-N-B-A1"
+        ]
+      },
+      "current": {
+        "channel_web": [
+          "K11-N-C-W1"
+        ],
+        "channel_app": [
+          "K11-N-C-A1",
+          "K11-N-C-A2"
+        ]
+      }
+    },
+    "group_cohort_source_row_ids": {
+      "channel_web": {
+        "baseline": [
+          "r11-order-n-b-web-1",
+          "r11-order-n-b-web-2"
+        ],
+        "current": [
+          "r11-order-n-c-web-1"
+        ]
+      },
+      "channel_app": {
+        "baseline": [
+          "r11-order-n-b-app-1"
+        ],
+        "current": [
+          "r11-order-n-c-app-1",
+          "r11-order-n-c-app-2",
+          "r11-order-n-c-app-3"
+        ]
+      }
+    },
+    "group_refund_source_row_ids": {
+      "channel_web": {
+        "baseline": [],
+        "current": [
+          "r11-refund-n-c-web-1"
+        ]
+      },
+      "channel_app": {
+        "baseline": [
+          "r11-refund-n-b-app-1"
+        ],
+        "current": [
+          "r11-refund-n-c-app-1",
+          "r11-refund-n-c-app-2"
+        ]
+      }
+    },
+    "excluded_order_ids": [
+      "K11-S-B-W1",
+      "K11-S-B-A1",
+      "K11-S-C-W1",
+      "K11-S-C-A1"
+    ],
+    "excluded_by_region_source_row_ids": [
+      "r11-order-s-b-web-1",
+      "r11-order-s-b-app-1",
+      "r11-order-s-c-web-1",
+      "r11-order-s-c-app-1"
+    ],
+    "excluded_by_region_refund_event_ids": [
+      "KR11-S-B-W1",
+      "KR11-S-C-A1"
+    ],
+    "excluded_by_region_refund_source_row_ids": [
+      "r11-refund-s-b-web-1",
+      "r11-refund-s-c-app-1"
+    ],
+    "catalog_source_row_ids": {
+      "products": [
+        "r11-product-book"
+      ],
+      "categories": [
+        "r11-category-books"
+      ],
+      "regions": [
+        "r11-region-northwest",
+        "r11-region-southeast"
+      ],
+      "channels": [
+        "r11-channel-web",
+        "r11-channel-app"
+      ]
+    },
+    "quality_checks": {
+      "all_orders_mature": true,
+      "payments_watermark_covered": true,
+      "refunds_watermark_covered": true,
+      "duplicate_order_key_count": 0,
+      "duplicate_refund_key_count": 0,
+      "duplicate_product_key_count": 0,
+      "duplicate_category_key_count": 0,
+      "duplicate_region_key_count": 0,
+      "duplicate_channel_key_count": 0,
+      "missing_product_order_count": 0,
+      "missing_region_order_count": 0,
+      "missing_channel_order_count": 0,
+      "orphan_refund_count": 0
+    },
+    "metrics": {
+      "baseline": {
+        "N": 3,
+        "U": 1,
+        "rate": "1/3"
+      },
+      "current": {
+        "N": 4,
+        "U": 3,
+        "rate": "3/4"
+      },
+      "absolute_change_ratio": "5/12",
+      "relative_change": "5/4"
+    },
+    "aggregate_rows": [
+      {
+        "window_index": 0,
+        "dimension_id": null,
+        "group_id": null,
+        "group_label": null,
+        "paid_orders": 3,
+        "refunded_orders": 1,
+        "rate": "1/3"
+      },
+      {
+        "window_index": 0,
+        "dimension_id": "channel",
+        "group_id": "channel_app",
+        "group_label": "移动应用",
+        "paid_orders": 1,
+        "refunded_orders": 1,
+        "rate": "1"
+      },
+      {
+        "window_index": 0,
+        "dimension_id": "channel",
+        "group_id": "channel_web",
+        "group_label": "网页",
+        "paid_orders": 2,
+        "refunded_orders": 0,
+        "rate": "0"
+      },
+      {
+        "window_index": 1,
+        "dimension_id": null,
+        "group_id": null,
+        "group_label": null,
+        "paid_orders": 4,
+        "refunded_orders": 3,
+        "rate": "3/4"
+      },
+      {
+        "window_index": 1,
+        "dimension_id": "channel",
+        "group_id": "channel_app",
+        "group_label": "移动应用",
+        "paid_orders": 3,
+        "refunded_orders": 2,
+        "rate": "2/3"
+      },
+      {
+        "window_index": 1,
+        "dimension_id": "channel",
+        "group_id": "channel_web",
+        "group_label": "网页",
+        "paid_orders": 1,
+        "refunded_orders": 1,
+        "rate": "1"
+      }
+    ],
+    "group_rate_change_diagnostics": {
+      "channel_web": {
+        "absolute_change_ratio": "1",
+        "relative_change": null
+      },
+      "channel_app": {
+        "absolute_change_ratio": "-1/3",
+        "relative_change": "-1/3"
+      }
+    },
+    "unfiltered_counterexample": {
+      "note": "人工漏过滤诊断，不是固定西北Scope的有效输出，不是新增Fixture或已运行控制测试。",
+      "baseline": {
+        "N": 5,
+        "U": 2,
+        "rate_fraction": "2/5"
+      },
+      "current": {
+        "N": 6,
+        "U": 4,
+        "rate_fraction": "2/3"
+      },
+      "absolute_change_fraction": "4/15",
+      "relative_change_fraction": "2/3",
+      "group_metrics": {
+        "baseline": {
+          "channel_web": {
+            "N": 3,
+            "U": 1,
+            "rate_fraction": "1/3"
+          },
+          "channel_app": {
+            "N": 2,
+            "U": 1,
+            "rate_fraction": "1/2"
+          }
+        },
+        "current": {
+          "channel_web": {
+            "N": 2,
+            "U": 1,
+            "rate_fraction": "1/2"
+          },
+          "channel_app": {
+            "N": 4,
+            "U": 3,
+            "rate_fraction": "3/4"
+          }
+        }
+      },
+      "additional_order_ids": {
+        "baseline": [
+          "K11-S-B-W1",
+          "K11-S-B-A1"
+        ],
+        "current": [
+          "K11-S-C-W1",
+          "K11-S-C-A1"
+        ]
+      },
+      "additional_order_source_row_ids": {
+        "baseline": [
+          "r11-order-s-b-web-1",
+          "r11-order-s-b-app-1"
+        ],
+        "current": [
+          "r11-order-s-c-web-1",
+          "r11-order-s-c-app-1"
+        ]
+      },
+      "additional_refund_event_ids": {
+        "baseline": [
+          "KR11-S-B-W1"
+        ],
+        "current": [
+          "KR11-S-C-A1"
+        ]
+      },
+      "additional_refund_source_row_ids": {
+        "baseline": [
+          "r11-refund-s-b-web-1"
+        ],
+        "current": [
+          "r11-refund-s-c-app-1"
+        ]
+      }
+    },
+    "one_sided_filter_counterexamples": {
+      "note": "人工错误路径诊断，未执行计算；两种错误仍可能满足U<=N。",
+      "only_denominator_filtered": {
+        "baseline": {
+          "N": 3,
+          "U": 2,
+          "rate": "2/3"
+        },
+        "current": {
+          "N": 4,
+          "U": 4,
+          "rate": "1"
+        }
+      },
+      "only_numerator_filtered": {
+        "baseline": {
+          "N": 5,
+          "U": 1,
+          "rate": "1/5"
+        },
+        "current": {
+          "N": 6,
+          "U": 3,
+          "rate": "1/2"
+        }
+      }
+    }
+  },
+  "calculation_basis": [
+    "基期网页集合{K11-N-B-W1,K11-N-B-W2}无退款，N=2/U=0/率0；移动应用{K11-N-B-A1}退款，N=1/U=1/率1；总计3/1/率1/3。",
+    "当前网页{K11-N-C-W1}退款，N=1/U=1/率1；移动应用{K11-N-C-A1,K11-N-C-A2,K11-N-C-A3}中前两单退款，N=3/U=2/率2/3；总计4/3/率3/4。",
+    "基期ΣN=2+1=3、ΣU=0+1=1；当前ΣN=1+3=4、ΣU=1+2=3，两窗组集合互斥且并集等于各自总计集合。",
+    "总体绝对变化=3/4-1/3=5/12 ratio，相对变化=(5/12)/(1/3)=5/4；网页基期率0，组相对变化null。",
+    "西北最晚09-19成熟，全输入最晚09-21；as_of/退款水位09-23覆盖，支付水位09-15覆盖双窗end。",
+    "漏过滤全地区总计5/2/率2/5到6/4/率2/3，绝对变化4/15；来源另列，不能混入西北正式预期。"
+  ],
+  "assumptions": [
+    "手工合成输入，无随机生成器或种子；metric_version尚未由批准manifest绑定。",
+    "保留2026-10-30草案和台账原字节，技术复核非首次盲审、不代替用户本人验收。"
+  ]
+}

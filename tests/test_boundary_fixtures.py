@@ -19,6 +19,7 @@ FIXTURE_FILES = (
     "08_category_entry_exit.v1.json",
     "09_unknown_category_preserved.json",
     "10_missing_product_join_blocks.json",
+    "11_single_region_channel_grouping.json",
 )
 
 
