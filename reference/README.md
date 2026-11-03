@@ -60,4 +60,12 @@ A3-10 固定样例 `10_missing_product_join_blocks.json` 专门覆盖关键产�
 
 未来生产实现应独立编写，并与这些固定预期比较，不能导入本参考函数作为其业务实现，否则失去对照独立性。
 
+## A3-11冻结阶段（2026-11-02）
+
 A3-11新增固定开发样例[单地区渠道分组](../tests/fixtures/order_boundaries/11_single_region_channel_grouping.json)。已先按原始输入复核并保存[独立expected](manual_checks/A3-11_expected.json)，冻结西北地区两个渠道和总计的六行、精确Fraction、来源集合及漏过滤反例；input与原草案相同，旧草案/初稿原字节保留，未发现数值或来源差异。冻结指纹、审核限制及实际21项静态pytest见[冻结审核记录](manual_checks/A3-11_freeze_review.md)。这只完成先行Oracle，当前category_cohort.py仍仅做类别分组；独立渠道计算及实际计算回归尚待实现，不宣称用户本人验收或G0通过。
+
+## A3-11渠道计算及C01/C02（2026-11-03）
+
+上节保存冻结阶段状态。现已新增[channel_cohort.py](channel_cohort.py)中的calculate_channel_reference(input)，只依赖标准库与总体参考函数：复用固定Scope的支付队列、成熟水位、总体指标和比较门槛，独立扫描原始退款并按订单去重，然后直接按订单channel_id分组。完整产品关联、目录重复/域快照检查位于不足返回之前；最小版本支持已登记渠道，未知渠道拒绝仅表示参考输入范围限制，不是业务关键DQ规则。未修改总体/类别函数或生产Runtime。
+
+[渠道固定测试](../tests/test_reference_channel_cohort.py)绑定原有Fixture、独立expected、规范化input及expected四项指纹；C01比较四条渠道行、两条总计行、精确Fraction及总体变化，C02按基期/当前核对复合键、支付/退款来源、东南排除、分组互斥穷尽及N/U守恒。只传input，测试结束检查内存和磁盘不变，不从actual生成预期。实际专项3项、相关71项、开发全量136项通过，见[本轮运行记录](regression_checks/A3-11_channel.md)。C03～C07控制变体及C08展示名补强仍待后续，不能因固定正例通过宣称全部渠道边界或G0通过。

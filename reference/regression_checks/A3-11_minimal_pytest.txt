@@ -1,0 +1,24 @@
+A3-11：最小回归实际输出
+执行日期：2026-11-03（Asia/Shanghai）
+执行范围：当前仓库开发工作树，本地沙箱内；非公开工作树、非CI、非用户L3验收。
+环境：CPython 3.10.12；pytest 9.1.1；Linux x86_64；使用现有.venv/bin/python。
+捕获方式：命令执行工具返回的合并输出原文，未从历史记录复制通过数量。
+
+【渠道专项】
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+...                                                                      [100%]
+3 passed in 0.05s
+
+【渠道、总体与类别组合检查】
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+..................................................                       [100%]
+50 passed in 0.21s
+
+覆盖关系：组合50项=渠道3项+总体9项+类别38项；专项3项是组合子集，不合计为53项。
+本轮失败原因：无；未出现失败、收集错误或环境阻塞，无需修改实现或契约。
+本轮未运行Fixture静态检查、全量pytest、公开工作树pytest或CI；历史71/136项结果不作为本轮重跑。
+冻结Fixture、expected及源码保持不变；不据本地pytest标记用户L3、用户本人独立验收或G0通过。
