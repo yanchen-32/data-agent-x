@@ -1,0 +1,71 @@
+A3-11 C07及Must评审：公开候选工作树实际验证
+日期：2026-11-06（Asia/Shanghai）
+公开父提交：91e215d5423ca766e6af6768566af4cd79ee9a8f
+环境：CPython 3.10.12；pytest 9.1.1；Linux x86_64
+实际复用既有开发虚拟环境解释器；以下python仅省略解释器本机绝对路径，显式PYTHONPATH=src；没有安装依赖。
+本地公开工作树pytest，不是GitHub Actions CI、用户本人L3或独立验收。
+
+命令：PYTHONPATH=src python -B -m pytest tests/test_reference_channel_cohort.py -rA -o addopts='' -q -p no:cacheprovider
+退出码：0
+..........................................                               [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_a3_11_matches_six_frozen_rows_and_metrics
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_a3_11_sources_scope_and_conservation[baseline]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_a3_11_sources_scope_and_conservation[current]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_a3_11_all_regions_matches_frozen_counterexample
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_duplicate_catalog_keys[products]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_duplicate_catalog_keys[regions]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_duplicate_catalog_keys[channels]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_foreign_catalog_scope[domain_id-products]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_foreign_catalog_scope[domain_id-regions]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_foreign_catalog_scope[domain_id-channels]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_foreign_catalog_scope[snapshot_id-products]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_foreign_catalog_scope[snapshot_id-regions]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_foreign_catalog_scope[snapshot_id-channels]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_missing_product_before_comparison_gate[in-scope-northwest-ready]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_missing_product_before_comparison_gate[in-scope-northwest-immature]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_missing_product_before_comparison_gate[excluded-southeast-ready]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_rejects_missing_product_before_comparison_gate[excluded-southeast-immature]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c04_preserves_legal_unknown_category
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_blocks_insufficient_comparisons[immature]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_blocks_insufficient_comparisons[payments_below]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_blocks_insufficient_comparisons[refunds_below]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_blocks_insufficient_comparisons[empty_baseline]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_allows_exact_comparison_boundaries[maturity_equal]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_allows_exact_comparison_boundaries[payments_equal]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_allows_exact_comparison_boundaries[refunds_equal]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c05_publishes_legal_zero_baseline_refunds
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[second_success_baseline]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[second_success_current]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[failed_baseline]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[failed_current]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_horizon_baseline]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_horizon_current]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_as_of_baseline]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_as_of_current]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_repeated_calls_and_results_are_isolated
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[orders]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[refunds]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[products]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[categories]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[channels]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[regions]
+PASSED tests/test_reference_channel_cohort.py::test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[all]
+42 passed in 0.22s
+
+命令：PYTHONPATH=src python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+........................................................................ [ 65%]
+......................................                                   [100%]
+110 passed in 0.48s
+
+阶段3：全量pytest，沿用已知沙箱内API/TestClient限制，获准在沙箱外本地执行。
+命令：PYTHONPATH=src python -B -m pytest -o addopts='' -q -p no:cacheprovider
+退出码：0
+........................................................................ [ 42%]
+........................................................................ [ 84%]
+..........................                                               [100%]
+170 passed in 0.56s
+
+执行后核对：45份公开运行文件SHA-256与运行前相同，主冻结输入/预期及三个参考函数未变；没有安装依赖。

@@ -1,0 +1,21 @@
+A3-11 C07 分别重排与重复执行：本地开发工作树证据
+日期：2026-11-06（Asia/Shanghai）
+环境：CPython 3.10.12；pytest 9.1.1；Linux x86_64
+解释器：本仓库 .venv/bin/python；本地pytest，不是GitHub Actions CI、用户本人L3或人工验收。
+
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -k c07 -o addopts='' -q -p no:cacheprovider
+退出码：0
+........                                                                 [100%]
+8 passed, 34 deselected in 0.14s
+
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+..........................................                               [100%]
+42 passed in 0.21s
+
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+........................................................................ [ 65%]
+......................................                                   [100%]
+110 passed in 0.47s
+

@@ -1,4 +1,4 @@
-"""A3-11 C01～C06：固定结果、来源、关联、比较门槛及退款控制，不生成预期。"""
+"""A3-11 C01～C07：固定结果、来源、关联、门槛、退款及输入隔离，不生成预期。"""
 
 import copy
 import hashlib
@@ -714,4 +714,95 @@ def test_channel_reference_c06_refund_events_keep_frozen_order_metrics(channel_f
     )
     for row in actual["aggregate_rows"]:
         assert isinstance(row["rate"], Fraction)
+    assert dict(data) == before
+
+
+def test_channel_reference_c07_repeated_calls_and_results_are_isolated(channel_fixture) -> None:
+    """重复及交错调用不共享可变状态；复用既有input访问和冻结文件保护。"""
+    fixture, _ = channel_fixture
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    before = copy.deepcopy(dict(data))
+    first = calculate_channel_reference(data)
+    snapshot = copy.deepcopy(first)
+    repeated = calculate_channel_reference(data)
+    assert repeated == snapshot
+
+    # 显式修改先前返回的各层容器，检出结果缓存或跨调用可变对象别名。
+    first["reasons"].append("c07_caller_mutation")
+    first["quality_checks"].clear()
+    first["metrics"]["baseline"]["N"] = -1
+    first["aggregate_rows"][0]["paid_orders"] = -1
+    first["candidate_order_ids"]["baseline"].clear()
+    first["group_order_ids"]["baseline"]["channel_web"].clear()
+    first["group_refunded_order_ids"]["baseline"]["channel_app"].clear()
+    assert repeated == snapshot
+    assert dict(data) == before
+
+    # C03已有独立反例数值；这里只检查另一合法Scope不会污染原Scope。
+    other = _InputOnly(copy.deepcopy(fixture["input"]))
+    other["context"]["filters"]["region_ids"] = []
+    other_before = copy.deepcopy(dict(other))
+    all_regions = calculate_channel_reference(other)
+    all_regions_snapshot = copy.deepcopy(all_regions)
+    assert all_regions["metrics"] != snapshot["metrics"]
+    assert calculate_channel_reference(data) == snapshot
+    assert calculate_channel_reference(_InputOnly(copy.deepcopy(fixture["input"]))) == snapshot
+    assert all_regions == all_regions_snapshot
+    assert repeated == snapshot
+    assert dict(data) == before
+    assert dict(other) == other_before
+
+
+@pytest.mark.parametrize(
+    "target", ("orders", "refunds", "products", "categories", "channels", "regions", "all"),
+)
+def test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets(channel_fixture, target: str) -> None:
+    """分别及联合逆序后重复计算，候选队列仅比较集合。"""
+    fixture, _ = channel_fixture
+    original = calculate_channel_reference(_InputOnly(fixture["input"]))
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    # 冻结产品/类别目录各仅一行；深拷贝中补合法未引用项，使逆序有区分力。
+    for name, id_field in (("products", "product_id"), ("categories", "category_id")):
+        if target not in (name, "all"):
+            continue
+        rows = data["dimensions"][name]
+        assert len(rows) == 1
+        unused = copy.deepcopy(rows[0])
+        unused[id_field] += "_c07_unused"
+        unused["source_row_id"] += "_c07_unused"
+        references = data["orders"] if name == "products" else data["dimensions"]["products"]
+        assert all(row.get(id_field) != unused[id_field] for row in references)
+        rows.append(unused)
+    augmented_before = copy.deepcopy(dict(data))
+    augmented = calculate_channel_reference(data)
+    assert dict(data) == augmented_before
+    if target == "all":
+        selected = (data["orders"], data["refunds"], *data["dimensions"].values())
+    elif target in ("orders", "refunds"):
+        selected = (data[target],)
+    else:
+        selected = (data["dimensions"][target],)
+    for rows in selected:
+        # 每个逆序控制均有实质变化，避免单行目录让测试空转。
+        assert len(rows) > 1 and rows[0] != rows[-1]
+        rows.reverse()
+    before = copy.deepcopy(dict(data))
+
+    reordered = calculate_channel_reference(data)
+    assert dict(data) == before
+    repeated = calculate_channel_reference(data)
+    assert dict(data) == before
+    restored = calculate_channel_reference(_InputOnly(fixture["input"]))
+
+    # 原始→重排→同一重排输入重复→原始，检出跨调用状态污染。
+    for result in (augmented, reordered, repeated, restored):
+        assert _rows_by_identity(result) == _rows_by_identity(original)
+        assert result["group_order_ids"] == original["group_order_ids"]
+        assert result["group_refunded_order_ids"] == original["group_refunded_order_ids"]
+        for window in WINDOWS:
+            assert set(result["candidate_order_ids"][window]) == set(original["candidate_order_ids"][window])
+            assert isinstance(result["metrics"][window]["rate"], Fraction)
+        assert all(isinstance(row["rate"], Fraction) for row in result["aggregate_rows"])
+        for field in ("outcome", "reasons", "quality_checks", "metrics"):
+            assert result[field] == original[field]
     assert dict(data) == before
