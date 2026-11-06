@@ -1,4 +1,4 @@
-"""A3-11 C01/C02：固定渠道结果、过滤及来源回归，不生成预期。"""
+"""A3-11 C01～C06：固定结果、来源、关联、比较门槛及退款控制，不生成预期。"""
 
 import copy
 import hashlib
@@ -212,3 +212,506 @@ def test_channel_reference_a3_11_sources_scope_and_conservation(channel_fixture,
         wrong = expected["one_sided_filter_counterexamples"][mode][window]
         assert (total["paid_orders"], total["refunded_orders"]) != (wrong["N"], wrong["U"])
         assert total["rate"] != Fraction(wrong["rate"])
+
+
+def test_channel_reference_a3_11_all_regions_matches_frozen_counterexample(channel_fixture) -> None:
+    """另设假定已授权的全地区合成Scope；冻结西北Scope前后均须正确。"""
+    fixture, expected = channel_fixture
+    west_data = _InputOnly(fixture["input"])
+    west_before = copy.deepcopy(dict(west_data))
+    west = calculate_channel_reference(west_data)
+    control_input = copy.deepcopy(fixture["input"])
+    control_input["context"]["filters"]["region_ids"] = []
+    control_before = copy.deepcopy(control_input)
+    control_data = _InputOnly(control_input)
+    control = calculate_channel_reference(control_data)
+    west_again = calculate_channel_reference(west_data)
+    assert dict(west_data) == west_before
+    assert control_input == dict(control_data) == control_before
+    assert fixture["input"]["context"]["filters"] == {"region_ids": ["region_northwest"]}
+    assert control_data["context"]["filters"] == {"region_ids": []}
+    assert west == west_again
+    assert west["outcome"] == control["outcome"] == "ready"
+    assert west["reasons"] == control["reasons"] == []
+
+    frozen_rows = [{**row, "rate": Fraction(row["rate"])} for row in expected["aggregate_rows"]]
+    west_rows, all_rows = _rows_by_identity(west), _rows_by_identity(control)
+    assert west_rows == _rows_by_identity({"aggregate_rows": frozen_rows})
+    # 全地区若被误用作西北输出，既有六行比较必须能识别；不编写错误算法。
+    assert all_rows != west_rows
+    counter = expected["unfiltered_counterexample"]
+    scope = control_input["context"]["domain_id"], control_input["context"]["snapshot_id"]
+    orders = {_key(row, "order_id"): row for row in control_input["orders"]}
+    refunds = {_key(row, "refund_id"): row for row in control_input["refunds"]}
+    assert len(orders) == len(control_input["orders"])
+    assert len(refunds) == len(control_input["refunds"])
+    horizon = timedelta(seconds=control_input["context"]["horizon_seconds"])
+    as_of = _instant(control_input["context"]["as_of"])
+
+    for index, window in enumerate(WINDOWS):
+        extra_ids = set(counter["additional_order_ids"][window])
+        extra_events = set(counter["additional_refund_event_ids"][window])
+        extra_refunded = {refunds[(*scope, rid)]["order_id"] for rid in extra_events}
+        assert extra_ids.isdisjoint(expected["candidate_order_ids"][window])
+        assert extra_refunded <= extra_ids
+        assert {orders[(*scope, oid)]["source_row_id"] for oid in extra_ids} == set(
+            counter["additional_order_source_row_ids"][window]
+        )
+        assert {refunds[(*scope, rid)]["source_row_id"] for rid in extra_events} == set(
+            counter["additional_refund_source_row_ids"][window]
+        )
+        assert all(orders[(*scope, oid)]["region_id"] == "region_southeast" for oid in extra_ids)
+        start = _instant(control_input["context"]["windows"][window]["start"])
+        end = _instant(control_input["context"]["windows"][window]["end"])
+        added_paid, added_refunded, added_sources, added_refund_sources, added_events = set(), set(), set(), set(), set()
+        assert set(control["group_order_ids"][window]) == set(counter["group_metrics"][window])
+        assert set(control["group_refunded_order_ids"][window]) == set(counter["group_metrics"][window])
+
+        for gid, values in counter["group_metrics"][window].items():
+            members = set(control["group_order_ids"][window][gid])
+            returned_refunds = set(control["group_refunded_order_ids"][window][gid])
+            west_members = set(expected["group_order_ids"][window][gid])
+            west_refunded = set(expected["group_refunded_order_ids"][window][gid])
+            new_members = {oid for oid in extra_ids if orders[(*scope, oid)]["channel_id"] == gid}
+            new_refunded = {oid for oid in extra_refunded if orders[(*scope, oid)]["channel_id"] == gid}
+            assert set(west["group_order_ids"][window][gid]) == west_members
+            assert set(west["group_refunded_order_ids"][window][gid]) == west_refunded
+            assert members == west_members | new_members
+            assert returned_refunds == west_refunded | new_refunded
+            assert members - west_members == new_members
+            assert returned_refunds - west_refunded == new_refunded
+            for oid in members:
+                order = orders[(*scope, oid)]
+                assert order["channel_id"] == gid and order["is_payment_valid"] is True
+                assert start <= _instant(order["paid_at"]) < end
+            member_sources = {orders[(*scope, oid)]["source_row_id"] for oid in members}
+            assert member_sources == set(expected["group_cohort_source_row_ids"][gid][window]) | {
+                orders[(*scope, oid)]["source_row_id"] for oid in new_members
+            }
+            # 固定例每个退款订单一笔事件，按实际订单台账查回事件及原始来源。
+            refunded_keys = {(*scope, oid) for oid in returned_refunds}
+            events = [row for row in refunds.values() if _key(row, "order_id") in refunded_keys]
+            assert len(events) == len(returned_refunds)
+            assert {row["order_id"] for row in events} == returned_refunds
+            for event in events:
+                paid_at = _instant(orders[_key(event, "order_id")]["paid_at"])
+                assert event["status"] == "success"
+                assert paid_at <= _instant(event["refund_at"]) <= paid_at + horizon
+                assert _instant(event["refund_at"]) <= as_of
+            new_events = {row["refund_id"] for row in events} & extra_events
+            event_sources = {row["source_row_id"] for row in events}
+            assert event_sources == set(expected["group_refund_source_row_ids"][gid][window]) | {
+                refunds[(*scope, rid)]["source_row_id"] for rid in new_events
+            }
+            row = all_rows[index, "channel", gid]
+            assert (row["paid_orders"], row["refunded_orders"], row["rate"]) == (
+                values["N"], values["U"], Fraction(values["rate_fraction"]),
+            )
+            assert isinstance(row["rate"], Fraction)
+            assert row["group_label"] == west_rows[index, "channel", gid]["group_label"]
+            added_paid |= new_members
+            added_refunded |= new_refunded
+            added_sources |= member_sources - set(expected["group_cohort_source_row_ids"][gid][window])
+            added_refund_sources |= event_sources - set(expected["group_refund_source_row_ids"][gid][window])
+            added_events |= new_events
+
+        assert added_paid == extra_ids
+        assert added_refunded == extra_refunded
+        assert added_sources == set(counter["additional_order_source_row_ids"][window])
+        assert added_refund_sources == set(counter["additional_refund_source_row_ids"][window])
+        assert added_events == extra_events
+        assert set(control["candidate_order_ids"][window]) == set(expected["candidate_order_ids"][window]) | extra_ids
+        for result, indexed, values, rate_key in (
+            (west, west_rows, expected["metrics"][window], "rate"),
+            (control, all_rows, counter[window], "rate_fraction"),
+        ):
+            total = indexed[index, None, None]
+            assert total["group_label"] is None
+            paid, refunded = [], []
+            for gid, ids in result["group_order_ids"][window].items():
+                rids = result["group_refunded_order_ids"][window][gid]
+                assert set(rids) <= set(ids)
+                row = indexed[index, "channel", gid]
+                assert (row["paid_orders"], row["refunded_orders"]) == (len(ids), len(rids))
+                assert row["rate"] == Fraction(len(rids), len(ids))
+                paid.extend(ids)
+                refunded.extend(rids)
+            assert len(paid) == len(set(paid)) == total["paid_orders"]
+            assert len(refunded) == len(set(refunded)) == total["refunded_orders"]
+            assert set(paid) == set(result["candidate_order_ids"][window])
+            assert sum(indexed[index, "channel", gid]["paid_orders"] for gid in result["group_order_ids"][window]) == total["paid_orders"]
+            assert sum(indexed[index, "channel", gid]["refunded_orders"] for gid in result["group_order_ids"][window]) == total["refunded_orders"]
+            assert (total["paid_orders"], total["refunded_orders"], total["rate"]) == (
+                values["N"], values["U"], Fraction(values[rate_key]),
+            )
+            assert result["metrics"][window] == {"N": values["N"], "U": values["U"], "rate": Fraction(values[rate_key])}
+            assert isinstance(total["rate"], Fraction)
+        assert control["metrics"][window] != west["metrics"][window]
+
+    for field, counter_field in (("absolute_change_ratio", "absolute_change_fraction"),
+                                 ("relative_change", "relative_change_fraction")):
+        assert west["metrics"][field] == Fraction(expected["metrics"][field])
+        assert control["metrics"][field] == Fraction(counter[counter_field])
+        assert isinstance(control["metrics"][field], Fraction)
+        assert control["metrics"][field] != west["metrics"][field]
+
+
+@pytest.mark.parametrize(
+    ("catalog", "id_field"),
+    (("products", "product_id"), ("regions", "region_id"), ("channels", "channel_id")),
+    ids=("products", "regions", "channels"),
+)
+def test_channel_reference_c04_rejects_duplicate_catalog_keys(channel_fixture, catalog, id_field) -> None:
+    fixture, _ = channel_fixture
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    duplicate = copy.deepcopy(data["dimensions"][catalog][0])
+    duplicate["source_row_id"] += "-c04-duplicate"
+    data["dimensions"][catalog].append(duplicate)
+    before = copy.deepcopy(dict(data))
+
+    with pytest.raises(ValueError, match="重复目录主键") as error:
+        calculate_channel_reference(data)
+
+    assert repr(_key(duplicate, id_field)) in str(error.value)
+    assert dict(data) == before
+
+
+@pytest.mark.parametrize(
+    ("catalog", "id_field"),
+    (("products", "product_id"), ("regions", "region_id"), ("channels", "channel_id")),
+    ids=("products", "regions", "channels"),
+)
+@pytest.mark.parametrize("scope_field", ("domain_id", "snapshot_id"))
+def test_channel_reference_c04_rejects_foreign_catalog_scope(
+    channel_fixture, catalog, id_field, scope_field,
+) -> None:
+    fixture, _ = channel_fixture
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    local = data["dimensions"][catalog][0]
+    foreign = copy.deepcopy(local)
+    foreign[scope_field] = "foreign_" + scope_field
+    foreign["source_row_id"] += "-c04-foreign"
+    # 保留合法本地行，混入一个局部ID相同而域/快照不同的目录行。
+    assert foreign[id_field] == local[id_field]
+    assert _key(foreign, id_field) != _key(local, id_field)
+    data["dimensions"][catalog].append(foreign)
+    before = copy.deepcopy(dict(data))
+
+    with pytest.raises(ValueError, match="目录域或快照") as error:
+        calculate_channel_reference(data)
+
+    assert id_field in str(error.value)
+    assert dict(data) == before
+
+
+@pytest.mark.parametrize("comparison", ("ready", "immature"))
+@pytest.mark.parametrize(
+    ("target_order_id", "region_id"),
+    (("K11-N-C-A3", "region_northwest"), ("K11-S-C-A1", "region_southeast")),
+    ids=("in-scope-northwest", "excluded-southeast"),
+)
+def test_channel_reference_c04_rejects_missing_product_before_comparison_gate(
+    channel_fixture, target_order_id, region_id, comparison,
+) -> None:
+    fixture, _ = channel_fixture
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    target = next(row for row in data["orders"] if row["order_id"] == target_order_id)
+    assert target["region_id"] == region_id
+    # 只破坏目标订单的产品关联，不删除所有订单共用的合法产品。
+    target["product_id"] = "product_missing_c04"
+    product_key = _key(target, "product_id")
+    products = {_key(row, "product_id") for row in data["dimensions"]["products"]}
+    assert product_key not in products
+    assert all(_key(row, "product_id") in products for row in data["orders"] if row is not target)
+    if comparison == "immature":
+        data["context"]["as_of"] = "2026-09-18T23:59:59.999999Z"
+    before = copy.deepcopy(dict(data))
+
+    overall = calculate_reference(data)
+    assert overall["outcome"] == ("ready" if comparison == "ready" else "insufficient_evidence")
+    assert overall["reasons"] == ([] if comparison == "ready" else ["观察期未成熟"])
+    assert overall["quality_checks"] == {
+        "all_orders_mature": comparison == "ready",
+        "payments_watermark_covered": True,
+        "refunds_watermark_covered": True,
+    }
+    candidates = set().union(*(set(ids) for ids in overall["candidate_order_ids"].values()))
+    assert (target_order_id in candidates) == (region_id == "region_northwest")
+
+    with pytest.raises(ValueError, match="订单产品复合键关联缺失") as error:
+        calculate_channel_reference(data)
+
+    message = str(error.value)
+    assert f"order_id={target_order_id}" in message
+    assert f"source_row_id={target['source_row_id']}" in message
+    assert f"product_key={product_key!r}" in message
+    assert dict(data) == before
+
+
+def test_channel_reference_c04_preserves_legal_unknown_category(channel_fixture) -> None:
+    """产品实体存在，仅非关键类别未知，不能误当关键产品关联缺失。"""
+    fixture, expected = channel_fixture
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    for product in data["dimensions"]["products"]:
+        product["category_id"] = None
+    before = copy.deepcopy(dict(data))
+
+    actual = calculate_channel_reference(data)
+
+    assert actual["outcome"] == "ready" and actual["reasons"] == []
+    expected_rows = [{**row, "rate": Fraction(row["rate"])} for row in expected["aggregate_rows"]]
+    assert _rows_by_identity(actual) == _rows_by_identity({"aggregate_rows": expected_rows})
+    assert actual == calculate_channel_reference(_InputOnly(fixture["input"]))
+    assert dict(data) == before
+
+
+@pytest.fixture
+def c05_expected() -> Iterator[dict]:
+    path = ROOT / "reference/manual_checks/A3-11_C05_expected.json"
+    original_bytes = path.read_bytes()
+    assert hashlib.sha256(original_bytes).hexdigest() == (
+        "cbe71efb6734e3480f5d1ad93793d4338c240377dec5cb3335c01136c7565819"
+    )
+    record = json.loads(original_bytes)
+    assert record["source_fixture_sha256"] == FIXTURE_SHA256
+    assert record["source_expected_sha256"] == MANUAL_SHA256
+    assert record["source_input_sha256"] == INPUT_SHA256
+    original = copy.deepcopy(record)
+    try:
+        yield record
+    finally:
+        assert record == original
+        assert path.read_bytes() == original_bytes
+
+
+def _c05_input(fixture: dict, case: dict) -> dict:
+    """只应用先行记录的输入变更，不在控制装配中计算预期。"""
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    for field, value in case.get("context_overrides", {}).items():
+        if field == "watermark":
+            data["context"][field].update(value)
+        else:
+            data["context"][field] = value
+    for order in data["orders"]:
+        if order["order_id"] in case.get("disable_order_ids", []):
+            order["is_payment_valid"] = False
+    if "remove_refund_ids" in case:
+        data["refunds"] = [
+            row for row in data["refunds"] if row["refund_id"] not in case["remove_refund_ids"]
+        ]
+    return data
+
+
+def _assert_c05_state(actual: dict, case: dict, frozen: dict) -> None:
+    assert actual["outcome"] == case["outcome"]
+    assert actual["reasons"] == case["reasons"]
+    assert actual["quality_checks"] == case["quality_checks"]
+    candidates = case.get("candidate_order_ids", frozen["candidate_order_ids"])
+    for window in WINDOWS:
+        assert set(actual["candidate_order_ids"][window]) == set(candidates[window])
+
+
+def _assert_c05_ready_publication(actual: dict, publication: dict, frozen: dict) -> None:
+    expected_rows = [{**row, "rate": Fraction(row["rate"])} for row in publication["aggregate_rows"]]
+    assert _rows_by_identity(actual) == _rows_by_identity({"aggregate_rows": expected_rows})
+    expected_metrics = copy.deepcopy(publication["metrics"])
+    for window in WINDOWS:
+        expected_metrics[window]["rate"] = Fraction(expected_metrics[window]["rate"])
+        assert isinstance(actual["metrics"][window]["rate"], Fraction)
+    for field in ("absolute_change_ratio", "relative_change"):
+        value = expected_metrics[field]
+        expected_metrics[field] = None if value is None else Fraction(value)
+        if value is not None:
+            assert isinstance(actual["metrics"][field], Fraction)
+    assert actual["metrics"] == expected_metrics
+    assert actual["group_order_ids"] == frozen["group_order_ids"]
+    assert actual["group_refunded_order_ids"] == publication["group_refunded_order_ids"]
+    for row in actual["aggregate_rows"]:
+        assert isinstance(row["rate"], Fraction)
+
+
+@pytest.mark.parametrize("case_id", ("immature", "payments_below", "refunds_below", "empty_baseline"))
+def test_channel_reference_c05_blocks_insufficient_comparisons(channel_fixture, c05_expected, case_id) -> None:
+    fixture, frozen = channel_fixture
+    case = c05_expected["cases"][case_id]
+    assert case["publication"] == "blocked"
+    data = _c05_input(fixture, case)
+    before = copy.deepcopy(dict(data))
+
+    actual = calculate_channel_reference(data)
+
+    _assert_c05_state(actual, case, frozen)
+    for field, value in c05_expected["blocked_publication"].items():
+        assert actual[field] == value
+    # 对比总体只核验语义未改；状态/空发布答案来自先行C05记录。
+    for field, value in calculate_reference(data).items():
+        assert actual[field] == value
+    if case_id == "empty_baseline":
+        disabled = {row["order_id"] for row in data["orders"] if not row["is_payment_valid"]}
+        assert disabled == set(case["disable_order_ids"]) == set(frozen["candidate_order_ids"]["baseline"])
+        assert actual["candidate_order_ids"]["baseline"] == []
+        assert actual["candidate_order_ids"]["current"]
+        assert any(row["is_payment_valid"] and row["region_id"] == "region_southeast" for row in data["orders"])
+    assert dict(data) == before
+
+
+@pytest.mark.parametrize("case_id", ("maturity_equal", "payments_equal", "refunds_equal"))
+def test_channel_reference_c05_allows_exact_comparison_boundaries(channel_fixture, c05_expected, case_id) -> None:
+    fixture, frozen = channel_fixture
+    case = c05_expected["cases"][case_id]
+    assert case["publication"] == "frozen"
+    data = _c05_input(fixture, case)
+    before = copy.deepcopy(dict(data))
+
+    actual = calculate_channel_reference(data)
+
+    _assert_c05_state(actual, case, frozen)
+    _assert_c05_ready_publication(actual, frozen, frozen)
+    assert dict(data) == before
+
+
+def test_channel_reference_c05_publishes_legal_zero_baseline_refunds(channel_fixture, c05_expected) -> None:
+    fixture, frozen = channel_fixture
+    case = c05_expected["cases"]["zero_baseline_refunds"]
+    assert case["publication"] == "zero_baseline"
+    data = _c05_input(fixture, case)
+    before = copy.deepcopy(dict(data))
+    removed = {row["refund_id"] for row in fixture["input"]["refunds"]} - {
+        row["refund_id"] for row in data["refunds"]
+    }
+    assert removed == set(case["remove_refund_ids"])
+    assert "KR11-S-B-W1" in {row["refund_id"] for row in data["refunds"]}
+
+    actual = calculate_channel_reference(data)
+
+    _assert_c05_state(actual, case, frozen)
+    _assert_c05_ready_publication(actual, c05_expected["zero_baseline_publication"], frozen)
+    assert actual["metrics"]["baseline"]["N"] > 0
+    assert actual["metrics"]["baseline"]["U"] == 0
+    assert actual["metrics"]["baseline"]["rate"] == Fraction(0)
+    assert actual["metrics"]["relative_change"] is None
+    assert actual["aggregate_rows"]
+    assert dict(data) == before
+
+
+@pytest.fixture
+def c06_expected() -> Iterator[dict]:
+    path = ROOT / "reference/manual_checks/A3-11_C06_expected.json"
+    original_bytes = path.read_bytes()
+    assert hashlib.sha256(original_bytes).hexdigest() == (
+        "32ecd37ddf05767c5496362c8f0f3529d8a905412cd6c1b78ae8d8a42c52ae03"
+    )
+    record = json.loads(original_bytes)
+    assert record["source_fixture_sha256"] == FIXTURE_SHA256
+    assert record["source_expected_sha256"] == MANUAL_SHA256
+    assert record["source_input_sha256"] == INPUT_SHA256
+    definition = record["definition_source"]
+    assert hashlib.sha256((ROOT / definition["path"]).read_bytes()).hexdigest() == definition["sha256"]
+    original = copy.deepcopy(record)
+    try:
+        yield record
+    finally:
+        assert record == original
+        assert path.read_bytes() == original_bytes
+
+
+@pytest.mark.parametrize(
+    "case_id",
+    ("second_success_baseline", "second_success_current", "failed_baseline", "failed_current",
+     "after_horizon_baseline", "after_horizon_current", "after_as_of_baseline", "after_as_of_current"),
+)
+def test_channel_reference_c06_refund_events_keep_frozen_order_metrics(channel_fixture, c06_expected, case_id) -> None:
+    fixture, frozen = channel_fixture
+    case = c06_expected["cases"][case_id]
+    data = _InputOnly(copy.deepcopy(fixture["input"]))
+    context = data["context"]
+    scope = context["domain_id"], context["snapshot_id"]
+    assert c06_expected["scope"] == {"domain_id": scope[0], "snapshot_id": scope[1]}
+    event = {**c06_expected["scope"], **copy.deepcopy(case["additional_refund"])}
+    orders = {_key(row, "order_id"): row for row in data["orders"]}
+    original_events = {_key(row, "refund_id"): row for row in data["refunds"]}
+    order_key = _key(event, "order_id")
+    order = orders[order_key]
+    window, gid = case["window"], case["channel_id"]
+    assert order["channel_id"] == gid and order["region_id"] == "region_northwest"
+    assert order["is_payment_valid"] is True
+    assert order["order_id"] in frozen["group_order_ids"][window][gid]
+    assert (order["order_id"] in frozen["counted_refund_order_ids"][window]) is case["target_is_already_refunded"]
+    assert _key(event, "refund_id") not in original_events
+    source_ids = {
+        row["source_row_id"] for rows in (data["orders"], data["refunds"], *data["dimensions"].values())
+        for row in rows
+    }
+    assert event["source_row_id"] not in source_ids
+    paid_at, refund_at = _instant(order["paid_at"]), _instant(event["refund_at"])
+    horizon = timedelta(seconds=context["horizon_seconds"])
+    as_of = _instant(context["as_of"])
+    assert _instant(context["windows"][window]["start"]) <= paid_at < _instant(context["windows"][window]["end"])
+    assert paid_at <= refund_at  # 不混入支付前退款故障。
+    prior_target_events = [row for row in original_events.values() if _key(row, "order_id") == order_key]
+    if case["kind"] == "second_success":
+        assert case["target_is_already_refunded"] and case["expected_event_qualifies"]
+        assert event["status"] == "success" and paid_at <= refund_at <= paid_at + horizon
+        assert refund_at <= as_of
+        prior = original_events[(*scope, case["original_refund_id"])]
+        assert prior_target_events == [prior]
+        assert _key(prior, "order_id") == order_key and prior["status"] == "success"
+        assert paid_at <= _instant(prior["refund_at"]) <= paid_at + horizon
+        assert _instant(prior["refund_at"]) <= as_of
+        assert prior["refund_id"] != event["refund_id"]
+        assert prior["source_row_id"] != event["source_row_id"]
+    else:
+        assert not prior_target_events
+        assert case["target_is_already_refunded"] is False
+        assert case["expected_event_qualifies"] is False
+        if case["kind"] == "failed":
+            assert event["status"] == "failed"
+            assert paid_at <= refund_at <= paid_at + horizon and refund_at <= as_of
+        elif case["kind"] == "after_horizon":
+            assert event["status"] == "success"
+            assert refund_at == paid_at + horizon + timedelta(microseconds=1)
+            assert refund_at <= as_of
+        else:
+            assert case["kind"] == "after_as_of" and event["status"] == "success"
+            assert refund_at == as_of + timedelta(microseconds=1)
+            assert refund_at > paid_at + horizon  # 成熟前提下不是孤立as_of边界。
+
+    data["refunds"].append(event)
+    before = copy.deepcopy(dict(data))
+    assert len({_key(row, "refund_id") for row in data["refunds"]}) == len(data["refunds"])
+    assert len({row["source_row_id"] for row in data["refunds"]}) == len(data["refunds"])
+    target_events = [row for row in data["refunds"] if _key(row, "order_id") == order_key]
+    assert len(target_events) == (2 if case["kind"] == "second_success" else 1)
+
+    actual = calculate_channel_reference(data)
+
+    assert actual["outcome"] == c06_expected["expected_outcome"] == "ready"
+    assert actual["reasons"] == []
+    assert actual["quality_checks"] == {
+        key: frozen["quality_checks"][key]
+        for key in ("all_orders_mature", "payments_watermark_covered", "refunds_watermark_covered")
+    }
+    expected_rows = [{**row, "rate": Fraction(row["rate"])} for row in frozen["aggregate_rows"]]
+    rows = _rows_by_identity(actual)
+    assert rows == _rows_by_identity({"aggregate_rows": expected_rows})
+    expected_metrics = copy.deepcopy(frozen["metrics"])
+    for name in WINDOWS:
+        expected_metrics[name]["rate"] = Fraction(expected_metrics[name]["rate"])
+        assert set(actual["candidate_order_ids"][name]) == set(frozen["candidate_order_ids"][name])
+        assert isinstance(actual["metrics"][name]["rate"], Fraction)
+    for field in ("absolute_change_ratio", "relative_change"):
+        expected_metrics[field] = Fraction(expected_metrics[field])
+        assert isinstance(actual["metrics"][field], Fraction)
+    assert actual["metrics"] == expected_metrics
+    assert actual["group_order_ids"] == frozen["group_order_ids"]
+    assert actual["group_refunded_order_ids"] == frozen["group_refunded_order_ids"]
+    target_row = rows[WINDOWS.index(window), "channel", gid]
+    assert target_row["refunded_orders"] - len(frozen["group_refunded_order_ids"][window][gid]) == (
+        c06_expected["expected_U_change"]
+    )
+    assert actual["group_refunded_order_ids"][window][gid].count(order["order_id"]) == (
+        1 if case["target_is_already_refunded"] else 0
+    )
+    for row in actual["aggregate_rows"]:
+        assert isinstance(row["rate"], Fraction)
+    assert dict(data) == before

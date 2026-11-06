@@ -1,0 +1,27 @@
+A3-11 C04：关键关联拒绝及合法未知兼容测试输出
+日期：2026-11-05（Asia/Shanghai）
+环境：开发工作树；CPython 3.10.12；pytest 9.1.1；Linux x86_64；现有.venv/bin/python。
+执行方式：本地沙箱内，非公开工作树、非CI、非用户L3。
+定向检查已实际执行：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -k c04 -o addopts='' -q -p no:cacheprovider
+定向检查退出码：0；结果摘要：14 passed, 4 deselected in 0.12s。
+以下保留随后最终套件的工具合并输出原文：
+
+【渠道C01～C04套件】
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+..................                                                       [100%]
+18 passed in 0.13s
+
+【渠道、总体、类别与静态组合】
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+........................................................................ [ 83%]
+..............                                                           [100%]
+86 passed in 0.42s
+
+覆盖关系：C04新增14项=目录重复拒绝3+域快照混入拒绝6+产品缺失拒绝4+合法类别未知兼容1。
+渠道18项=原C01～C03四项+C04十四项；相关86项=渠道18+总体9+类别38+静态21，各结果为包含关系，不相加。
+本轮无测试失败，未修改参考函数、既有类别Oracle、冻结Fixture或expected迎合测试。
+未运行全量pytest、公开工作树或CI；不将通过证据记为生产DQ、真实权限或用户L3验收。

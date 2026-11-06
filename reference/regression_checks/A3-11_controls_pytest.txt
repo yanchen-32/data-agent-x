@@ -1,0 +1,41 @@
+A3-11：C03/C04定向、渠道及全量回归原始输出
+日期：2026-11-05（Asia/Shanghai）
+环境：当前仓库开发工作树；CPython 3.10.12；pytest 9.1.1；Linux x86_64；现有.venv/bin/python。
+执行顺序：前三阶段均退出0后，才执行全量；前三阶段沙箱内，全量经批准在沙箱外本地执行。
+证据属性：非公开工作树、非CI/GitHub Actions、非用户本人L3验收。
+
+【阶段1：C03/C04定向】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -k 'all_regions or c04' -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始合并输出：
+...............                                                          [100%]
+15 passed, 3 deselected in 0.12s
+
+【阶段2：渠道专项】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始合并输出：
+..................                                                       [100%]
+18 passed in 0.12s
+
+【阶段3：渠道、总体、类别参考与静态组合】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始合并输出：
+........................................................................ [ 83%]
+..............                                                           [100%]
+86 passed in 0.41s
+
+【阶段4：开发工作树全量】
+实际命令：.venv/bin/python -B -m pytest -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始合并输出：
+........................................................................ [ 47%]
+........................................................................ [ 95%]
+.......                                                                  [100%]
+151 passed in 0.59s
+
+覆盖关系：定向15项=C03一项+C04十四项；渠道18项含原C01/C02三项；相关86项=渠道18+总体9+类别38+静态21。各范围包含，不重复相加。
+全量151项为此次实际运行结果，不按先前136项或公开131项加减推算；开发工作树含未公开Provider测试。
+失败原因：本轮无测试失败、收集错误或环境阻塞；无需更改实现或契约，冻结预期保持原样。
+本轮未重新尝试沙箱内全量，没有将历史API/TestClient停滞登记为本轮失败。

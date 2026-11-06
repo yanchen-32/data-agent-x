@@ -1,0 +1,28 @@
+A3-11 C05：成熟、水位、空基期及合法零退款控制输出
+日期：2026-11-05（Asia/Shanghai）
+环境：开发工作树；CPython 3.10.12；pytest 9.1.1；Linux x86_64；使用现有.venv/bin/python。
+执行方式：本地沙箱内，非公开工作树、非CI、非用户L3。
+先行预期：reference/manual_checks/A3-11_C05_expected.json，编写测试及运行前已手工保存，原11号Fixture与expected不改。
+定向命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -k c05 -o addopts='' -q -p no:cacheprovider
+定向退出码：0；结果摘要：8 passed, 18 deselected in 0.12s。
+以下保留最终套件工具合并输出原文：
+
+【渠道C01～C05】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+..........................                                               [100%]
+26 passed in 0.16s
+
+【渠道、总体、类别及静态组合】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+........................................................................ [ 76%]
+......................                                                   [100%]
+94 passed in 0.45s
+
+覆盖关系：C05八项=不足四项+等号允许三项+合法基期零退款一项。
+渠道26项=原18项+C05八项；相关94项=渠道26+总体9+类别38+静态21，各结果包含，不相加。
+本轮无失败，不修改参考函数、生产Runtime或原冻结答案迎合实现；新控制预期也未根据actual改写。
+本次未执行全量pytest、公开工作树或CI，旧全量151等结果保留其原时点，不作为本次结果。

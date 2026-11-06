@@ -1,0 +1,28 @@
+A3-11 C06：按正式定义补齐退款去重及观察期控制
+日期：2026-11-05（Asia/Shanghai）
+环境：开发工作树；CPython 3.10.12；pytest 9.1.1；Linux x86_64；现有.venv/bin/python。
+执行方式：本地沙箱内，非公开工作树、非CI、非用户L3。
+范围依据：A3-11_channel_oracle_plan.md §6 C06，方案SHA-256为178c5061a1741f3f85688fdfc21c197a9fd4be604e1cc1db7031604cc3f3eb08，编号与定义不改。
+定向命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -k c06 -o addopts='' -q -p no:cacheprovider
+定向退出码：0；结果摘要：8 passed, 26 deselected in 0.15s。
+以下为最终套件工具合并输出原文：
+
+【渠道C01～C06套件】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+..................................                                       [100%]
+34 passed in 0.20s
+
+【渠道、总体、类别参考及静态组合】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+........................................................................ [ 70%]
+..............................                                           [100%]
+102 passed in 0.47s
+
+覆盖关系：C06八项=方案规定四类退款事件×基期/当前；渠道34项=原C01～C05二十六项+C06八项；相关102项=渠道34+总体9+类别38+静态21，范围包含不相加。
+失败原因：无；没有改实现或冻结预期迎合测试。
+限制：after_as_of同时在H之后，不声称孤立验证as_of；未改变成熟条件或控制编号。
+本轮未运行全量、公开工作树或CI；保留历史结果原时点，不作为本次通过数量。

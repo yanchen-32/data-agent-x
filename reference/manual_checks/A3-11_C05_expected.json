@@ -1,0 +1,119 @@
+{
+  "case_id": "A3-11-C05",
+  "version": "1",
+  "record_date": "2026-11-05",
+  "derivation": "依据DD02 §2及原始逐单支付/成熟/退款记录，先直接手工保存控制预期，再编写和运行C05测试；未调用参考或生产函数生成答案。此前已阅读实现，不称首次盲审或用户本人验收。",
+  "source_fixture": "tests/fixtures/order_boundaries/11_single_region_channel_grouping.json",
+  "source_fixture_sha256": "d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8",
+  "source_expected": "reference/manual_checks/A3-11_expected.json",
+  "source_expected_sha256": "c0e82fc22fb028235f249d524e516920b733636f7ad22ecbb53d7a7b6e811a7e",
+  "source_input_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257",
+  "rules": [
+    "每单7天成熟、水位与空窗按固定西北Scope的有效支付队列判断；最晚成熟为2026-09-19T00:00:00Z，双窗最晚end为2026-09-15T00:00:00Z。",
+    "仅一个比较前提不足时预期insufficient_evidence及唯一对应原因，不能静默发布正常指标；这不是结构非法或关键DQ的ValueError。",
+    "成熟和水位等号允许；不足时两窗所有发布指标及变化均null、无聚合行或分组台账，候选订单仍可诊断。",
+    "零退款与零分母不同：正分母、成熟且水位完整时，U=0的率为Fraction(0)，可正常发布；基期率0仅使相对变化null。",
+    "控制只作用于合法原始input的深拷贝，原11号Fixture和独立expected不改。"
+  ],
+  "blocked_publication": {
+    "metrics": {
+      "baseline": {"N": null, "U": null, "rate": null},
+      "current": {"N": null, "U": null, "rate": null},
+      "absolute_change_ratio": null,
+      "relative_change": null
+    },
+    "aggregate_rows": [],
+    "group_order_ids": {},
+    "group_refunded_order_ids": {}
+  },
+  "cases": {
+    "immature": {
+      "context_overrides": {"as_of": "2026-09-18T23:59:59.999999Z"},
+      "outcome": "insufficient_evidence",
+      "reasons": ["观察期未成熟"],
+      "quality_checks": {"all_orders_mature": false, "payments_watermark_covered": true, "refunds_watermark_covered": true},
+      "publication": "blocked",
+      "basis": "K11-N-C-A3于09-12支付，7天成熟为09-19；as_of仅早1微秒，其他水位仍完整，候选队列不变。"
+    },
+    "payments_below": {
+      "context_overrides": {"watermark": {"payments_through": "2026-09-14T23:59:59.999999Z"}},
+      "outcome": "insufficient_evidence",
+      "reasons": ["支付水位不足"],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": false, "refunds_watermark_covered": true},
+      "publication": "blocked",
+      "basis": "当前窗口end为09-15，支付水位早1微秒；即使实际最后支付早于end，仍不能把不完整窗口当作完整。"
+    },
+    "refunds_below": {
+      "context_overrides": {"watermark": {"refunds_through": "2026-09-18T23:59:59.999999Z"}},
+      "outcome": "insufficient_evidence",
+      "reasons": ["退款水位不足"],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": false},
+      "publication": "blocked",
+      "basis": "西北最大paid_at+H为09-19；退款水位早1微秒，即使已提供事件都在更早日期，也不能断言观察期完整。"
+    },
+    "empty_baseline": {
+      "disable_order_ids": ["K11-N-B-W1", "K11-N-B-W2", "K11-N-B-A1"],
+      "candidate_order_ids": {
+        "baseline": [],
+        "current": ["K11-N-C-W1", "K11-N-C-A1", "K11-N-C-A2", "K11-N-C-A3"]
+      },
+      "outcome": "insufficient_evidence",
+      "reasons": ["支付窗口无有效样本"],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": true},
+      "publication": "blocked",
+      "basis": "全部三笔西北基期支付设为无效，不能只改两笔；东南基期有效支付仍存在但必须排除。当前队列保留四单，不足时仍不得发布当前正常指标或变化。"
+    },
+    "maturity_equal": {
+      "context_overrides": {"as_of": "2026-09-19T00:00:00Z"},
+      "outcome": "ready",
+      "reasons": [],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": true},
+      "publication": "frozen",
+      "basis": "as_of恰等于西北最后一单的paid_at+7天，所有西北退款事件早于此时，故原冻结六行及变化不变。东南更晚成熟不属于本过滤队列。"
+    },
+    "payments_equal": {
+      "context_overrides": {"watermark": {"payments_through": "2026-09-15T00:00:00Z"}},
+      "outcome": "ready",
+      "reasons": [],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": true},
+      "publication": "frozen",
+      "basis": "支付水位等于双窗最大end允许发布；这是原合法输入已有的等号正例，复用原冻结预期，不另计新固定Fixture。"
+    },
+    "refunds_equal": {
+      "context_overrides": {"watermark": {"refunds_through": "2026-09-19T00:00:00Z"}},
+      "outcome": "ready",
+      "reasons": [],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": true},
+      "publication": "frozen",
+      "basis": "退款水位等于西北最大成熟时刻允许发布，原退款订单集合及冻结结果不变；不额外要求覆盖被排除东南订单的成熟日。"
+    },
+    "zero_baseline_refunds": {
+      "remove_refund_ids": ["KR11-N-B-A1"],
+      "outcome": "ready",
+      "reasons": [],
+      "quality_checks": {"all_orders_mature": true, "payments_watermark_covered": true, "refunds_watermark_covered": true},
+      "publication": "zero_baseline",
+      "basis": "只移除唯一西北基期退款事件；基期支付三单保持有效，东南基期退款仍在原始输入但不能计入。基期N=3/U=0，当前N=4/U=3；率0→3/4、绝对变化3/4，相对变化因基期率0为null。"
+    }
+  },
+  "zero_baseline_publication": {
+    "metrics": {
+      "baseline": {"N": 3, "U": 0, "rate": "0"},
+      "current": {"N": 4, "U": 3, "rate": "3/4"},
+      "absolute_change_ratio": "3/4",
+      "relative_change": null
+    },
+    "aggregate_rows": [
+      {"window_index": 0, "dimension_id": null, "group_id": null, "group_label": null, "paid_orders": 3, "refunded_orders": 0, "rate": "0"},
+      {"window_index": 0, "dimension_id": "channel", "group_id": "channel_app", "group_label": "移动应用", "paid_orders": 1, "refunded_orders": 0, "rate": "0"},
+      {"window_index": 0, "dimension_id": "channel", "group_id": "channel_web", "group_label": "网页", "paid_orders": 2, "refunded_orders": 0, "rate": "0"},
+      {"window_index": 1, "dimension_id": null, "group_id": null, "group_label": null, "paid_orders": 4, "refunded_orders": 3, "rate": "3/4"},
+      {"window_index": 1, "dimension_id": "channel", "group_id": "channel_app", "group_label": "移动应用", "paid_orders": 3, "refunded_orders": 2, "rate": "2/3"},
+      {"window_index": 1, "dimension_id": "channel", "group_id": "channel_web", "group_label": "网页", "paid_orders": 1, "refunded_orders": 1, "rate": "1"}
+    ],
+    "group_refunded_order_ids": {
+      "baseline": {"channel_web": [], "channel_app": []},
+      "current": {"channel_web": ["K11-N-C-W1"], "channel_app": ["K11-N-C-A1", "K11-N-C-A2"]}
+    }
+  }
+}

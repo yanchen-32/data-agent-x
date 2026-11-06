@@ -1,0 +1,24 @@
+A3-11：C05定向复跑及渠道专项实际输出
+日期：2026-11-05（Asia/Shanghai）
+环境：开发工作树；CPython 3.10.12；pytest 9.1.1；Linux x86_64；现有.venv/bin/python。
+执行方式：本地沙箱内，不是公开工作树、GitHub Actions CI或用户本人L3验收。
+本文件保存本批次工具合并输出；历史C03/C04输出保留原文，仅复核指纹并建立索引。
+
+【C05定向】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -k c05 -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+........                                                                 [100%]
+8 passed, 26 deselected in 0.13s
+
+【当前渠道C01～C06专项】
+实际命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+..................................                                       [100%]
+34 passed in 0.19s
+
+失败原因：无测试失败、收集错误或环境阻塞；无需修改实现、契约或冻结答案。
+数量关系：C05八项包含于当前渠道三十四项，不相加；当前渠道也实际执行C03/C04，历史输出仍按原时点保存。
+本批次未执行总体/类别组合、Fixture静态套件、全量、公开工作树测试或GitHub Actions CI；不把此前102或151等结果计为本轮重跑。
+冻结Fixture、原expected、C05独立控制预期及测试/参考源码均保持不变；历史C03/C04文件未覆盖。

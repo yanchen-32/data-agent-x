@@ -1,0 +1,74 @@
+{
+  "case_id": "A3-11-C06",
+  "version": "1",
+  "record_date": "2026-11-05",
+  "definition": "独立退款扫描仍按订单去重及观察期：同单新增不同refund_id的有效success事件仍只计一个U；failed、支付后H之后或as_of之后的事件不增加U。",
+  "definition_source": {
+    "path": "reference/manual_checks/A3-11_channel_oracle_plan.md",
+    "published_commit": "c9b8536a6d26287a845a978f0cd59f4b99a79169",
+    "sha256": "178c5061a1741f3f85688fdfc21c197a9fd4be604e1cc1db7031604cc3f3eb08",
+    "section": "§6 C06及控制注意事项；编号与范围不变"
+  },
+  "source_fixture_sha256": "d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8",
+  "source_expected_sha256": "c0e82fc22fb028235f249d524e516920b733636f7ad22ecbb53d7a7b6e811a7e",
+  "source_input_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257",
+  "derivation": "先从原始订单/退款及DD02 §2手工确定下列事件属性，保存本记录后再编写并执行测试；未调用参考或生产函数生成预期。已阅读实现，不称首次盲审或用户本人验收。",
+  "scope": {"domain_id": "domain_a", "snapshot_id": "fixture_single_region_channel_v1_draft"},
+  "expected_result_ref": "reference/manual_checks/A3-11_expected.json#expected",
+  "expected_outcome": "ready",
+  "expected_U_change": 0,
+  "expected_result_rule": "每个控制独立追加一笔事件，原支付候选、六条行、两个组台账、总体率与变化均与先行冻结结果相同；不生成新数值或修改原expected。",
+  "as_of_limit": "原as_of=2026-09-23T00:00:00Z且所有西北订单已成熟，故H内不可能同时在as_of后；after_as_of事件也在H后，只验证这种组合被忽略，不声称孤立覆盖as_of条件。",
+  "cases": {
+    "second_success_baseline": {
+      "kind": "second_success", "window": "baseline", "channel_id": "channel_app",
+      "target_is_already_refunded": true, "expected_event_qualifies": true,
+      "original_refund_id": "KR11-N-B-A1",
+      "additional_refund": {"source_row_id": "r11-c06-b-second-success", "refund_id": "KR11-C06-B-SECOND", "order_id": "K11-N-B-A1", "refund_at": "2026-09-06T00:00:00Z", "status": "success"},
+      "basis": "支付09-04、原success退款09-05，新success为09-06，均在[09-04,09-11]且<=as_of；事件不同但订单已计U，不能再增加。"
+    },
+    "second_success_current": {
+      "kind": "second_success", "window": "current", "channel_id": "channel_web",
+      "target_is_already_refunded": true, "expected_event_qualifies": true,
+      "original_refund_id": "KR11-N-C-W1",
+      "additional_refund": {"source_row_id": "r11-c06-c-second-success", "refund_id": "KR11-C06-C-SECOND", "order_id": "K11-N-C-W1", "refund_at": "2026-09-11T00:00:00Z", "status": "success"},
+      "basis": "支付09-09、原success退款09-10，新success为09-11，均在[09-09,09-16]且<=as_of；U仍按同一订单只计一次。"
+    },
+    "failed_baseline": {
+      "kind": "failed", "window": "baseline", "channel_id": "channel_web",
+      "target_is_already_refunded": false, "expected_event_qualifies": false,
+      "additional_refund": {"source_row_id": "r11-c06-b-failed", "refund_id": "KR11-C06-B-FAILED", "order_id": "K11-N-B-W1", "refund_at": "2026-09-03T00:00:00Z", "status": "failed"},
+      "basis": "支付09-02，事件09-03在闭合观察期内且<=as_of，仅状态为failed；原无退款订单仍不计U。"
+    },
+    "failed_current": {
+      "kind": "failed", "window": "current", "channel_id": "channel_app",
+      "target_is_already_refunded": false, "expected_event_qualifies": false,
+      "additional_refund": {"source_row_id": "r11-c06-c-failed", "refund_id": "KR11-C06-C-FAILED", "order_id": "K11-N-C-A3", "refund_at": "2026-09-13T00:00:00Z", "status": "failed"},
+      "basis": "支付09-12，事件09-13在闭合观察期内且<=as_of，仅状态失败；不把该未退款订单加入U。"
+    },
+    "after_horizon_baseline": {
+      "kind": "after_horizon", "window": "baseline", "channel_id": "channel_web",
+      "target_is_already_refunded": false, "expected_event_qualifies": false,
+      "additional_refund": {"source_row_id": "r11-c06-b-after-horizon", "refund_id": "KR11-C06-B-AFTER-H", "order_id": "K11-N-B-W1", "refund_at": "2026-09-09T00:00:00.000001Z", "status": "success"},
+      "basis": "支付09-02，H末端09-09零点，success事件晚1微秒但早于as_of；仅因超出观察期不计U。"
+    },
+    "after_horizon_current": {
+      "kind": "after_horizon", "window": "current", "channel_id": "channel_app",
+      "target_is_already_refunded": false, "expected_event_qualifies": false,
+      "additional_refund": {"source_row_id": "r11-c06-c-after-horizon", "refund_id": "KR11-C06-C-AFTER-H", "order_id": "K11-N-C-A3", "refund_at": "2026-09-19T00:00:00.000001Z", "status": "success"},
+      "basis": "支付09-12，H末端09-19零点，success事件晚1微秒且<=as_of；不计U。"
+    },
+    "after_as_of_baseline": {
+      "kind": "after_as_of", "window": "baseline", "channel_id": "channel_web",
+      "target_is_already_refunded": false, "expected_event_qualifies": false,
+      "additional_refund": {"source_row_id": "r11-c06-b-after-as-of", "refund_id": "KR11-C06-B-AFTER-ASOF", "order_id": "K11-N-B-W1", "refund_at": "2026-09-23T00:00:00.000001Z", "status": "success"},
+      "basis": "success事件晚as_of 1微秒，也晚于该单09-09观察期末端，必须忽略；未提前改变as_of或破坏成熟/水位。"
+    },
+    "after_as_of_current": {
+      "kind": "after_as_of", "window": "current", "channel_id": "channel_app",
+      "target_is_already_refunded": false, "expected_event_qualifies": false,
+      "additional_refund": {"source_row_id": "r11-c06-c-after-as-of", "refund_id": "KR11-C06-C-AFTER-ASOF", "order_id": "K11-N-C-A3", "refund_at": "2026-09-23T00:00:00.000001Z", "status": "success"},
+      "basis": "success事件晚as_of 1微秒，也晚于09-19观察期末端；原未退款订单仍不计U，不能宣称这是孤立as_of边界。"
+    }
+  }
+}

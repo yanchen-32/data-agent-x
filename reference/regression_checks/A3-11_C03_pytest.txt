@@ -1,0 +1,22 @@
+A3-11 C03：全地区合成对照实际测试输出
+日期：2026-11-05（Asia/Shanghai）
+环境：开发工作树；CPython 3.10.12；pytest 9.1.1；Linux x86_64；现有.venv/bin/python。
+执行方式：本地沙箱内，非公开工作树、非CI或用户L3。
+
+【渠道C01～C03套件】
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+....                                                                     [100%]
+4 passed in 0.08s
+
+【渠道、总体、类别与静态组合】
+命令：.venv/bin/python -B -m pytest tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+工具原始输出：
+........................................................................ [100%]
+72 passed in 0.35s
+
+覆盖关系：渠道4项=原C01/C02三项+C03一项；组合72项=渠道4+总体9+类别38+静态21，包含渠道子集，不相加。
+失败原因：无；未修改参考实现或先行预期来使测试通过。
+本次未运行全量pytest、公开工作树或CI；此前全量结果保留原时点，不作为本次结果。

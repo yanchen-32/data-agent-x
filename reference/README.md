@@ -69,3 +69,23 @@ A3-11新增固定开发样例[单地区渠道分组](../tests/fixtures/order_bou
 上节保存冻结阶段状态。现已新增[channel_cohort.py](channel_cohort.py)中的calculate_channel_reference(input)，只依赖标准库与总体参考函数：复用固定Scope的支付队列、成熟水位、总体指标和比较门槛，独立扫描原始退款并按订单去重，然后直接按订单channel_id分组。完整产品关联、目录重复/域快照检查位于不足返回之前；最小版本支持已登记渠道，未知渠道拒绝仅表示参考输入范围限制，不是业务关键DQ规则。未修改总体/类别函数或生产Runtime。
 
 [渠道固定测试](../tests/test_reference_channel_cohort.py)绑定原有Fixture、独立expected、规范化input及expected四项指纹；C01比较四条渠道行、两条总计行、精确Fraction及总体变化，C02按基期/当前核对复合键、支付/退款来源、东南排除、分组互斥穷尽及N/U守恒。只传input，测试结束检查内存和磁盘不变，不从actual生成预期。实际专项3项、相关71项、开发全量136项通过，见[本轮运行记录](regression_checks/A3-11_channel.md)。C03～C07控制变体及C08展示名补强仍待后续，不能因固定正例通过宣称全部渠道边界或G0通过。
+
+## A3-11 C03全地区控制（2026-11-05）
+
+在冻结input深拷贝上只将filters.region_ids设为[]，作为另行假定已授权的全地区合成Scope。新增C03直接调用既有渠道函数，与先行unfiltered_counterexample比较双窗两渠道N/U/精确率、总体变化、增加的东南订单/退款及来源，并同时核对西北和全地区的互斥穷尽、N/U守恒；全地区调用前后的西北六行保持一致。原冻结文件与渠道实现不改，当前渠道套件4项、相关72项实际通过，原始输出见[C03测试输出](regression_checks/A3-11_C03_pytest.txt)，覆盖边界见[追加回归记录](regression_checks/A3-11_channel.md)。C04～C07及C08仍待后续，本次不是授权实现或用户L3验收。
+
+## A3-11 C04关键关联控制（2026-11-05）
+
+新增14项参数化/兼容检查：产品、地区、渠道目录重复键3项，保留本地合法行并混入域/快照不同但局部ID相同的目录行6项，西北/东南目标订单产品缺失×ready/immature四项，以及产品实体存在但category_id=None的合法未知兼容一项。关键产品缺失须抛包含订单ID、来源行、完整产品复合键的ValueError，东南目标已确认不在候选队列中，不能因地区过滤或未成熟而绕过。
+
+合法非关键类别未知仍返回原渠道六行；原类别未知回归继续运行，未知channel_id的参考范围限制不提升为关键DQ规则。只补测试断言，没有修改渠道/总体/类别函数或冻结答案。C04定向14项、渠道套件18项及相关86项实际通过，原始输出见[C04测试输出](regression_checks/A3-11_C04_pytest.txt)，拒绝范围及限制见[回归记录](regression_checks/A3-11_channel.md)。C05～C07及C08仍待后续，不据这些局部参考测试声称生产DQ或G0通过。
+
+## A3-11 C05比较前提与零退款（2026-11-05）
+
+先按DD02和原始逐单记录保存[C05独立预期](manual_checks/A3-11_C05_expected.json)及[推导说明](manual_checks/A3-11_C05_expected.md)，再新增8项测试：仅未成熟、仅支付水位不足、仅退款水位不足、仅空基期四项不足控制，三个等号允许控制和一个合法基期零退款正例。四种不足均不发布两窗指标/变化或聚合行；N>0/U=0应ready，基期率0只使相对变化null。当前渠道26项、相关94项实际通过，[输出](regression_checks/A3-11_C05_pytest.txt)及[回归记录](regression_checks/A3-11_channel.md)保留真实证据；原Fixture/expected和参考实现不改，C06/C07及C08仍待后续。
+
+## A3-11 C06退款去重及观察期（2026-11-05）
+
+已核对发布方案的C06定义和哈希，只补四类追加事件在基期/当前的缺失控制，共8项：同单第二笔有效success、failed、H后1微秒、as_of后1微秒。[独立事件清单](manual_checks/A3-11_C06_expected.json)和[依据](manual_checks/A3-11_C06_expected.md)先于测试保存；所有控制复用原冻结六行、分组订单和总体变化，未生成或回填新答案。后一个场景同时在H后，按方案披露其不能孤立验证as_of，不改变编号或范围。
+
+当前C06定向8项、渠道34项、相关102项实际通过，C01～C05保持原断言，输出见[C06执行证据](regression_checks/A3-11_C06_pytest.txt)，详细状态见[回归记录](regression_checks/A3-11_channel.md)。三种参考实现、原Fixture/expected及已发布方案均不改；C07与C08仍待后续，本地运行不代表CI、用户L3或生产验收。
