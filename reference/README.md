@@ -105,3 +105,13 @@ A3-11新增固定开发样例[单地区渠道分组](../tests/fixtures/order_bou
 ## 后续公开交付验证（2026-11-06）
 
 以上保留开发阶段范围与状态；本次已在公开候选工作树实际通过渠道42项、相关110项、全量170项，源码与冻结指纹不变，见[公开交付验证](regression_checks/A3-11_C07_publication.md)。C07及本评审随此次公开追加提交交付；公开版本摘要绑定45份运行文件，完整内部开发清单保留本地。本地公开pytest仍不是CI或本人验收，仅关闭A3-11最小渠道参考Must，G0与C08保持原边界。
+
+## M01最小region参考入口（2026-11-10）
+
+新增[region_cohort.py](region_cohort.py)中的calculate_region_reference(input)，复用总体支付队列与成熟水位，独立以完整订单键去重退款并按region_id分组；未知留组受调用侧预审合成Scope约束，不实现生产授权。返回总体字段、地区聚合行及支付/退款订单台账，比较不足不发布组，关键关联与非法过滤拒绝。
+
+[首批测试](../tests/test_reference_region_cohort.py)直接对照[冻结Oracle v1](manual_checks/G0_M01_region_expected.json)验证W四行、A六行、精确Fraction、来源及代表性控制，实际专项13项、相关123项、开发全量188项通过；[执行输出](regression_checks/G0_M01_region_pytest.txt)及[阶段记录](regression_checks/G0_M01_region.md)绑定源码/测试哈希。原冻结Fixture/预期和其他计算器不改；完整矩阵/三维共同Scope仍待验证，M01/G0开放、C08非阻塞，不将本地结果称为CI或生产验收。未提交/推送。
+
+## region实现公开交付验证（2026-11-10）
+
+以上保留各开发阶段及旧输出对应版本；本次公开候选工作树已实际通过地区13项、相关123项、全量183项，详见[公开交付记录](regression_checks/G0_M01_region_implementation_publication.md)和公开版本清单。规则/冻结Oracle/region入口/当前断言版本随本次追加交付，原Fixture及既有计算器不变。M01/G0仍开放、C08非阻塞；公开本地pytest不是CI、真实授权或本人验收。

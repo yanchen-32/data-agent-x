@@ -1,0 +1,24 @@
+M01-region RG01/RG02最小回归：本地开发工作树真实执行
+日期：2026-11-10（Asia/Shanghai）
+环境：CPython 3.10.12；pytest 9.1.1；Linux x86_64
+解释器：本仓库.venv/bin/python；PYTHONPATH=src。不是公开工作树、GitHub Actions CI或用户本人验收。
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -k matches_frozen_oracle_and_sources -rA -o addopts='' -q -p no:cacheprovider
+退出码：0
+..                                                                       [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_region_cohort.py::test_region_reference_matches_frozen_oracle_and_sources[RG01.W]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_matches_frozen_oracle_and_sources[RG02.A]
+2 passed, 11 deselected in 0.15s
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+.............                                                            [100%]
+13 passed in 0.18s
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_cohort.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+.........                                                                [100%]
+9 passed in 0.03s
+

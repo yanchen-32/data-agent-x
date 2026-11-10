@@ -1,0 +1,125 @@
+{
+  "date": "2026-11-10",
+  "timezone": "Asia/Shanghai",
+  "scope": "本地公开候选工作树回归；不是CI、生产授权或用户本人验收",
+  "parent_public_commit": "2fe6d51d9c1f0797b09930b875a47e4f70f2ada6",
+  "commit_binding": "最终追加提交须包含下列相同字节的53份运行文件；执行结果由父提交、逐文件SHA-256及本输出绑定，不把旧开发HEAD或历史结果当作本次公开版本。",
+  "environment": {
+    "python": "3.10.12",
+    "pytest": "9.1.1",
+    "system": "Linux",
+    "machine": "x86_64",
+    "interpreter": "复用既有虚拟环境python，省略本机绝对路径；PYTHONPATH=src，无依赖安装"
+  },
+  "source_manifest_sha256": "8d4629116144a115882970078129ded3d00151876fda6581624bd2f81b8083bf",
+  "file_sha256": {
+    "pyproject.toml": "5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0",
+    "reference/__init__.py": "48aa9aabb44a5512f257a576d4782550663cf51c4a5d9a39c6efeaaa18816bb9",
+    "reference/category_cohort.py": "53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216",
+    "reference/channel_cohort.py": "207071252972bbd3cf6de22bc463fbd0c444068966cbb9cfd176b37f2d61629c",
+    "reference/cohort.py": "13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6",
+    "reference/manual_checks/A3-11_C05_expected.json": "cbe71efb6734e3480f5d1ad93793d4338c240377dec5cb3335c01136c7565819",
+    "reference/manual_checks/A3-11_C05_expected.md": "aab77d6806982c9576fdbfc483d2b692cf8f0a29f54f2f94fdb535d3c99a504d",
+    "reference/manual_checks/A3-11_C06_expected.json": "32ecd37ddf05767c5496362c8f0f3529d8a905412cd6c1b78ae8d8a42c52ae03",
+    "reference/manual_checks/A3-11_C06_expected.md": "f71ba1f204f998554df0f69a6d4fcd481e72541468babe12a7eb4947e99e983c",
+    "reference/manual_checks/A3-11_channel_oracle_plan.md": "178c5061a1741f3f85688fdfc21c197a9fd4be604e1cc1db7031604cc3f3eb08",
+    "reference/manual_checks/A3-11_design.md": "e46202b925ff5c074ca62c1d17482cd210fc339874a9786897ed12cc4ed9ae1b",
+    "reference/manual_checks/A3-11_expected.json": "c0e82fc22fb028235f249d524e516920b733636f7ad22ecbb53d7a7b6e811a7e",
+    "reference/manual_checks/A3-11_expected_draft.md": "0a190a957ac70afab40d68bafd910c3003dfee944227c48efc549c4316dac2b3",
+    "reference/manual_checks/A3-11_freeze_review.md": "e7a1c127464b8e0ad11cbfb635e3bb15ac1cea57c71b6b73c5a56d2b3ec04726",
+    "reference/manual_checks/A3-11_implementation_start.md": "86f1a4853c69ef3acbeeb3638509b703cc7d6156a5ff6624589b856dd71fc19d",
+    "reference/manual_checks/A3-11_input_review.md": "28498ead0ea560d1e60de75b99feb14a22f804e9735b94155d2a784e0fbe1427",
+    "reference/manual_checks/G0_M01_region_expected.json": "50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce",
+    "reference/manual_checks/G0_M01_region_expected_draft.md": "99040571560c27f8eadd84ce72ee4640a53f25a6eadfaff8ffd6ba4705fc9fe3",
+    "reference/manual_checks/G0_M01_region_freeze_review.md": "23ad5eb7789b791fd0a17ae6027e305108eee547648bbf4b11e7a05284083eee",
+    "reference/manual_checks/G0_M01_region_plan.md": "20200d0af6c99bf4118d7ea0d81ebd22ab1f3a03084148b79606da56d1949b2c",
+    "reference/manual_checks/G0_M01_region_rule_review.md": "5322018b50b74da02b32c888b6777e9527fecd84b58d66b4a752ed664343c96c",
+    "reference/manual_checks/G0_M01_region_test_matrix.md": "8da7fd865cb1bd590d6c4b457490ccf4638e9a32e23d61f637d8e8aa23e2b7e1",
+    "reference/region_cohort.py": "4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba",
+    "src/dataagentx/__init__.py": "3ebbb4065141012142168ecc70776886d2a452d80c3c3c1b19fc94665136fd5c",
+    "src/dataagentx/config.py": "f8c396b00e855ccb1640edd35cb171196ce32d77fb9833a222c481b460c7ce4b",
+    "src/dataagentx/logging_config.py": "5b5019c7057594af3123e57d548df3b8c9b822a87cf20086ddbb0be1c5f346c9",
+    "src/dataagentx/main.py": "70909a2abb94fa55a94ebf1be6218843f9c729551f6c8b8aab1dee2e9512d63b",
+    "src/dataagentx/models.py": "794fbea861887e9386fa6e254ebd028b114f8e4619a4e51ce01c617d861cfcbf",
+    "src/dataagentx/order_validation.py": "235f0e23da44a0a4276541e990fcb45ec4a690f118f4da57808df5efcccfa1c0",
+    "src/dataagentx/schemas.py": "90a4c685e77eb4f90859772272585bbab920365a9d3ad3cbde40c107e6bc0e91",
+    "src/dataagentx/service.py": "bb7f27ce448673af4259bbe52a7b63f57ea7e2ce2dc591b90e59290f5c5f2555",
+    "tests/fixtures/order_boundaries/01_maturity_watermark.json": "115afb0b7d40387dc0ef39e22af64af7ede26854d7b923e5ca33ba921d9fadba",
+    "tests/fixtures/order_boundaries/02_utc_boundaries.json": "5c842684b3b917dc137607edd87fb558e79d777b94af845bb5edfcd580bf3b82",
+    "tests/fixtures/order_boundaries/03_duplicate_orders.json": "606d0c0aefaa385a59c81222e70f779a3a652af97c5bf27c17c8a26a5e0b85a7",
+    "tests/fixtures/order_boundaries/04_zero_denominator_window.json": "5d2da96ec1dded382eb454fe68ee24f6bedaffeffbd45887e3526072a7d924c2",
+    "tests/fixtures/order_boundaries/05_single_region_filter.json": "d9f621f17385f2b7dcf2e58da70f79627adbf850e56e419f17de7e8baa233da8",
+    "tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json": "a7fdc991ce7df027cc48630f76da1f733bc3a11742ea046d219b7acee1ed66fd",
+    "tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json": "e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac",
+    "tests/fixtures/order_boundaries/08_category_entry_exit.json": "79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58",
+    "tests/fixtures/order_boundaries/08_category_entry_exit.v1.json": "b2ffe9d156a9e010f28bbfda072589c95b8ee8dd426f98a0da8c1515ed0cb580",
+    "tests/fixtures/order_boundaries/09_unknown_category_preserved.json": "d9677959c20e91b6965e984035742a6524592896fbf9ce40728192a43bd8439e",
+    "tests/fixtures/order_boundaries/10_missing_product_join_blocks.json": "4f2b8b097451cdbf2c3b7f97ff115235c58dea2de2a45b147d93a02bf0371cc3",
+    "tests/fixtures/order_boundaries/11_single_region_channel_grouping.json": "d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8",
+    "tests/test_boundary_fixtures.py": "1c092ecf94fc13f43b7f5eaa65bf40357fa510a3d27408f8ea8722a979d4a7f8",
+    "tests/test_config.py": "b3c6636b8895b1788f19eb612e3baff6e463c76583e7d4172b08a8a98aacff40",
+    "tests/test_health.py": "eda6a4fb3fd1dd9a7ef81e7c9faacc5c215ae0ee4a9b9c7a9ad7a2723cd6d4c9",
+    "tests/test_items.py": "c9d88a4849f77bd35b9b03ac1e5ba75e65684f0e48e5d76bb7688417a124ea3d",
+    "tests/test_order_validation.py": "ec0d0d00b38fcfa4797d631e0689420d1dd1b46087ae283416f88d4c105dca38",
+    "tests/test_reference_category_cohort.py": "f5be1f6e7740ed43f26231eaa62d51f75b59d4e16baf2e26821b71becd0387a5",
+    "tests/test_reference_channel_cohort.py": "d4fb4abaf6ade2d2fadbf20385943011e02db9b3e015a90b66da452712477817",
+    "tests/test_reference_cohort.py": "f0f7257f9471b4cff6a195332b54d37fc9833682ebd3ac5048739e4dc17c3fe0",
+    "tests/test_reference_region_cohort.py": "46706e3d95600b25a75198e6aada7d6ecb8e262a27d6e5c8882c07c3b75ac6f9",
+    "tests/test_service.py": "192a21250385f0f02bc9976a6fca9f4c42cb18d90d11ea46198e031b5d947f72"
+  },
+  "frozen_oracle": {
+    "path": "reference/manual_checks/G0_M01_region_expected.json",
+    "sha256": "50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce",
+    "expected_case_ids": [
+      "RG01.W",
+      "RG02.A"
+    ],
+    "input_variant_count": 40,
+    "note": "RG01/RG02完整expected冻结，其他控制仅绑定输入，不冒称完整矩阵已执行或所有输出已冻结。",
+    "rule_version": "M01-region-rules-v1",
+    "rule_sha256": "5322018b50b74da02b32c888b6777e9527fecd84b58d66b4a752ed664343c96c"
+  },
+  "public_results": [
+    {
+      "scope": "公开地区专项",
+      "exit_code": 0,
+      "passed": 13,
+      "seconds": "0.18"
+    },
+    {
+      "scope": "公开region＋总体＋类别＋渠道＋静态Fixture",
+      "exit_code": 0,
+      "passed": 123,
+      "seconds": "0.55"
+    },
+    {
+      "scope": "公开全量pytest（沙箱外本地）",
+      "exit_code": 0,
+      "passed": 183,
+      "seconds": "0.60"
+    }
+  ],
+  "prior_development_evidence": [
+    {
+      "path": "reference/regression_checks/G0_M01_region_pytest.txt",
+      "sha256": "cb6ad15e224447aad4de3d64bf1aad7e6946366c2bb0e1fe1212a8b04cec1873",
+      "test_sha256": "f00239954ae88529d3a929f7bc4d708ba6d5d49577c9515c93fc0a6a6f0b5305",
+      "note": "此前开发树专项13/相关123/全量188，属于旧断言版本，不改称公开结果。"
+    },
+    {
+      "path": "reference/regression_checks/G0_M01_region_RG01_RG02_pytest.txt",
+      "sha256": "7fcce42dfdf20a90d985ebdc792ee2174352bd419837c3d3bd46fa6d126c54d5",
+      "test_sha256": "46706e3d95600b25a75198e6aada7d6ecb8e262a27d6e5c8882c07c3b75ac6f9",
+      "note": "开发树定向2/地区13/总体9，定向属于专项子集，未在此阶段运行全量。"
+    }
+  ],
+  "post_run_verification": {
+    "source_file_count": 53,
+    "source_files_unchanged": true,
+    "previous_45_public_runtime_files_unchanged": true,
+    "frozen_oracle_and_sources_unchanged": true
+  },
+  "public_output_path": "reference/regression_checks/G0_M01_region_public_pytest.txt",
+  "public_output_sha256": "bc48d5c8a1e0c444628a99156e603a843e261694d041c513811131881da7057b",
+  "acceptance_boundary": "固定预期及代表性控制通过，不关闭完整M01或G0；C08仍是非阻塞Should，不代表真实授权、正式评测或用户本人签字。"
+}

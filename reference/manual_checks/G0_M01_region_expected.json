@@ -1,0 +1,1646 @@
+{
+  "oracle_id": "G0-M01-region",
+  "freeze_version": "1",
+  "freeze_date": "2026-11-10",
+  "freeze_status": "RG01.W/RG02.A开发数值与来源Oracle v1已冻结；40个输入变体指纹已登记；其余控制完整业务预期、参考计算/pytest、生产批准和本人独立验收未完成。",
+  "frozen_expected_case_ids": [
+    "RG01.W",
+    "RG02.A"
+  ],
+  "input_variant_count": 40,
+  "derivation": "直接结构化2fe6d51已提交114行人工台账；表格数值及P/R集合直接转录，W四行和总体变化由§4文字手填。来源关联、集合排序和输入指纹仅为机械记录，不读取Fixture.expected，不调用待测/总体/类别/渠道函数、SQL或生产代码生成答案。已知历史总计，非首次盲审、非用户签字。",
+  "sources": {
+    "fixture": {
+      "path": "tests/fixtures/order_boundaries/11_single_region_channel_grouping.json",
+      "sha256": "d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8",
+      "input_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257"
+    },
+    "original_channel_expected": {
+      "path": "reference/manual_checks/A3-11_expected.json",
+      "sha256": "c0e82fc22fb028235f249d524e516920b733636f7ad22ecbb53d7a7b6e811a7e"
+    },
+    "manual_ledger": {
+      "path": "reference/manual_checks/G0_M01_region_expected_draft.md",
+      "sha256": "99040571560c27f8eadd84ce72ee4640a53f25a6eadfaff8ffd6ba4705fc9fe3",
+      "line_count": 114,
+      "published_commit": "2fe6d51d9c1f0797b09930b875a47e4f70f2ada6",
+      "sections_used_for_frozen_expected": [
+        "§1 固定输入与两个Scope",
+        "§2 逐订单支付与成熟",
+        "§3 逐退款归属",
+        "§4 手工集合与六行预期"
+      ]
+    },
+    "region_plan": {
+      "path": "reference/manual_checks/G0_M01_region_plan.md",
+      "sha256": "20200d0af6c99bf4118d7ea0d81ebd22ab1f3a03084148b79606da56d1949b2c"
+    },
+    "test_matrix": {
+      "path": "reference/manual_checks/G0_M01_region_test_matrix.md",
+      "sha256": "8da7fd865cb1bd590d6c4b457490ccf4638e9a32e23d61f637d8e8aa23e2b7e1"
+    },
+    "rules": {
+      "path": "reference/manual_checks/G0_M01_region_rule_review.md",
+      "sha256": "5322018b50b74da02b32c888b6777e9527fecd84b58d66b4a752ed664343c96c",
+      "version": "M01-region-rules-v1",
+      "repository_status_at_freeze": "本地技术审定已形成；该规则记录尚未随2fe6d51提交，以本文件SHA-256绑定，不冒称生产批准。"
+    },
+    "DD02": {
+      "path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sha256": "3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0"
+    },
+    "SRS": {
+      "path": "docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+      "sha256": "8440318ebaea1565dc02fd9096e09cbe23e10f0c961dad4762ea74d605fc7950"
+    },
+    "metric_catalog": {
+      "path": "docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "sha256": "51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce"
+    },
+    "object_schema": {
+      "path": "docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json",
+      "sha256": "e50b08ca770ef699dcc58db246782ff800eb2e7c856c9558369c25022528383a"
+    }
+  },
+  "canonicalization": "UTF-8编码json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'))；不含末尾换行；数组不重排后再算输入指纹。",
+  "numeric_representation": "计数为整数，rate及变化为精确有理数字符串，读取端用Fraction解析；无浮点，不是生产Decimal序列化。",
+  "comparison_semantics": {
+    "aggregate_rows": "原列表先检查行数/身份键唯一，再逐行或按(window_index,dimension_id,group_id)比较；每窗总计在前，地区ID排序。",
+    "id_and_source_arrays": "作为集合核对成员及唯一性；本文件按ID排序以便审阅，不要求overall候选列表跨输入重排后保持同一顺序。",
+    "expected_vs_evidence": "expected为参考函数应有的输出字段；evidence只在测试端回查来源/过滤/成熟边界，不要求函数返回这些字段。"
+  },
+  "authorization_boundary": "仅绑定受控合成固定输入。W是原西北Scope，A另行假定合成主体获准访问整个固定两地区输入；未知变体仍受规则RR01/RR02前提约束。此元数据不是生产输入权限开关，不证明真实授权或403实现。",
+  "scope": {
+    "domain_id": "domain_a",
+    "snapshot_id": "fixture_single_region_channel_v1_draft",
+    "metric_id": "refund_rate_order_horizon",
+    "horizon_seconds": 604800
+  },
+  "source_order_ledger": {
+    "K11-N-B-W1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-B-W1"
+      ],
+      "source_row_id": "r11-order-n-b-web-1",
+      "paid_at": "2026-09-02T00:00:00Z",
+      "mature_at": "2026-09-09T00:00:00Z",
+      "assigned_window": "baseline",
+      "original_region_id": "region_northwest",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-N-B-W2": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-B-W2"
+      ],
+      "source_row_id": "r11-order-n-b-web-2",
+      "paid_at": "2026-09-03T00:00:00Z",
+      "mature_at": "2026-09-10T00:00:00Z",
+      "assigned_window": "baseline",
+      "original_region_id": "region_northwest",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-N-B-A1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-B-A1"
+      ],
+      "source_row_id": "r11-order-n-b-app-1",
+      "paid_at": "2026-09-04T00:00:00Z",
+      "mature_at": "2026-09-11T00:00:00Z",
+      "assigned_window": "baseline",
+      "original_region_id": "region_northwest",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-N-C-W1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-C-W1"
+      ],
+      "source_row_id": "r11-order-n-c-web-1",
+      "paid_at": "2026-09-09T00:00:00Z",
+      "mature_at": "2026-09-16T00:00:00Z",
+      "assigned_window": "current",
+      "original_region_id": "region_northwest",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-N-C-A1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-C-A1"
+      ],
+      "source_row_id": "r11-order-n-c-app-1",
+      "paid_at": "2026-09-10T00:00:00Z",
+      "mature_at": "2026-09-17T00:00:00Z",
+      "assigned_window": "current",
+      "original_region_id": "region_northwest",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-N-C-A2": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-C-A2"
+      ],
+      "source_row_id": "r11-order-n-c-app-2",
+      "paid_at": "2026-09-11T00:00:00Z",
+      "mature_at": "2026-09-18T00:00:00Z",
+      "assigned_window": "current",
+      "original_region_id": "region_northwest",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-N-C-A3": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-C-A3"
+      ],
+      "source_row_id": "r11-order-n-c-app-3",
+      "paid_at": "2026-09-12T00:00:00Z",
+      "mature_at": "2026-09-19T00:00:00Z",
+      "assigned_window": "current",
+      "original_region_id": "region_northwest",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-S-B-W1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-S-B-W1"
+      ],
+      "source_row_id": "r11-order-s-b-web-1",
+      "paid_at": "2026-09-05T00:00:00Z",
+      "mature_at": "2026-09-12T00:00:00Z",
+      "assigned_window": "baseline",
+      "original_region_id": "region_southeast",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-S-B-A1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-S-B-A1"
+      ],
+      "source_row_id": "r11-order-s-b-app-1",
+      "paid_at": "2026-09-06T00:00:00Z",
+      "mature_at": "2026-09-13T00:00:00Z",
+      "assigned_window": "baseline",
+      "original_region_id": "region_southeast",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-S-C-W1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-S-C-W1"
+      ],
+      "source_row_id": "r11-order-s-c-web-1",
+      "paid_at": "2026-09-13T00:00:00Z",
+      "mature_at": "2026-09-20T00:00:00Z",
+      "assigned_window": "current",
+      "original_region_id": "region_southeast",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    },
+    "K11-S-C-A1": {
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-S-C-A1"
+      ],
+      "source_row_id": "r11-order-s-c-app-1",
+      "paid_at": "2026-09-14T00:00:00Z",
+      "mature_at": "2026-09-21T00:00:00Z",
+      "assigned_window": "current",
+      "original_region_id": "region_southeast",
+      "product_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "product_book"
+      ],
+      "product_source_row_id": "r11-product-book",
+      "is_payment_valid": true
+    }
+  },
+  "source_refund_ledger": {
+    "KR11-N-B-A1": {
+      "refund_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "KR11-N-B-A1"
+      ],
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-B-A1"
+      ],
+      "source_row_id": "r11-refund-n-b-app-1",
+      "refund_at": "2026-09-05T00:00:00Z",
+      "status": "success",
+      "assigned_window": "baseline",
+      "assigned_region_id": "region_northwest"
+    },
+    "KR11-N-C-W1": {
+      "refund_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "KR11-N-C-W1"
+      ],
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-C-W1"
+      ],
+      "source_row_id": "r11-refund-n-c-web-1",
+      "refund_at": "2026-09-10T00:00:00Z",
+      "status": "success",
+      "assigned_window": "current",
+      "assigned_region_id": "region_northwest"
+    },
+    "KR11-N-C-A1": {
+      "refund_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "KR11-N-C-A1"
+      ],
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-C-A1"
+      ],
+      "source_row_id": "r11-refund-n-c-app-1",
+      "refund_at": "2026-09-11T00:00:00Z",
+      "status": "success",
+      "assigned_window": "current",
+      "assigned_region_id": "region_northwest"
+    },
+    "KR11-N-C-A2": {
+      "refund_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "KR11-N-C-A2"
+      ],
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-N-C-A2"
+      ],
+      "source_row_id": "r11-refund-n-c-app-2",
+      "refund_at": "2026-09-12T00:00:00Z",
+      "status": "success",
+      "assigned_window": "current",
+      "assigned_region_id": "region_northwest"
+    },
+    "KR11-S-B-W1": {
+      "refund_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "KR11-S-B-W1"
+      ],
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-S-B-W1"
+      ],
+      "source_row_id": "r11-refund-s-b-web-1",
+      "refund_at": "2026-09-06T00:00:00Z",
+      "status": "success",
+      "assigned_window": "baseline",
+      "assigned_region_id": "region_southeast"
+    },
+    "KR11-S-C-A1": {
+      "refund_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "KR11-S-C-A1"
+      ],
+      "order_key": [
+        "domain_a",
+        "fixture_single_region_channel_v1_draft",
+        "K11-S-C-A1"
+      ],
+      "source_row_id": "r11-refund-s-c-app-1",
+      "refund_at": "2026-09-15T00:00:00Z",
+      "status": "success",
+      "assigned_window": "current",
+      "assigned_region_id": "region_southeast"
+    }
+  },
+  "cases": {
+    "RG01.W": {
+      "scope_id": "W",
+      "input_variant_id": "RG01.W",
+      "derivation": "直接转录114行人工台账§2～4；集合排序和来源关联只作结构化，不计算业务答案。",
+      "expected": {
+        "outcome": "ready",
+        "reasons": [],
+        "quality_checks": {
+          "all_orders_mature": true,
+          "payments_watermark_covered": true,
+          "refunds_watermark_covered": true
+        },
+        "metrics": {
+          "baseline": {
+            "N": 3,
+            "U": 1,
+            "rate": "1/3"
+          },
+          "current": {
+            "N": 4,
+            "U": 3,
+            "rate": "3/4"
+          },
+          "absolute_change_ratio": "5/12",
+          "relative_change": "5/4"
+        },
+        "aggregate_rows": [
+          {
+            "window_index": 0,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 3,
+            "refunded_orders": 1,
+            "rate": "1/3"
+          },
+          {
+            "window_index": 0,
+            "dimension_id": "region",
+            "group_id": "region_northwest",
+            "group_label": "西北",
+            "paid_orders": 3,
+            "refunded_orders": 1,
+            "rate": "1/3"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 4,
+            "refunded_orders": 3,
+            "rate": "3/4"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": "region",
+            "group_id": "region_northwest",
+            "group_label": "西北",
+            "paid_orders": 4,
+            "refunded_orders": 3,
+            "rate": "3/4"
+          }
+        ],
+        "candidate_order_ids": {
+          "baseline": [
+            "K11-N-B-A1",
+            "K11-N-B-W1",
+            "K11-N-B-W2"
+          ],
+          "current": [
+            "K11-N-C-A1",
+            "K11-N-C-A2",
+            "K11-N-C-A3",
+            "K11-N-C-W1"
+          ]
+        },
+        "group_order_ids": {
+          "baseline": {
+            "region_northwest": [
+              "K11-N-B-A1",
+              "K11-N-B-W1",
+              "K11-N-B-W2"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "K11-N-C-A1",
+              "K11-N-C-A2",
+              "K11-N-C-A3",
+              "K11-N-C-W1"
+            ]
+          }
+        },
+        "group_refunded_order_ids": {
+          "baseline": {
+            "region_northwest": [
+              "K11-N-B-A1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "K11-N-C-A1",
+              "K11-N-C-A2",
+              "K11-N-C-W1"
+            ]
+          }
+        }
+      },
+      "expected_sha256": "4bf1651b89c9e02ac35f618f628e0d5485353cf8ebc98e79db595db23e7d5d09",
+      "evidence": {
+        "applied_filters": {
+          "region_ids": [
+            "region_northwest"
+          ]
+        },
+        "cohort_source_row_ids": {
+          "baseline": [
+            "r11-order-n-b-app-1",
+            "r11-order-n-b-web-1",
+            "r11-order-n-b-web-2"
+          ],
+          "current": [
+            "r11-order-n-c-app-1",
+            "r11-order-n-c-app-2",
+            "r11-order-n-c-app-3",
+            "r11-order-n-c-web-1"
+          ]
+        },
+        "counted_refund_order_ids": {
+          "baseline": [
+            "K11-N-B-A1"
+          ],
+          "current": [
+            "K11-N-C-A1",
+            "K11-N-C-A2",
+            "K11-N-C-W1"
+          ]
+        },
+        "qualifying_refund_event_ids": {
+          "baseline": [
+            "KR11-N-B-A1"
+          ],
+          "current": [
+            "KR11-N-C-A1",
+            "KR11-N-C-A2",
+            "KR11-N-C-W1"
+          ]
+        },
+        "qualifying_refund_source_row_ids": {
+          "baseline": [
+            "r11-refund-n-b-app-1"
+          ],
+          "current": [
+            "r11-refund-n-c-app-1",
+            "r11-refund-n-c-app-2",
+            "r11-refund-n-c-web-1"
+          ]
+        },
+        "group_cohort_source_row_ids": {
+          "baseline": {
+            "region_northwest": [
+              "r11-order-n-b-app-1",
+              "r11-order-n-b-web-1",
+              "r11-order-n-b-web-2"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "r11-order-n-c-app-1",
+              "r11-order-n-c-app-2",
+              "r11-order-n-c-app-3",
+              "r11-order-n-c-web-1"
+            ]
+          }
+        },
+        "group_refund_event_ids": {
+          "baseline": {
+            "region_northwest": [
+              "KR11-N-B-A1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "KR11-N-C-A1",
+              "KR11-N-C-A2",
+              "KR11-N-C-W1"
+            ]
+          }
+        },
+        "group_refund_source_row_ids": {
+          "baseline": {
+            "region_northwest": [
+              "r11-refund-n-b-app-1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "r11-refund-n-c-app-1",
+              "r11-refund-n-c-app-2",
+              "r11-refund-n-c-web-1"
+            ]
+          }
+        },
+        "max_paid_at_plus_h": "2026-09-19T00:00:00Z",
+        "region_catalog_source_row_ids": {
+          "region_northwest": "r11-region-northwest",
+          "region_southeast": "r11-region-southeast"
+        },
+        "product_catalog_source_row_ids": [
+          "r11-product-book"
+        ],
+        "excluded_order_ids": [
+          "K11-S-B-A1",
+          "K11-S-B-W1",
+          "K11-S-C-A1",
+          "K11-S-C-W1"
+        ],
+        "excluded_order_source_row_ids": [
+          "r11-order-s-b-app-1",
+          "r11-order-s-b-web-1",
+          "r11-order-s-c-app-1",
+          "r11-order-s-c-web-1"
+        ],
+        "excluded_refund_event_ids": [
+          "KR11-S-B-W1",
+          "KR11-S-C-A1"
+        ],
+        "excluded_refund_source_row_ids": [
+          "r11-refund-s-b-web-1",
+          "r11-refund-s-c-app-1"
+        ]
+      }
+    },
+    "RG02.A": {
+      "scope_id": "A",
+      "input_variant_id": "RG02.A",
+      "derivation": "直接转录114行人工台账§2～4；集合排序和来源关联只作结构化，不计算业务答案。",
+      "expected": {
+        "outcome": "ready",
+        "reasons": [],
+        "quality_checks": {
+          "all_orders_mature": true,
+          "payments_watermark_covered": true,
+          "refunds_watermark_covered": true
+        },
+        "metrics": {
+          "baseline": {
+            "N": 5,
+            "U": 2,
+            "rate": "2/5"
+          },
+          "current": {
+            "N": 6,
+            "U": 4,
+            "rate": "2/3"
+          },
+          "absolute_change_ratio": "4/15",
+          "relative_change": "2/3"
+        },
+        "aggregate_rows": [
+          {
+            "window_index": 0,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 5,
+            "refunded_orders": 2,
+            "rate": "2/5"
+          },
+          {
+            "window_index": 0,
+            "dimension_id": "region",
+            "group_id": "region_northwest",
+            "group_label": "西北",
+            "paid_orders": 3,
+            "refunded_orders": 1,
+            "rate": "1/3"
+          },
+          {
+            "window_index": 0,
+            "dimension_id": "region",
+            "group_id": "region_southeast",
+            "group_label": "东南",
+            "paid_orders": 2,
+            "refunded_orders": 1,
+            "rate": "1/2"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 6,
+            "refunded_orders": 4,
+            "rate": "2/3"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": "region",
+            "group_id": "region_northwest",
+            "group_label": "西北",
+            "paid_orders": 4,
+            "refunded_orders": 3,
+            "rate": "3/4"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": "region",
+            "group_id": "region_southeast",
+            "group_label": "东南",
+            "paid_orders": 2,
+            "refunded_orders": 1,
+            "rate": "1/2"
+          }
+        ],
+        "candidate_order_ids": {
+          "baseline": [
+            "K11-N-B-A1",
+            "K11-N-B-W1",
+            "K11-N-B-W2",
+            "K11-S-B-A1",
+            "K11-S-B-W1"
+          ],
+          "current": [
+            "K11-N-C-A1",
+            "K11-N-C-A2",
+            "K11-N-C-A3",
+            "K11-N-C-W1",
+            "K11-S-C-A1",
+            "K11-S-C-W1"
+          ]
+        },
+        "group_order_ids": {
+          "baseline": {
+            "region_northwest": [
+              "K11-N-B-A1",
+              "K11-N-B-W1",
+              "K11-N-B-W2"
+            ],
+            "region_southeast": [
+              "K11-S-B-A1",
+              "K11-S-B-W1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "K11-N-C-A1",
+              "K11-N-C-A2",
+              "K11-N-C-A3",
+              "K11-N-C-W1"
+            ],
+            "region_southeast": [
+              "K11-S-C-A1",
+              "K11-S-C-W1"
+            ]
+          }
+        },
+        "group_refunded_order_ids": {
+          "baseline": {
+            "region_northwest": [
+              "K11-N-B-A1"
+            ],
+            "region_southeast": [
+              "K11-S-B-W1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "K11-N-C-A1",
+              "K11-N-C-A2",
+              "K11-N-C-W1"
+            ],
+            "region_southeast": [
+              "K11-S-C-A1"
+            ]
+          }
+        }
+      },
+      "expected_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd",
+      "evidence": {
+        "applied_filters": {
+          "region_ids": []
+        },
+        "cohort_source_row_ids": {
+          "baseline": [
+            "r11-order-n-b-app-1",
+            "r11-order-n-b-web-1",
+            "r11-order-n-b-web-2",
+            "r11-order-s-b-app-1",
+            "r11-order-s-b-web-1"
+          ],
+          "current": [
+            "r11-order-n-c-app-1",
+            "r11-order-n-c-app-2",
+            "r11-order-n-c-app-3",
+            "r11-order-n-c-web-1",
+            "r11-order-s-c-app-1",
+            "r11-order-s-c-web-1"
+          ]
+        },
+        "counted_refund_order_ids": {
+          "baseline": [
+            "K11-N-B-A1",
+            "K11-S-B-W1"
+          ],
+          "current": [
+            "K11-N-C-A1",
+            "K11-N-C-A2",
+            "K11-N-C-W1",
+            "K11-S-C-A1"
+          ]
+        },
+        "qualifying_refund_event_ids": {
+          "baseline": [
+            "KR11-N-B-A1",
+            "KR11-S-B-W1"
+          ],
+          "current": [
+            "KR11-N-C-A1",
+            "KR11-N-C-A2",
+            "KR11-N-C-W1",
+            "KR11-S-C-A1"
+          ]
+        },
+        "qualifying_refund_source_row_ids": {
+          "baseline": [
+            "r11-refund-n-b-app-1",
+            "r11-refund-s-b-web-1"
+          ],
+          "current": [
+            "r11-refund-n-c-app-1",
+            "r11-refund-n-c-app-2",
+            "r11-refund-n-c-web-1",
+            "r11-refund-s-c-app-1"
+          ]
+        },
+        "group_cohort_source_row_ids": {
+          "baseline": {
+            "region_northwest": [
+              "r11-order-n-b-app-1",
+              "r11-order-n-b-web-1",
+              "r11-order-n-b-web-2"
+            ],
+            "region_southeast": [
+              "r11-order-s-b-app-1",
+              "r11-order-s-b-web-1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "r11-order-n-c-app-1",
+              "r11-order-n-c-app-2",
+              "r11-order-n-c-app-3",
+              "r11-order-n-c-web-1"
+            ],
+            "region_southeast": [
+              "r11-order-s-c-app-1",
+              "r11-order-s-c-web-1"
+            ]
+          }
+        },
+        "group_refund_event_ids": {
+          "baseline": {
+            "region_northwest": [
+              "KR11-N-B-A1"
+            ],
+            "region_southeast": [
+              "KR11-S-B-W1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "KR11-N-C-A1",
+              "KR11-N-C-A2",
+              "KR11-N-C-W1"
+            ],
+            "region_southeast": [
+              "KR11-S-C-A1"
+            ]
+          }
+        },
+        "group_refund_source_row_ids": {
+          "baseline": {
+            "region_northwest": [
+              "r11-refund-n-b-app-1"
+            ],
+            "region_southeast": [
+              "r11-refund-s-b-web-1"
+            ]
+          },
+          "current": {
+            "region_northwest": [
+              "r11-refund-n-c-app-1",
+              "r11-refund-n-c-app-2",
+              "r11-refund-n-c-web-1"
+            ],
+            "region_southeast": [
+              "r11-refund-s-c-app-1"
+            ]
+          }
+        },
+        "max_paid_at_plus_h": "2026-09-21T00:00:00Z",
+        "region_catalog_source_row_ids": {
+          "region_northwest": "r11-region-northwest",
+          "region_southeast": "r11-region-southeast"
+        },
+        "product_catalog_source_row_ids": [
+          "r11-product-book"
+        ],
+        "excluded_order_ids": [],
+        "excluded_order_source_row_ids": [],
+        "excluded_refund_event_ids": [],
+        "excluded_refund_source_row_ids": []
+      }
+    }
+  },
+  "input_variants": {
+    "RG01.W": {
+      "base_variant_id": "source_input",
+      "changes": [],
+      "input_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257",
+      "source_reference": "人工台账§1/4 W",
+      "freeze_scope": "完整业务预期见cases",
+      "note": "原固定西北Scope；来源授权为受控合成案例前提，不是生产验证。"
+    },
+    "RG02.A": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "filters",
+            "region_ids"
+          ],
+          "value": []
+        }
+      ],
+      "input_sha256": "46b72e78ff75d2bbad685d1923efea250e1cd624af92d09d9f6004466d26d169",
+      "source_reference": "人工台账§1/4 A",
+      "freeze_scope": "完整业务预期见cases",
+      "note": "另行假定合成主体获准访问整个固定两地区输入；不改原任务Scope，不提供生产授权开关。"
+    },
+    "RG03.D": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "append_refund",
+          "row": {
+            "domain_id": "domain_a",
+            "snapshot_id": "fixture_single_region_channel_v1_draft",
+            "refund_id": "KR11-RG03-S-C-SECOND",
+            "order_id": "K11-S-C-A1",
+            "refund_at": "2026-09-16T00:00:00Z",
+            "status": "success",
+            "source_row_id": "r11-rg03-s-c-second"
+          }
+        }
+      ],
+      "input_sha256": "4fa22184fbc13ea25529d7668d34ce714da0867108647869ec7703aaff389ac9",
+      "source_reference": "人工台账§5 D",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG03.T": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "update_refund",
+          "refund_id": "KR11-S-B-W1",
+          "fields": {
+            "refund_at": "2026-09-09T00:00:00Z"
+          }
+        }
+      ],
+      "input_sha256": "503a4d242de946e57a4eeb5d562c9c0660c506cd6e07ff127f7ffe24236e9251",
+      "source_reference": "人工台账§5 T",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG03.Z": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "remove_refund",
+          "refund_id": "KR11-S-B-W1"
+        }
+      ],
+      "input_sha256": "0c5a36c701b45be6e4fa58cfa6d0fde4127fe322db6e6d084338700ee2190d90",
+      "source_reference": "人工台账§5 Z",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.M-minus": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "as_of"
+          ],
+          "value": "2026-09-20T23:59:59.999999Z"
+        }
+      ],
+      "input_sha256": "86c596e34dc1a8d898a3917156e1c13443b539538798cb0e1d29c3d0042d3e95",
+      "source_reference": "人工台账§6 RG04.M-minus",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.P-minus": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "watermark",
+            "payments_through"
+          ],
+          "value": "2026-09-14T23:59:59.999999Z"
+        }
+      ],
+      "input_sha256": "04655485e7783335960778ba89127317db900e9cc51e5fbd248ca922f445d033",
+      "source_reference": "人工台账§6 RG04.P-minus",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.R-minus": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "watermark",
+            "refunds_through"
+          ],
+          "value": "2026-09-20T23:59:59.999999Z"
+        }
+      ],
+      "input_sha256": "f45749ecf636114484fec5dcda6134e1e9c80d2129ab2c72f397fa1de8e5545d",
+      "source_reference": "人工台账§6 RG04.R-minus",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.M-equal": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "as_of"
+          ],
+          "value": "2026-09-21T00:00:00Z"
+        }
+      ],
+      "input_sha256": "856d699617ac4da5dfa8329e3e8f50d53ba9565f1fbf7960c38483f688099162",
+      "source_reference": "人工台账§6 RG04.M-equal",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.R-equal": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "watermark",
+            "refunds_through"
+          ],
+          "value": "2026-09-21T00:00:00Z"
+        }
+      ],
+      "input_sha256": "7eae50d626a43a10a7502ff27a45b01663dcd46baa73287395df6337307e16a0",
+      "source_reference": "人工台账§6 RG04.R-equal",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.E": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-N-B-W1",
+            "K11-N-B-W2",
+            "K11-N-B-A1",
+            "K11-S-B-W1",
+            "K11-S-B-A1"
+          ],
+          "fields": {
+            "is_payment_valid": false
+          }
+        }
+      ],
+      "input_sha256": "8eb5850f0e5868c1ed50bd78d1a6bf9775cdf5bfb292a40018cdc94c6d14ea47",
+      "source_reference": "人工台账§6 E",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG02.Q": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-B-W1",
+            "K11-S-B-A1"
+          ],
+          "fields": {
+            "is_payment_valid": false
+          }
+        }
+      ],
+      "input_sha256": "87923b72fe33fba06ebc97048014aa8ebb55b239890668a451809ac4a4ab1049",
+      "source_reference": "人工台账§6 Q",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.label-same": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "update_catalog",
+          "catalog": "regions",
+          "id_field": "region_id",
+          "id": "region_northwest",
+          "fields": {
+            "label": "同名地区"
+          }
+        },
+        {
+          "operation": "update_catalog",
+          "catalog": "regions",
+          "id_field": "region_id",
+          "id": "region_southeast",
+          "fields": {
+            "label": "同名地区"
+          }
+        }
+      ],
+      "input_sha256": "3dc3c8e31dfd72b06857dbcd4a071c5b193f557a5bb9f62e8e1e7d55dcd4ae82",
+      "source_reference": "人工台账§7 L",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.label-null": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "update_catalog",
+          "catalog": "regions",
+          "id_field": "region_id",
+          "id": "region_southeast",
+          "fields": {
+            "label": null
+          }
+        }
+      ],
+      "input_sha256": "41c85313d145eb0e7d8a1b66a40efceccf15cd45d8f797412657a0e0c79a1c9f",
+      "source_reference": "人工台账§7 L",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.label-absent": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "remove_catalog_field",
+          "catalog": "regions",
+          "id_field": "region_id",
+          "id": "region_southeast",
+          "field": "label"
+        }
+      ],
+      "input_sha256": "291b5e56ea8a6d4e79bc0d8fc68f47d985889119726ee9bce83bd60534dbf298",
+      "source_reference": "人工台账§7 L",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.unknown-explicit": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-C-A1"
+          ],
+          "fields": {
+            "region_id": "__unknown__"
+          }
+        }
+      ],
+      "input_sha256": "bf73cb8d6fa888a6fcdd8577c5b54c2a88c0ccf0f98de207130f669ec549713f",
+      "source_reference": "人工台账§7 U；规则RR01/RR02",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "只在来源已纳入受控合成输入且授权假设明确时使用，未知归类本身不提供访问权。"
+    },
+    "RG05.filtered-explicit": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-C-A1"
+          ],
+          "fields": {
+            "region_id": "__unknown__"
+          }
+        }
+      ],
+      "input_sha256": "57e0689ebd8001e55192252d59f1cad034788effb76322d968acea100e7c3119",
+      "source_reference": "人工台账§7 W-U",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.unknown-unregistered": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-C-A1"
+          ],
+          "fields": {
+            "region_id": "region_unregistered_rg05"
+          }
+        }
+      ],
+      "input_sha256": "8fc595d38da73b8fd3adfd1af41cf763baa410a54a465cbfbfcd2c8c011cdcf5",
+      "source_reference": "人工台账§7 U；规则RR01/RR02",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "只在来源已纳入受控合成输入且授权假设明确时使用，未知归类本身不提供访问权。"
+    },
+    "RG05.filtered-unregistered": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-C-A1"
+          ],
+          "fields": {
+            "region_id": "region_unregistered_rg05"
+          }
+        }
+      ],
+      "input_sha256": "03f23f6931bef8a0cbf5203051f6772be2566cd5d82c59a7ab4185a19b74d6ee",
+      "source_reference": "人工台账§7 W-U",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.invalid-filter-unregistered": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "filters",
+            "region_ids"
+          ],
+          "value": [
+            "region_unregistered_filter_rg05"
+          ]
+        }
+      ],
+      "input_sha256": "47d6450349f8b4b62b4ca1535f1e34c1234e2462ce9279dbd102355e23c7f54f",
+      "source_reference": "人工台账§7 F；规则RR06/RR10",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.invalid-filter-sentinel": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "filters",
+            "region_ids"
+          ],
+          "value": [
+            "__unknown__"
+          ]
+        }
+      ],
+      "input_sha256": "3a4965986c8e95f7b37b1c2ff6fcc91511b190c98d5153395ebde303dabb8e7b",
+      "source_reference": "人工台账§7 F；规则RR06/RR10",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG05.invalid-order-null": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-C-A1"
+          ],
+          "fields": {
+            "region_id": null
+          }
+        }
+      ],
+      "input_sha256": "1fda66f11343743d4c9cb568d0180c9b352d55b6a0e389ec887a230d528d5e88",
+      "source_reference": "人工台账§7 F；规则RR05",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.duplicate-products": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "append_catalog",
+          "catalog": "products",
+          "row": {
+            "source_row_id": "r11-rg04-product-dup",
+            "domain_id": "domain_a",
+            "snapshot_id": "fixture_single_region_channel_v1_draft",
+            "product_id": "product_book",
+            "category_id": "category_books"
+          }
+        }
+      ],
+      "input_sha256": "799cdce35044ec8a7b09aceeb21a46680d2904934cb4b96437d73538181f30fb",
+      "source_reference": "测试矩阵§3 duplicate",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.foreign-products-domain_id": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "append_catalog",
+          "catalog": "products",
+          "row": {
+            "source_row_id": "r11-rg04-products-domain_id",
+            "domain_id": "domain_foreign_rg04",
+            "snapshot_id": "fixture_single_region_channel_v1_draft",
+            "product_id": "product_book",
+            "category_id": "category_books"
+          }
+        }
+      ],
+      "input_sha256": "0450165e1635ae883f0bcabcca5c7fd56606e7467380c1a44b2285f07842a522",
+      "source_reference": "测试矩阵§3 foreign",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.foreign-products-snapshot_id": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "append_catalog",
+          "catalog": "products",
+          "row": {
+            "source_row_id": "r11-rg04-products-snapshot_id",
+            "domain_id": "domain_a",
+            "snapshot_id": "snapshot_foreign_rg04",
+            "product_id": "product_book",
+            "category_id": "category_books"
+          }
+        }
+      ],
+      "input_sha256": "2b4f4870802150f17868689efe97a1407c52a5b4f723ba1be5a3f1dee6d041e7",
+      "source_reference": "测试矩阵§3 foreign",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.duplicate-regions": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "append_catalog",
+          "catalog": "regions",
+          "row": {
+            "source_row_id": "r11-rg04-region-dup",
+            "domain_id": "domain_a",
+            "snapshot_id": "fixture_single_region_channel_v1_draft",
+            "region_id": "region_southeast",
+            "label": "东南"
+          }
+        }
+      ],
+      "input_sha256": "6e1bc881829854f8ff459379e6fb785d4a5e639d8a3308689f181b97b3180540",
+      "source_reference": "测试矩阵§3 duplicate",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.foreign-regions-domain_id": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "append_catalog",
+          "catalog": "regions",
+          "row": {
+            "source_row_id": "r11-rg04-regions-domain_id",
+            "domain_id": "domain_foreign_rg04",
+            "snapshot_id": "fixture_single_region_channel_v1_draft",
+            "region_id": "region_southeast",
+            "label": "东南"
+          }
+        }
+      ],
+      "input_sha256": "8ef3ee8eb646095545b557874c603951990fb50e6313a368146ed205cc91bdf9",
+      "source_reference": "测试矩阵§3 foreign",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.foreign-regions-snapshot_id": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "append_catalog",
+          "catalog": "regions",
+          "row": {
+            "source_row_id": "r11-rg04-regions-snapshot_id",
+            "domain_id": "domain_a",
+            "snapshot_id": "snapshot_foreign_rg04",
+            "region_id": "region_southeast",
+            "label": "东南"
+          }
+        }
+      ],
+      "input_sha256": "37ba8d33ea13a50912945d1417657ce248705788d443e9506992e8990c50954e",
+      "source_reference": "测试矩阵§3 foreign",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.product-ready": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-C-A1"
+          ],
+          "fields": {
+            "product_id": "product_rg04_missing"
+          }
+        }
+      ],
+      "input_sha256": "1f13921b7b420b908ae767bbd69c4613ea8970ec17005268087282d05e275208",
+      "source_reference": "测试矩阵§3 product-ready",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.product-immature": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "update_orders",
+          "order_ids": [
+            "K11-S-C-A1"
+          ],
+          "fields": {
+            "product_id": "product_rg04_missing"
+          }
+        },
+        {
+          "operation": "replace_context",
+          "path": [
+            "as_of"
+          ],
+          "value": "2026-09-18T23:59:59.999999Z"
+        }
+      ],
+      "input_sha256": "6378c36e580aaef6149a443fc1329eddf2a99454e11f429fbbda43ad1e543f1a",
+      "source_reference": "测试矩阵§3 product-immature",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG04.scope-W": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "as_of"
+          ],
+          "value": "2026-09-19T00:00:00Z"
+        }
+      ],
+      "input_sha256": "077463938035569ad569abb22e7b7a4d9538a5b18cad7f1fe6e33d538197d2d8",
+      "source_reference": "测试矩阵§3 scope",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG06.W-reverse-orders": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "orders"
+          ]
+        }
+      ],
+      "input_sha256": "262f7d46122b6cbbbc83bb4b54ab7c8a24477daca7713084c69646054b3f4dbb",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    },
+    "RG06.W-reverse-refunds": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "refunds"
+          ]
+        }
+      ],
+      "input_sha256": "1d186552e82761323da0bda6b915953a5f8d23a870c6c287e268e2e0bf460d50",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    },
+    "RG06.W-reverse-regions": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "dimensions",
+            "regions"
+          ]
+        }
+      ],
+      "input_sha256": "a8a933a233cb42c96902c11548f29690e8b6031dc70e05b620c32f9a4f4bbb24",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    },
+    "RG06.W-reverse-combined": {
+      "base_variant_id": "RG01.W",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "orders"
+          ]
+        },
+        {
+          "operation": "reverse",
+          "path": [
+            "refunds"
+          ]
+        },
+        {
+          "operation": "reverse",
+          "path": [
+            "dimensions",
+            "regions"
+          ]
+        }
+      ],
+      "input_sha256": "7fc0b9c44dc97af68169aa7c071d340a19ac5f8984bb9031ed9295cb0d5c7dc4",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    },
+    "RG04.scope-A": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "replace_context",
+          "path": [
+            "as_of"
+          ],
+          "value": "2026-09-19T00:00:00Z"
+        }
+      ],
+      "input_sha256": "f3c1f35a702d9e03a6aefbd5730749ebf794943a89625d4fc3d962d88dffcf4e",
+      "source_reference": "测试矩阵§3 scope",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": ""
+    },
+    "RG06.A-reverse-orders": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "orders"
+          ]
+        }
+      ],
+      "input_sha256": "e93820496130115e1359c7d3c0967f0842448483252e2151abf4487676b5ce00",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    },
+    "RG06.A-reverse-refunds": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "refunds"
+          ]
+        }
+      ],
+      "input_sha256": "5efde247ebf0006f178330c6158d6d9b32c55f535dd03145e4d65477162249d4",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    },
+    "RG06.A-reverse-regions": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "dimensions",
+            "regions"
+          ]
+        }
+      ],
+      "input_sha256": "40bb3f4e57af6a2de667e8b39df78b879a9bd8a345e1a6ff7c0004f2a87bc282",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    },
+    "RG06.A-reverse-combined": {
+      "base_variant_id": "RG02.A",
+      "changes": [
+        {
+          "operation": "reverse",
+          "path": [
+            "orders"
+          ]
+        },
+        {
+          "operation": "reverse",
+          "path": [
+            "refunds"
+          ]
+        },
+        {
+          "operation": "reverse",
+          "path": [
+            "dimensions",
+            "regions"
+          ]
+        }
+      ],
+      "input_sha256": "c8e448434e1f5ed872dd3f4e8f3febd8496dc78265239fab7a2ca4faad941556",
+      "source_reference": "测试矩阵§5 RG06",
+      "freeze_scope": "仅绑定变更清单与输入指纹，本次不冻结该控制的完整业务输出",
+      "note": "输入行序反转仅为隔离控制；候选和来源集合按集合比较。重复调用/跨维调用不改变输入字节，直接引用W/A绑定。"
+    }
+  },
+  "remaining_scope": "RG02.Q、RG03～RG06仅登记明确变更/输入指纹及先行来源引用，本次不把其完整expected或执行结果冒称已冻结/通过。后续按已有台账及规则继续冻结，不修改本版。"
+}

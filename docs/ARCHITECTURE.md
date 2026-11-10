@@ -60,3 +60,11 @@ A3-10 `10_missing_product_join_blocks.json` 新增四笔支付、两笔合法退
 `tests/test_reference_channel_cohort.py` 已完成实施方案C01及按双窗参数化的C02，共3项固定回归；直接从冻结input计算，与先行A3-11_expected.json比较六行及总体变化、精确Fraction、渠道身份、订单/退款来源、东南排除和分组守恒，并绑定四项既有指纹、逐测试检查输入与文件不变。另有C03全地区控制：仅在深拷贝上清空地区过滤，假定该合成控制已另获授权，对照先行unfiltered_counterexample核对各渠道精确数值、新增东南订单/退款及来源；两种Scope均检查分组互斥穷尽和N/U守恒，西北结果在全地区调用前后不变。C04补齐产品/地区/渠道目录重复及域快照混入拒绝，确认西北和过滤外东南订单的产品缺失在ready/immature两种前提下均拒绝并定位订单/来源/完整键；产品合法而类别未知的兼容性保持。C05先保存独立控制预期，再核验成熟/支付水位/退款水位各差1微秒及空基期的不足阻断、三个等号允许和正分母零退款的正常发布；不足时两窗指标和分组均不发布，合法零退款时保留Fraction(0)且基期率0只使相对变化为空。C06按已发布定义补四类退款追加事件的双窗控制：同单第二笔有效success按订单去重，failed、H后或as_of后事件不增加U，实际六行和总体变化仍匹配原冻结预期；as_of后事件同时在H后，不声称孤立覆盖as_of。C07复用_InputOnly及既有冻结保护，补充重复调用、修改旧返回值与交错Scope的隔离检查，以及订单、退款、产品、类别、渠道、地区分别逆序和联合逆序后的聚合与台账不变性；单行产品/类别目录只在深拷贝控制中补合法未引用项后重排，各变体均重复调用并恢复原输入核对，两个窗口的率显式保持Fraction，总体候选按集合比较。当前渠道测试共42项，运行及限制见[渠道回归记录](../reference/regression_checks/A3-11_channel.md)。C08展示名补强仍待后续，不据固定样例与合成控制关闭G0其余缺口；总体/类别/渠道函数和生产Runtime均未因C03～C07修改。
 
 公开候选工作树按顺序通过渠道42项、相关110项及全量170项，主冻结输入/预期与45份运行文件指纹不变；[逐项评审](../reference/regression_checks/A3-11_Must_review.md)仅关闭A3-11最小渠道参考C01～C07 Must。C07与评审随公开追加交付，源码及执行证据由[公开版本摘要](../reference/regression_checks/A3-11_full_regression_public_manifest.json)绑定；此前开发树175项单独保留历史范围，C08、G0其余缺口、生产及用户本人验收保持开放，本地公开pytest不是CI。
+
+## 最小地区参考计算
+
+`reference/region_cohort.py` 的 `calculate_region_reference(input)` 已实现，位于生产包外，只依赖标准库和总体参考入口。复用总体过滤后的双窗候选、成熟/水位和比较状态，独立按完整订单复合键扫描成功退款并去重，按订单region_id归组，以Fraction计算组/总计并核对总体。地区/产品目录核对完整键、唯一性及域快照，所有原始订单关键产品关联检查先于不足返回；不通过产品类别或channel计算地区结果。
+
+已登记ID缺label保留ID；调用侧已预审的合成Scope内，非关键未登记地区或显式__unknown__留在候选并归未知组。非法过滤、源地区坏格式及关键关联故障拒绝，unknown归类不证明权限；函数不实现授权、不接受权限开关、不读取expected/文件或修改input。输出保留overall并增加aggregate_rows、group_order_ids及group_refunded_order_ids；不足时不发布聚合行或组台账，异常用ValueError，不新增生产DQ映射。
+
+RG01.W返回四行，RG02.A合成全地区返回六行，均匹配先行冻结Oracle；首批13项同时检查来源/守恒、SE退款去重、过滤Scope成熟差异、关键产品拒绝、代表性未知/缺label及输入隔离。运行与版本见[region回归记录](../reference/regression_checks/G0_M01_region.md)。公开工作树地区13项、相关123项及全量183项实际本地通过，源码和冻结文件由[公开版本清单](../reference/regression_checks/G0_M01_region_public_manifest.json)绑定；开发188项保留原版本/范围。完整矩阵和三维共同Scope仍待验收，M01/G0未关闭，没有生产Runtime或真实授权能力变更，本地公开pytest不是CI。

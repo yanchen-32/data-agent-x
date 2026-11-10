@@ -1,0 +1,40 @@
+G0 M01 region最小入口：本地开发工作树实际执行
+日期：2026-11-10（Asia/Shanghai）
+环境：CPython 3.10.12；pytest 9.1.1；Linux x86_64
+解释器：本仓库.venv/bin/python；PYTHONPATH=src。不是公开工作树、GitHub Actions CI、生产授权验证或用户本人验收。
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -rA -o addopts='' -q -p no:cacheprovider
+退出码：0
+.............                                                            [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_region_cohort.py::test_region_reference_matches_frozen_oracle_and_sources[RG01.W]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_matches_frozen_oracle_and_sources[RG02.A]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_deduplicates_refunds_for_southeast_order
+PASSED tests/test_reference_region_cohort.py::test_region_reference_results_calls_and_reordering_are_isolated
+PASSED tests/test_reference_region_cohort.py::test_region_reference_maturity_uses_filtered_scope
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_critical_product_join_outside_filter[RG04.product-ready]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_critical_product_join_outside_filter[RG04.product-immature]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_preserves_preapproved_noncritical_unknown[RG05.unknown-explicit]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_preserves_preapproved_noncritical_unknown[RG05.unknown-unregistered]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_missing_label_preserves_registered_id
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-filter-unregistered]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-filter-sentinel]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-order-null]
+13 passed in 0.18s
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_boundary_fixtures.py -o addopts='' -q -p no:cacheprovider
+退出码：0
+........................................................................ [ 58%]
+...................................................                      [100%]
+123 passed in 0.55s
+
+全量：因既有沙箱内API/TestClient停滞记录，获准在沙箱外本地执行；本轮没有新增沙箱内全量尝试。
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest -o addopts='' -q -p no:cacheprovider
+退出码：0
+........................................................................ [ 38%]
+........................................................................ [ 76%]
+............................................                             [100%]
+188 passed in 0.69s
+
+本轮均为开发工作树本地运行，未运行公开工作树或CI；未修改冻结预期。
