@@ -1,0 +1,30 @@
+RG03.T/Z 本地开发工作树执行证据；2026-11-12（Asia/Shanghai），不是CI或用户L3。
+解释器：.venv/bin/python
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba  reference/region_cohort.py
+9feb57de18645b1a2e791942e67a89bc55d5f816835a9a189c5da55d591dcd31  tests/test_reference_region_cohort.py
+50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce  reference/manual_checks/G0_M01_region_expected.json
+99040571560c27f8eadd84ce72ee4640a53f25a6eadfaff8ffd6ba4705fc9fe3  reference/manual_checks/G0_M01_region_expected_draft.md
+d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8  tests/fixtures/order_boundaries/11_single_region_channel_grouping.json
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -k 'refund_follows_payment_window_and_region or keeps_positive_denominator_zero_refund_group' -rA -o addopts= -q -p no:cacheprovider
+..                                                                       [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_region_cohort.py::test_region_reference_refund_follows_payment_window_and_region
+PASSED tests/test_reference_region_cohort.py::test_region_reference_keeps_positive_denominator_zero_refund_group
+2 passed, 13 deselected in 0.25s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -o addopts= -q -p no:cacheprovider
+...............                                                          [100%]
+15 passed in 0.20s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 57%]
+.....................................................                    [100%]
+125 passed in 0.61s
+退出码：0

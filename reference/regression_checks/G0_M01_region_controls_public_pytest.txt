@@ -1,0 +1,119 @@
+region控制公开交付本地回归；2026-11-12（Asia/Shanghai）。
+公开候选工作树；不是CI、生产权限或用户本人L3。
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+复用既有开发虚拟环境解释器；工作目录为公开候选树，PYTHONPATH=src。未安装依赖。
+父提交：63bbffa7443c9a79fa2ff3e6360513661cc58d1b
+8440318ebaea1565dc02fd9096e09cbe23e10f0c961dad4762ea74d605fc7950  docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md
+51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce  docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md
+3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0  docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md
+e50b08ca770ef699dcc58db246782ff800eb2e7c856c9558369c25022528383a  docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json
+5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0  pyproject.toml
+48aa9aabb44a5512f257a576d4782550663cf51c4a5d9a39c6efeaaa18816bb9  reference/__init__.py
+53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216  reference/category_cohort.py
+207071252972bbd3cf6de22bc463fbd0c444068966cbb9cfd176b37f2d61629c  reference/channel_cohort.py
+13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6  reference/cohort.py
+bd522d87d50d59d126836d5b05a979d75ddae6e8da3fcd3716c7552e53596205  reference/fixture_drafts/11_single_region_channel_grouping.json
+b3b05df4a7f69df8c4da86e92ad44b8260cc36870926906694b335fc6f5b605b  reference/manual_checks/2026-10-14.json
+f9a9fb70234190a16ecccdc8645b763aaa919597fa9e20f0e4dc42a90d41e6ac  reference/manual_checks/A3-07_review.json
+e6e0f2408aa31082232e7e8ccb74ecb48b76e06bdaced8266c790a96c97ddd3b  reference/manual_checks/A3-08_review.json
+f45636330a6ea44f80d9ceb255e15ca3b22082e0b744b962cee16398b3bf12d4  reference/manual_checks/A3-08_v2.json
+1b1d63e22f6285cf43f64f8c2db1ce1da39070af6f801840cc47ba596aa159da  reference/manual_checks/A3-08_v2_expected.json
+07dca84a024330d35ff1bfb68ff8159d2d7cf52a953926ee76afd1e07b7ae35f  reference/manual_checks/A3-09_expected.json
+ce3e4aca7f5213792f0936df40bf61acb7505e84ad4bcbc8c7937845347b4fde  reference/manual_checks/A3-10.json
+cbe71efb6734e3480f5d1ad93793d4338c240377dec5cb3335c01136c7565819  reference/manual_checks/A3-11_C05_expected.json
+32ecd37ddf05767c5496362c8f0f3529d8a905412cd6c1b78ae8d8a42c52ae03  reference/manual_checks/A3-11_C06_expected.json
+c0e82fc22fb028235f249d524e516920b733636f7ad22ecbb53d7a7b6e811a7e  reference/manual_checks/A3-11_expected.json
+50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce  reference/manual_checks/G0_M01_region_expected.json
+99040571560c27f8eadd84ce72ee4640a53f25a6eadfaff8ffd6ba4705fc9fe3  reference/manual_checks/G0_M01_region_expected_draft.md
+20200d0af6c99bf4118d7ea0d81ebd22ab1f3a03084148b79606da56d1949b2c  reference/manual_checks/G0_M01_region_plan.md
+5322018b50b74da02b32c888b6777e9527fecd84b58d66b4a752ed664343c96c  reference/manual_checks/G0_M01_region_rule_review.md
+8da7fd865cb1bd590d6c4b457490ccf4638e9a32e23d61f637d8e8aa23e2b7e1  reference/manual_checks/G0_M01_region_test_matrix.md
+4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba  reference/region_cohort.py
+3a913406adffefb1b2322f64fe43348fb59c684754b8ff7a5521d5c2f0adde45  reference/regression_checks/A3-11_full_regression_public_manifest.json
+20bf4e8eeace6ffaa9ec025ecf70d24fa542396be6ab0c62bc4a0690baeddcef  reference/regression_checks/G0_M01_region_public_manifest.json
+f25381ac9deb503aa38121bf60f1ee6d193570f91c90d1ba4458426fef3b58a9  reference/regression_checks/G0_fixture_inventory.json
+3ebbb4065141012142168ecc70776886d2a452d80c3c3c1b19fc94665136fd5c  src/dataagentx/__init__.py
+f8c396b00e855ccb1640edd35cb171196ce32d77fb9833a222c481b460c7ce4b  src/dataagentx/config.py
+5b5019c7057594af3123e57d548df3b8c9b822a87cf20086ddbb0be1c5f346c9  src/dataagentx/logging_config.py
+70909a2abb94fa55a94ebf1be6218843f9c729551f6c8b8aab1dee2e9512d63b  src/dataagentx/main.py
+794fbea861887e9386fa6e254ebd028b114f8e4619a4e51ce01c617d861cfcbf  src/dataagentx/models.py
+235f0e23da44a0a4276541e990fcb45ec4a690f118f4da57808df5efcccfa1c0  src/dataagentx/order_validation.py
+90a4c685e77eb4f90859772272585bbab920365a9d3ad3cbde40c107e6bc0e91  src/dataagentx/schemas.py
+bb7f27ce448673af4259bbe52a7b63f57ea7e2ce2dc591b90e59290f5c5f2555  src/dataagentx/service.py
+115afb0b7d40387dc0ef39e22af64af7ede26854d7b923e5ca33ba921d9fadba  tests/fixtures/order_boundaries/01_maturity_watermark.json
+5c842684b3b917dc137607edd87fb558e79d777b94af845bb5edfcd580bf3b82  tests/fixtures/order_boundaries/02_utc_boundaries.json
+606d0c0aefaa385a59c81222e70f779a3a652af97c5bf27c17c8a26a5e0b85a7  tests/fixtures/order_boundaries/03_duplicate_orders.json
+5d2da96ec1dded382eb454fe68ee24f6bedaffeffbd45887e3526072a7d924c2  tests/fixtures/order_boundaries/04_zero_denominator_window.json
+d9f621f17385f2b7dcf2e58da70f79627adbf850e56e419f17de7e8baa233da8  tests/fixtures/order_boundaries/05_single_region_filter.json
+a7fdc991ce7df027cc48630f76da1f733bc3a11742ea046d219b7acee1ed66fd  tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json
+e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac  tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json
+79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58  tests/fixtures/order_boundaries/08_category_entry_exit.json
+b2ffe9d156a9e010f28bbfda072589c95b8ee8dd426f98a0da8c1515ed0cb580  tests/fixtures/order_boundaries/08_category_entry_exit.v1.json
+d9677959c20e91b6965e984035742a6524592896fbf9ce40728192a43bd8439e  tests/fixtures/order_boundaries/09_unknown_category_preserved.json
+4f2b8b097451cdbf2c3b7f97ff115235c58dea2de2a45b147d93a02bf0371cc3  tests/fixtures/order_boundaries/10_missing_product_join_blocks.json
+d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8  tests/fixtures/order_boundaries/11_single_region_channel_grouping.json
+1c092ecf94fc13f43b7f5eaa65bf40357fa510a3d27408f8ea8722a979d4a7f8  tests/test_boundary_fixtures.py
+b3c6636b8895b1788f19eb612e3baff6e463c76583e7d4172b08a8a98aacff40  tests/test_config.py
+eda6a4fb3fd1dd9a7ef81e7c9faacc5c215ae0ee4a9b9c7a9ad7a2723cd6d4c9  tests/test_health.py
+c9d88a4849f77bd35b9b03ac1e5ba75e65684f0e48e5d76bb7688417a124ea3d  tests/test_items.py
+ec0d0d00b38fcfa4797d631e0689420d1dd1b46087ae283416f88d4c105dca38  tests/test_order_validation.py
+f5be1f6e7740ed43f26231eaa62d51f75b59d4e16baf2e26821b71becd0387a5  tests/test_reference_category_cohort.py
+d4fb4abaf6ade2d2fadbf20385943011e02db9b3e015a90b66da452712477817  tests/test_reference_channel_cohort.py
+f0f7257f9471b4cff6a195332b54d37fc9833682ebd3ac5048739e4dc17c3fe0  tests/test_reference_cohort.py
+f2f9fbeddd4d9f0a5f0bd8a0752401ebaaff5a208583010f2e0a182733acc963  tests/test_reference_region_cohort.py
+192a21250385f0f02bc9976a6fca9f4c42cb18d90d11ea46198e031b5d947f72  tests/test_service.py
+
+范围：region专项
+命令：PYTHONPATH=src '既有虚拟环境Python' -B -m pytest tests/test_reference_region_cohort.py -rA -o addopts= -q -p no:cacheprovider
+............................                                             [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_region_cohort.py::test_region_reference_matches_frozen_oracle_and_sources[RG01.W]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_matches_frozen_oracle_and_sources[RG02.A]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_deduplicates_refunds_for_southeast_order
+PASSED tests/test_reference_region_cohort.py::test_region_reference_refund_follows_payment_window_and_region
+PASSED tests/test_reference_region_cohort.py::test_region_reference_keeps_positive_denominator_zero_refund_group
+PASSED tests/test_reference_region_cohort.py::test_region_reference_results_calls_and_reordering_are_isolated
+PASSED tests/test_reference_region_cohort.py::test_region_reference_maturity_uses_filtered_scope
+PASSED tests/test_reference_region_cohort.py::test_region_reference_comparison_gates_suppress_all_published_results[RG04.M-minus-\u89c2\u5bdf\u671f\u672a\u6210\u719f-all_orders_mature]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_comparison_gates_suppress_all_published_results[RG04.P-minus-\u652f\u4ed8\u6c34\u4f4d\u4e0d\u8db3-payments_watermark_covered]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_comparison_gates_suppress_all_published_results[RG04.R-minus-\u9000\u6b3e\u6c34\u4f4d\u4e0d\u8db3-refunds_watermark_covered]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_comparison_gates_suppress_all_published_results[RG04.E-\u652f\u4ed8\u7a97\u53e3\u65e0\u6709\u6548\u6837\u672c-None]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_comparison_gate_equalities_are_ready[RG04.M-equal]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_comparison_gate_equalities_are_ready[RG04.R-equal]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_absent_region_has_no_fabricated_zero_rate_row
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_critical_product_join_outside_filter[RG04.product-ready]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_critical_product_join_outside_filter[RG04.product-immature]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_duplicate_catalog_full_keys[regions-region_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_duplicate_catalog_full_keys[products-product_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[domain_id-regions-region_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[domain_id-products-product_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[snapshot_id-regions-region_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[snapshot_id-products-product_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_preserves_preapproved_noncritical_unknown[RG05.unknown-explicit]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_preserves_preapproved_noncritical_unknown[RG05.unknown-unregistered]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_missing_label_preserves_registered_id
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-filter-unregistered]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-filter-sentinel]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-order-null]
+28 passed in 0.19s
+退出码：0
+
+范围：相关参考与静态Fixture
+命令：PYTHONPATH=src '既有虚拟环境Python' -B -m pytest tests/test_reference_region_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 52%]
+..................................................................       [100%]
+138 passed in 0.46s
+退出码：0
+
+范围：公开工作树全量
+命令：PYTHONPATH=src '既有虚拟环境Python' -B -m pytest -o addopts= -q -p no:cacheprovider
+........................................................................ [ 36%]
+........................................................................ [ 72%]
+......................................................                   [100%]
+198 passed in 0.75s
+退出码：0
+
+全部运行文件及冻结来源指纹不变：True

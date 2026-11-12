@@ -1,0 +1,36 @@
+RG04目录复合键拒绝：本地开发工作树执行证据；2026-11-12（Asia/Shanghai），不是CI或用户L3。
+解释器：.venv/bin/python
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba  reference/region_cohort.py
+cd6f899e24f87a7ea82c022d81581da85b68b5bd7333326a2639a750beb5e199  tests/test_reference_region_cohort.py
+d4fb4abaf6ade2d2fadbf20385943011e02db9b3e015a90b66da452712477817  tests/test_reference_channel_cohort.py
+50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce  reference/manual_checks/G0_M01_region_expected.json
+8da7fd865cb1bd590d6c4b457490ccf4638e9a32e23d61f637d8e8aa23e2b7e1  reference/manual_checks/G0_M01_region_test_matrix.md
+5322018b50b74da02b32c888b6777e9527fecd84b58d66b4a752ed664343c96c  reference/manual_checks/G0_M01_region_rule_review.md
+d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8  tests/fixtures/order_boundaries/11_single_region_channel_grouping.json
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -k 'rejects_duplicate_catalog_full_keys or rejects_foreign_catalog_scope' -rA -o addopts= -q -p no:cacheprovider
+......                                                                   [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_duplicate_catalog_full_keys[regions-region_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_duplicate_catalog_full_keys[products-product_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[domain_id-regions-region_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[domain_id-products-product_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[snapshot_id-regions-region_id]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_rejects_foreign_catalog_scope[snapshot_id-products-product_id]
+6 passed, 15 deselected in 0.19s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -o addopts= -q -p no:cacheprovider
+.....................                                                    [100%]
+21 passed in 0.23s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 54%]
+...........................................................              [100%]
+131 passed in 0.59s
+退出码：0
