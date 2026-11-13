@@ -235,3 +235,147 @@ Q不是空基期E，也不是RG03.Z的正分母零退款组：前者无支付、
 ## region控制公开交付验证（2026-11-12）
 
 以上保留各开发阶段的源码版本、执行范围及当时未公开状态。本次公开候选已实际通过地区28项、相关138项和全量198项，详见[公开交付记录](G0_M01_region_controls_publication.md)、[原始输出](G0_M01_region_controls_public_pytest.txt)及[版本清单](G0_M01_region_controls_public_manifest.json)。新增15项与原13项均通过；原冻结文件和计算器不改。公开候选本地pytest不是CI、本人验收或生产DQ实现；M01/G0仍开放，C08非阻塞。公开交付以最终提交及远程refs核验为准。
+
+## RG05：地区身份及单地区过滤隔离增量（2026-11-13）
+
+### 已有覆盖与本次缺口
+
+实施前已存在全地区RG05.unknown-explicit/unknown-unregistered两项非关键未知保留测试、RG05.label-null一项已登记ID缺展示名测试，以及三项非法过滤/源地区格式拒绝；本轮保留原断言，不重复编写。仅新增同名不同ID一项，以及单地区排除两种未知来源各一项，共3项。
+
+独立依据为[人工台账§7 L/W-U](../manual_checks/G0_M01_region_expected_draft.md)、[RG05矩阵](../manual_checks/G0_M01_region_test_matrix.md)和已审定M01-region-rules-v1中RR01～RR04/RR06。既有台账和矩阵保留历史草案表述，采用规则以[规则审定记录](../manual_checks/G0_M01_region_rule_review.md)为准。未知留组仅适用于已预审受控合成输入中的非关键问题，不提供访问权；本次不新增授权开关或修改既有冻结契约。
+
+### 已登记输入及先行预期
+
+本次不新增变体；直接重放冻结JSON已有输入变更，并在调用前核对原有规范化input指纹：
+
+| 既有变体 | 输入变化 | input SHA-256 |
+| --- | --- | --- |
+| RG05.label-same | A中NW/SE两个已登记地区label均改为“同名地区” | 3dc3c8e31dfd72b06857dbcd4a071c5b193f557a5bb9f62e8e1e7d55dcd4ae82 |
+| RG05.filtered-explicit | W中K11-S-C-A1.region_id改为__unknown__ | 57e0689ebd8001e55192252d59f1cad034788effb76322d968acea100e7c3119 |
+| RG05.filtered-unregistered | W中同一订单region_id改为region_unregistered_rg05 | 03f23f6931bef8a0cbf5203051f6772be2566cd5d82c59a7ab4185a19b74d6ee |
+
+L的先行答案是“仅展示名变化”：测试端在冻结A预期深拷贝上只替换地区行group_label，两窗始终各有region_northwest、region_southeast两个独立组，合计六条聚合行；原支付/退款台账、来源、N/U、Fraction及总体变化全部不变。基期NW=3/1、SE=2/1，总计5/2；当前NW=4/3、SE=2/1，总计6/4。显式断言同名组数量为2、ID集合保持两地、label均为同名地区，两窗均不产生__unknown__分组。已登记ID不因改名归未知。
+
+W-U的先行答案是“完全等同原冻结W”：基期总计及NW均3/1/率1/3，当前均4/3/率3/4，绝对变化5/12，相对变化5/4，共四条行。两种变体都保留原始订单K11-S-C-A1、支付来源r11-order-s-c-app-1及退款KR11-S-C-A1、来源r11-refund-s-c-app-1；未知地区值没有目录登记，不能借unknown降级越过西北过滤。
+
+测试先核对该原始支付有效、退款事件和来源仍在input，再逐项比较冻结W完整输出；两窗候选及两类分组台账不含该订单，组ID只含region_northwest，不生成unknown/SE行。根据实际返回的订单集合回查支付来源和退款事件/来源，明确排除上述来源。复用现有来源/守恒辅助断言核对各组完整订单复合键、组来源和ΣN/ΣU互斥穷尽；不要求参考函数返回尚不存在的来源字段，也不从待测结果生成预期。
+
+### 实际执行、指纹与状态
+
+本轮环境为本地开发工作树，解释器.venv/bin/python，CPython 3.10.12、pytest 9.1.1、Linux x86_64，PYTHONPATH=src；未安装依赖。完整命令、逐项身份、stdout、退出码及文件指纹见[G0_M01_region_RG05_pytest.txt](G0_M01_region_RG05_pytest.txt)，SHA-256为`db4e12f13a1203cc60e944243d0772a39306ff8d375999c9b218012025442ec7`。
+
+| 实际范围 | 实际结果 | 退出码 |
+| --- | --- | --- |
+| 地区文件-k本次两项函数，附-rA身份 | 3 passed, 28 deselected in 0.20s | 0 |
+| 地区专项整个文件 | 31 passed in 0.28s | 0 |
+| 地区＋总体＋类别＋渠道＋静态Fixture | 141 passed in 0.63s | 0 |
+
+范围重叠不累计。原28项和新增3项均实际通过，没有失败或为实现输出修订预期；已有未知及缺label测试随专项保持通过。当前地区测试SHA-256为`6548ee0d6bb2a5839f7e9243dfb9d9692a70ebad4009c1183d89fffca78b67e7`；地区实现仍为`4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba`，冻结Oracle仍为`50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce`。原Fixture、人工台账、规则和全部绑定来源继续由fixture逐字节保护，input-only及调用前后输入隔离复用原机制。
+
+本次只新增地区测试断言、追加本节及新增原始输出；参考/生产实现、原Fixture/expected、其他测试、Provider、历史证据不变。不扩展label-absent或其他RG05坏格式变体的执行范围；未执行全量或公开工作树pytest，未触发/查询CI，未提交/推送。本轮本地测试不是公开交付、生产授权验证或用户本人L3，M01整体/G0保持开放，C08继续非阻塞Should。
+
+## RG06：三维共同Scope对齐（2026-11-13）
+
+### 既有控制与新增范围
+
+此前RG06已在region中覆盖返回值、重复/交错W/A调用及A联合重排隔离，但没有同一W/A输入下category/channel/region三个入口的共同Scope回归。本次在现有地区测试文件新增一个按RG01.W/RG02.A参数化的测试，共2项；不重写原三个维度的固定样例测试，不把共同Scope检查扩展为通用Runtime、联合维度或贡献计算。
+
+依据[实施方案RG06](../manual_checks/G0_M01_region_plan.md)、[测试矩阵§5](../manual_checks/G0_M01_region_test_matrix.md)及[人工台账§4](../manual_checks/G0_M01_region_expected_draft.md)，分别调用calculate_category_reference、calculate_channel_reference、calculate_region_reference。每个入口从同一冻结变体重新取得独立input深拷贝，_variant分别核对原有input_sha256，_InputOnly阻止探测expected；逐调用finally核对input不变。没有把前一入口的输出、聚合行或组台账传给下一入口。
+
+W规范化input SHA-256为459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257；A为46b72e78ff75d2bbad685d1923efea250e1cd624af92d09d9f6004466d26d169。W保持原西北过滤，A另行采用已获两地授权的合成前提；本次不将A变成原任务过滤更新或真实权限探测。
+
+### 独立总计及各维分别守恒
+
+三个入口均逐项对照同一份先行冻结总计及独立支付/退款订单集合，而非仅要求三个可能同时错误的输出彼此相等。region另调用原_assert_frozen完整比较独立四/六行及两类分组台账，其预期不由category/channel计算或生成。
+
+| Scope | 窗口 | 三维各自应有N/U/精确率 |
+| --- | --- | --- |
+| W西北 | 基期 | 3/1，1/3 |
+| W西北 | 当前 | 4/3，3/4 |
+| A合成全地区 | 基期 | 5/2，2/5 |
+| A合成全地区 | 当前 | 6/4，2/3 |
+
+W绝对变化5/12、相对变化5/4；A绝对变化4/15、相对变化2/3。三维均要求ready、无原因、三个quality标志与冻结值相同；N/U类型为int，率及变化为精确Fraction。候选以集合及唯一性核验，允许原始顺序不同，不比较不同Scope之间候选相等。
+
+每个维度、每个窗口单独核对以下性质：
+
+- 先检查聚合行身份(window_index,dimension_id,group_id)唯一，实际行仅含当前维度及总计；每窗恰有一条空group_id/group_label总计行。
+- 总计N/U/率分别与冻结值及metrics一致；维度行ID集合与两类group台账键一致，实际存在的组N大于0，不补虚假缺席行。
+- 各组支付/退款计数等于成员数，成员唯一，退款集合从属于本组支付集合；所有行率为Fraction(U,N)。这是结果内部一致性检查，不代替region独立Oracle。
+- 组支付集合互斥穷尽冻结候选P，组退款订单集合互斥穷尽台账R；不仅核对计数，还比较订单成员，防止三维总计相同却纳入不同Scope订单。
+- 在当前维度内分别验证ΣN组=N总计、ΣU组=U总计；最后再显式比较三维metrics及各窗候选集合相等。测试没有跨维合计N/U/行或相加组率，也不通过三维输出生成新的expected。
+
+类别和渠道在此只验证共同Scope、总计及各自分区守恒，不声称给它们新增了逐组冻结数值Oracle；它们原有固定回归另随相关套件真实执行。原Fixture、独立预期、规则和实现均不变。
+
+### 实际执行与证据
+
+环境：本地开发工作树，解释器.venv/bin/python，CPython 3.10.12、pytest 9.1.1、Linux x86_64，显式PYTHONPATH=src，未安装依赖。完整命令、两个用例身份、原始stdout、退出码和四个参考计算器及测试/冻结文件指纹保存在[G0_M01_region_RG06_common_scope_pytest.txt](G0_M01_region_RG06_common_scope_pytest.txt)，SHA-256为`caaafaa0b1f0a55e5acae36ed50044bdded90456097ee7a00a51155e9533dc3a`。
+
+| 实际范围 | 实际结果 | 退出码 |
+| --- | --- | --- |
+| 地区文件-k dimensions_share_frozen_scope_and_conserve_groups，附-rA | 2 passed, 31 deselected in 0.23s | 0 |
+| 地区专项整个文件 | 33 passed in 0.30s | 0 |
+| 地区＋总体＋类别＋渠道＋静态Fixture | 143 passed in 0.75s | 0 |
+
+两个参数用例内部各调用三个入口，不登记为六项pytest；三次范围重叠不累计。原有31项及新增2项均实际通过；相关总体、类别、渠道和静态测试没有回归。无失败或按运行输出修改预期。
+
+当前地区测试SHA-256为`3672be42d394b38335451c8c59c928fd43701eab38a5f6f42dffcb4c648f5683`；地区实现与冻结Oracle仍分别为`4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba`、`50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce`。只有地区测试、回归记录及本轮新增输出发生变化；其余测试、原Fixture/expected、参考/生产代码、Provider及历史证据保留原字节。
+
+本轮完成RG06的W/A三维共同Scope回归，不表示所有重排变体或完整M01矩阵都已验收；未执行全量或公开工作树pytest，未触发/查询CI，未提交/推送。本地合成测试不是公开交付、生产权限/DQ验收或用户本人L3，M01整体/G0继续开放，C08仍为非阻塞Should。
+
+## RG06：独立重排增量控制（2026-11-13）
+
+### 既有证据与本次范围
+
+现有test_region_reference_results_calls_and_reordering_are_isolated已验证A重复调用、修改旧返回值中metrics/聚合行/组成员后再次调用不受污染、W/A交错后原A恢复，以及A订单/退款/地区目录联合逆序。该函数及旧证据原字节保留；本次不重写返回值隔离、重复调用或联合逆序测试。
+
+只新增一个按W/A和orders/refunds/regions参数化的函数，共6项单独逆序控制。每项使用冻结JSON已登记变体，_variant复用既有reverse操作并核对原input_sha256；不新增Fixture或生成新expected。各变体只改变一个原始列表顺序，不修改订单/退款/目录内容、Scope、时间、水位或规则。
+
+| 已登记变体 | input SHA-256 |
+| --- | --- |
+| RG06.W-reverse-orders | 262f7d46122b6cbbbc83bb4b54ab7c8a24477daca7713084c69646054b3f4dbb |
+| RG06.W-reverse-refunds | 1d186552e82761323da0bda6b915953a5f8d23a870c6c287e268e2e0bf460d50 |
+| RG06.W-reverse-regions | a8a933a233cb42c96902c11548f29690e8b6031dc70e05b620c32f9a4f4bbb24 |
+| RG06.A-reverse-orders | e93820496130115e1359c7d3c0967f0842448483252e2151abf4487676b5ce00 |
+| RG06.A-reverse-refunds | 5efde247ebf0006f178330c6158d6d9b32c55f535dd03145e4d65477162249d4 |
+| RG06.A-reverse-regions | 40bb3f4e57af6a2de667e8b39df78b879a9bd8a345e1a6ff7c0004f2a87bc282 |
+
+先行不变量依据为[矩阵§5](../manual_checks/G0_M01_region_test_matrix.md)：行序不是业务含义。不另造数值预期：三个W控制均完整对照RG01.W四行，三个A控制均完整对照RG02.A六行；总体N/U、Fraction、变化和两类分组订单台账保持冻结值。此处不从“原输入新运行一次”的输出生成控制答案，而直接使用先于实现保存的Oracle。
+
+### 复用断言和实际执行
+
+新增函数只调用已有_variant、_calculate、_assert_frozen及来源/守恒辅助断言；候选订单沿用_assert_frozen按集合比较，聚合行及分组台账仍完整比较。来源辅助断言根据实际返回成员回查原始支付/退款集合，核对组来源、互斥穷尽及ΣN/ΣU；不重新实现计算器。_calculate的finally核对每个重排输入调用前后相等，fixture继续保护原冻结文件和内存，原文件SHA-256不变。
+
+本轮环境为本地开发工作树，.venv/bin/python，CPython 3.10.12、pytest 9.1.1、Linux x86_64，显式PYTHONPATH=src，未安装依赖。命令、逐项身份、原始stdout、退出码和版本指纹保存于[G0_M01_region_RG06_reorder_pytest.txt](G0_M01_region_RG06_reorder_pytest.txt)，SHA-256为`6470362c5706ba6a05289ad97328e54a6532f9e564d446d5dced654b039ffa10`。
+
+| 实际范围 | 实际结果 | 退出码 |
+| --- | --- | --- |
+| -k独立重排或原隔离函数，附-rA | 7 passed, 32 deselected in 0.21s | 0 |
+| 地区专项整个文件 | 39 passed in 0.33s | 0 |
+| 地区＋总体＋类别＋渠道＋静态Fixture | 149 passed in 0.67s | 0 |
+
+定向7项包含本次6项和原有隔离1项，不称新增7项；三次范围重叠不累加。原33项及新增6项均通过，既有三维共同Scope、RG05及其他相关回归无失败。当前地区测试SHA-256为`09a611917d87e492b8e58ea01ade88c045d3a314cd2e191ca8231297fbfafb71`；地区实现及冻结Oracle仍分别为`4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba`、`50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce`。未修改冻结答案以迎合结果，也没有失败修订。
+
+本次仅修改地区测试、追加本节和新增原始输出，原参考/生产实现、Fixture/expected、Provider、其他测试及旧证据保持不变。W联合逆序仍只是登记变体，本轮按范围只补独立重排，不将其或完整M01矩阵登记通过。未执行全量或公开工作树pytest，未查询/触发CI，未提交/推送；本地测试不是公开交付或用户本人L3。M01整体/G0仍开放，C08保持非阻塞Should。
+
+## M01：回归与局部关闭评审（2026-11-13）
+
+本轮未修改测试或实现，按当前版本依次运行开发树region专项、相关参考及静态Fixture，再运行独立公开候选全量。环境为CPython 3.10.12、pytest 9.1.1、Linux x86_64，复用既有虚拟环境，PYTHONPATH=src；完整依赖版本、实际参数、退出码、region逐项身份及两套运行文件指纹见[原始输出](G0_M01_region_local_review_pytest.txt)与[执行清单](G0_M01_region_local_review_manifest.json)。
+
+| 运行范围 | 实际结果 | 退出码 |
+| --- | --- | --- |
+| 开发树region专项 | 39 passed in 0.23s | 0 |
+| 开发树region＋总体＋类别＋渠道＋静态Fixture | 149 passed in 0.46s | 0 |
+| 隔离公开候选全量pytest | 209 passed in 0.76s | 0 |
+
+范围重叠不累计。无失败或按输出修改冻结预期；各阶段59份绑定源码/配置/输入/预期/规则来源指纹前后不变。当前地区测试仍为09a611917d87e492b8e58ea01ade88c045d3a314cd2e191ca8231297fbfafb71，冻结Oracle仍为50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce。
+
+公开候选从本地公开父提交7530cb9复制到隔离目录，仅更新当前地区测试和安全记录；不是修改原公开分支或把开发Provider一起带入。父提交仍是此前28项测试版本，本轮39/149/209以文件清单绑定，不追溯记到旧提交。未提交/推送、未查询远程或CI，本地公开候选全量不是GitHub Actions CI或用户本人L3。
+
+[逐项局部Must评审](G0_M01_region_local_Must_review.md)区分RG01～RG06已覆盖与剩余：固定W/A、目录拒绝和比较门槛、身份过滤、三维共同Scope及独立重排均有真实计算证据；RG03.D多事件来源、RG05全地区未知组原ID/支付/退款来源仍需补直接核对断言。因此本轮**回归通过但不关闭M01参考层**，不以数量判定来源证据完整。label-absent及W联合逆序保留为未执行补强项，不提升既有C08 Should为阻塞。
+
+原始输出SHA-256为3028a08978c098cf18e984644b48efd3608b46f6357a22d41a926663d454dbd2，执行清单SHA-256为e849f81dfb722bac79cd9257a0dd998ccc2fb08da44fda067ebc1f6e9ac81578。本轮仅新增两份执行证据和局部评审，并追加阶段记录/覆盖矩阵；测试、参考/生产代码、Fixture/expected及旧证据保持不变。M01整体/G0、生产验收及用户独立签收均不随本轮自动通过。
+
+## RG05/RG06公开交付版本核对（2026-11-13）
+
+本次将当前39项地区测试及对应阶段输出/局部Must评审转入公开候选，实际209项全量证据与本次59份运行文件指纹一致；详见[本轮公开交付记录](G0_M01_region_RG05_RG06_publication.md)。不把开发149项或公开候选209项称为CI，不因交付关闭仍缺来源断言的M01参考层。此前“未提交/推送”保留各阶段含义，实际公开状态以最终提交及远程refs核验为准。

@@ -8,6 +8,8 @@ from pathlib import Path
 
 import pytest
 
+from reference.category_cohort import calculate_category_reference
+from reference.channel_cohort import calculate_channel_reference
 from reference.region_cohort import calculate_region_reference
 from test_reference_channel_cohort import _InputOnly
 
@@ -170,6 +172,94 @@ def test_region_reference_matches_frozen_oracle_and_sources(region_fixture, case
         assert refund_sources.isdisjoint(evidence["excluded_refund_source_row_ids"])
 
 
+@pytest.mark.parametrize("case_id", ("RG01.W", "RG02.A"))
+def test_reference_dimensions_share_frozen_scope_and_conserve_groups(region_fixture, case_id):
+    frozen = region_fixture[1]["cases"][case_id]
+    # 三个入口各自从同一冻结input深拷贝计算；数值真值仍来自先行台账。
+    expected_metrics = copy.deepcopy(frozen["expected"]["metrics"])
+    for window in ("baseline", "current"):
+        expected_metrics[window]["rate"] = Fraction(expected_metrics[window]["rate"])
+    for field in ("absolute_change_ratio", "relative_change"):
+        expected_metrics[field] = Fraction(expected_metrics[field])
+    results = {}
+    for dimension, calculate in (
+        ("category", calculate_category_reference),
+        ("channel", calculate_channel_reference),
+        ("region", calculate_region_reference),
+    ):
+        data = _variant(region_fixture, case_id)
+        before = copy.deepcopy(dict(data))
+        try:
+            actual = calculate(data)
+        finally:
+            assert dict(data) == before
+        results[dimension] = actual
+        assert actual["outcome"] == "ready"
+        assert actual["reasons"] == []
+        assert actual["quality_checks"] == frozen["expected"]["quality_checks"]
+        assert actual["metrics"] == expected_metrics
+        assert all(isinstance(actual["metrics"][field], Fraction) for field in ("absolute_change_ratio", "relative_change"))
+        if dimension == "region":
+            # 不以category/channel结果生成region预期，仍完整对照冻结四/六行。
+            _assert_frozen(actual, frozen)
+
+        rows = actual["aggregate_rows"]
+        identities = [(r["window_index"], r["dimension_id"], r["group_id"]) for r in rows]
+        assert len(identities) == len(set(identities))
+        assert {r["window_index"] for r in rows} == {0, 1}
+        assert all(r["dimension_id"] in (None, dimension) for r in rows)
+        assert set(actual["candidate_order_ids"]) == {"baseline", "current"}
+        assert set(actual["group_order_ids"]) == set(actual["group_refunded_order_ids"]) == {"baseline", "current"}
+        for row in rows:
+            assert type(row["paid_orders"]) is int and type(row["refunded_orders"]) is int
+            assert row["paid_orders"] > 0
+            assert 0 <= row["refunded_orders"] <= row["paid_orders"]
+            assert isinstance(row["rate"], Fraction)
+            assert row["rate"] == Fraction(row["refunded_orders"], row["paid_orders"])
+
+        for index, window in enumerate(("baseline", "current")):
+            expected = expected_metrics[window]
+            metrics = actual["metrics"][window]
+            assert type(metrics["N"]) is int and type(metrics["U"]) is int
+            assert isinstance(metrics["rate"], Fraction)
+            candidates = actual["candidate_order_ids"][window]
+            expected_candidates = set(frozen["expected"]["candidate_order_ids"][window])
+            expected_refunded = set(frozen["evidence"]["counted_refund_order_ids"][window])
+            assert len(candidates) == len(set(candidates)) == expected["N"]
+            assert set(candidates) == expected_candidates
+            total, = [r for r in rows if r["window_index"] == index and r["dimension_id"] is None]
+            assert total["group_id"] is total["group_label"] is None
+            assert (total["paid_orders"], total["refunded_orders"], total["rate"]) == (
+                expected["N"], expected["U"], expected["rate"],
+            )
+            group_rows = [r for r in rows if r["window_index"] == index and r["dimension_id"] == dimension]
+            groups = actual["group_order_ids"][window]
+            refunded_groups = actual["group_refunded_order_ids"][window]
+            assert {r["group_id"] for r in group_rows} == set(groups) == set(refunded_groups)
+            paid_members, refunded_members = [], []
+            for row in group_rows:
+                gid = row["group_id"]
+                assert isinstance(gid, str) and gid
+                paid, refunded = groups[gid], refunded_groups[gid]
+                assert len(paid) == len(set(paid)) == row["paid_orders"]
+                assert len(refunded) == len(set(refunded)) == row["refunded_orders"]
+                assert set(refunded) <= set(paid)
+                paid_members.extend(paid)
+                refunded_members.extend(refunded)
+            # 只在当前维度内守恒，不把三维行、N/U或比率相加。
+            assert len(paid_members) == len(set(paid_members)) == expected["N"]
+            assert len(refunded_members) == len(set(refunded_members)) == expected["U"]
+            assert set(paid_members) == expected_candidates
+            assert set(refunded_members) == expected_refunded
+            assert sum(r["paid_orders"] for r in group_rows) == total["paid_orders"] == metrics["N"]
+            assert sum(r["refunded_orders"] for r in group_rows) == total["refunded_orders"] == metrics["U"]
+
+    assert results["category"]["metrics"] == results["channel"]["metrics"] == results["region"]["metrics"]
+    for window in ("baseline", "current"):
+        candidate_sets = [set(result["candidate_order_ids"][window]) for result in results.values()]
+        assert candidate_sets[0] == candidate_sets[1] == candidate_sets[2]
+
+
 def test_region_reference_deduplicates_refunds_for_southeast_order(region_fixture):
     data = _variant(region_fixture, "RG03.D")
     events = [r for r in data["refunds"] if r["order_id"] == "K11-S-C-A1"]
@@ -269,6 +359,18 @@ def test_region_reference_results_calls_and_reordering_are_isolated(region_fixtu
     _assert_frozen(_calculate(data), region_fixture[1]["cases"]["RG02.A"])
     _assert_frozen(_calculate(_variant(region_fixture, "RG06.A-reverse-combined")), region_fixture[1]["cases"]["RG02.A"])
     assert repeated == snapshot
+
+
+@pytest.mark.parametrize(("case_id", "scope_id"), (("RG01.W", "W"), ("RG02.A", "A")))
+@pytest.mark.parametrize("collection", ("orders", "refunds", "regions"))
+def test_region_reference_individual_reordering_matches_frozen_oracle(region_fixture, case_id, scope_id, collection):
+    # 仅补单集合逆序；重复调用、返回值隔离及A联合逆序保留原测试。
+    data = _variant(region_fixture, f"RG06.{scope_id}-reverse-{collection}")
+    frozen = region_fixture[1]["cases"][case_id]
+    actual = _calculate(data)
+    # 行、Fraction、变化和分组台账全部固定；候选沿用原辅助函数按集合比较。
+    _assert_frozen(actual, frozen)
+    _assert_refund_control_sources_and_conservation(actual, data, frozen["evidence"])
 
 
 def test_region_reference_maturity_uses_filtered_scope(region_fixture):
@@ -453,6 +555,71 @@ def test_region_reference_preserves_preapproved_noncritical_unknown(region_fixtu
     assert actual["group_order_ids"]["current"]["__unknown__"] == ["K11-S-C-A1"]
     assert actual["group_refunded_order_ids"]["current"]["__unknown__"] == ["K11-S-C-A1"]
     assert actual["metrics"]["current"] == {"N": 6, "U": 4, "rate": Fraction(2, 3)}
+
+
+def test_region_reference_same_label_preserves_distinct_registered_ids(region_fixture):
+    data = _variant(region_fixture, "RG05.label-same")
+    # 人工台账§7 L：只改变展示名，两地身份、六行数值和来源仍是冻结A。
+    frozen = copy.deepcopy(region_fixture[1]["cases"]["RG02.A"])
+    for row in frozen["expected"]["aggregate_rows"]:
+        if row["dimension_id"] == "region":
+            row["group_label"] = "同名地区"
+    actual = _calculate(data)
+    _assert_frozen(actual, frozen)
+    for index, window in enumerate(("baseline", "current")):
+        groups = [row for row in actual["aggregate_rows"] if (
+            row["window_index"], row["dimension_id"]
+        ) == (index, "region")]
+        assert len(groups) == 2
+        assert {row["group_id"] for row in groups} == {"region_northwest", "region_southeast"}
+        assert {row["group_label"] for row in groups} == {"同名地区"}
+        assert "__unknown__" not in actual["group_order_ids"][window]
+        assert "__unknown__" not in actual["group_refunded_order_ids"][window]
+    _assert_refund_control_sources_and_conservation(actual, data, frozen["evidence"])
+
+
+@pytest.mark.parametrize(
+    ("variant_id", "original_region_id"),
+    (
+        ("RG05.filtered-explicit", "__unknown__"),
+        ("RG05.filtered-unregistered", "region_unregistered_rg05"),
+    ),
+)
+def test_region_reference_single_region_excludes_unknown_source(region_fixture, variant_id, original_region_id):
+    data = _variant(region_fixture, variant_id)
+    assert data["context"]["filters"]["region_ids"] == ["region_northwest"]
+    scope = data["context"]["domain_id"], data["context"]["snapshot_id"]
+    orders = {(row["domain_id"], row["snapshot_id"], row["order_id"]): row for row in data["orders"]}
+    unknown_key = (*scope, "K11-S-C-A1")
+    unknown_order = orders[unknown_key]
+    assert unknown_order["region_id"] == original_region_id
+    assert unknown_order["source_row_id"] == "r11-order-s-c-app-1"
+    assert unknown_order["is_payment_valid"] is True
+    assert original_region_id not in {row["region_id"] for row in data["dimensions"]["regions"]}
+    refunds = [row for row in data["refunds"] if (
+        row["domain_id"], row["snapshot_id"], row["order_id"]
+    ) == unknown_key]
+    assert {row["refund_id"] for row in refunds} == {"KR11-S-C-A1"}
+    assert {row["source_row_id"] for row in refunds} == {"r11-refund-s-c-app-1"}
+    # 人工台账§7 W-U：原始订单及退款仍在input；过滤结果应完全等同冻结W。
+    frozen = region_fixture[1]["cases"]["RG01.W"]
+    actual = _calculate(data)
+    _assert_frozen(actual, frozen)
+    for window in ("baseline", "current"):
+        assert "K11-S-C-A1" not in actual["candidate_order_ids"][window]
+        for field in ("group_order_ids", "group_refunded_order_ids"):
+            assert set(actual[field][window]) == {"region_northwest"}
+            assert "K11-S-C-A1" not in actual[field][window]["region_northwest"]
+        paid_ids = actual["group_order_ids"][window]["region_northwest"]
+        paid_sources = {orders[(*scope, oid)]["source_row_id"] for oid in paid_ids}
+        assert unknown_order["source_row_id"] not in paid_sources
+        refunded_keys = {(*scope, oid) for oid in actual["group_refunded_order_ids"][window]["region_northwest"]}
+        observed_refunds = [row for row in data["refunds"] if (
+            row["domain_id"], row["snapshot_id"], row["order_id"]
+        ) in refunded_keys]
+        assert "KR11-S-C-A1" not in {row["refund_id"] for row in observed_refunds}
+        assert "r11-refund-s-c-app-1" not in {row["source_row_id"] for row in observed_refunds}
+    _assert_refund_control_sources_and_conservation(actual, data, frozen["evidence"])
 
 
 def test_region_reference_missing_label_preserves_registered_id(region_fixture):

@@ -1,0 +1,34 @@
+RG06三维共同Scope：本地开发工作树；2026-11-13（Asia/Shanghai）。不是CI、生产权限或用户本人L3。
+解释器：.venv/bin/python
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba  reference/region_cohort.py
+53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216  reference/category_cohort.py
+207071252972bbd3cf6de22bc463fbd0c444068966cbb9cfd176b37f2d61629c  reference/channel_cohort.py
+13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6  reference/cohort.py
+3672be42d394b38335451c8c59c928fd43701eab38a5f6f42dffcb4c648f5683  tests/test_reference_region_cohort.py
+50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce  reference/manual_checks/G0_M01_region_expected.json
+99040571560c27f8eadd84ce72ee4640a53f25a6eadfaff8ffd6ba4705fc9fe3  reference/manual_checks/G0_M01_region_expected_draft.md
+8da7fd865cb1bd590d6c4b457490ccf4638e9a32e23d61f637d8e8aa23e2b7e1  reference/manual_checks/G0_M01_region_test_matrix.md
+d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8  tests/fixtures/order_boundaries/11_single_region_channel_grouping.json
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -k dimensions_share_frozen_scope_and_conserve_groups -rA -o addopts= -q -p no:cacheprovider
+..                                                                       [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_region_cohort.py::test_reference_dimensions_share_frozen_scope_and_conserve_groups[RG01.W]
+PASSED tests/test_reference_region_cohort.py::test_reference_dimensions_share_frozen_scope_and_conserve_groups[RG02.A]
+2 passed, 31 deselected in 0.23s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -o addopts= -q -p no:cacheprovider
+.................................                                        [100%]
+33 passed in 0.30s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 50%]
+.......................................................................  [100%]
+143 passed in 0.75s
+退出码：0

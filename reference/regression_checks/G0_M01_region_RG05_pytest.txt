@@ -1,0 +1,33 @@
+RG05身份与单地区过滤隔离：本地开发工作树；2026-11-13（Asia/Shanghai）。不是CI或用户本人L3。
+解释器：.venv/bin/python
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba  reference/region_cohort.py
+6548ee0d6bb2a5839f7e9243dfb9d9692a70ebad4009c1183d89fffca78b67e7  tests/test_reference_region_cohort.py
+50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce  reference/manual_checks/G0_M01_region_expected.json
+99040571560c27f8eadd84ce72ee4640a53f25a6eadfaff8ffd6ba4705fc9fe3  reference/manual_checks/G0_M01_region_expected_draft.md
+5322018b50b74da02b32c888b6777e9527fecd84b58d66b4a752ed664343c96c  reference/manual_checks/G0_M01_region_rule_review.md
+8da7fd865cb1bd590d6c4b457490ccf4638e9a32e23d61f637d8e8aa23e2b7e1  reference/manual_checks/G0_M01_region_test_matrix.md
+d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8  tests/fixtures/order_boundaries/11_single_region_channel_grouping.json
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -k 'same_label_preserves_distinct_registered_ids or single_region_excludes_unknown_source' -rA -o addopts= -q -p no:cacheprovider
+...                                                                      [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_region_cohort.py::test_region_reference_same_label_preserves_distinct_registered_ids
+PASSED tests/test_reference_region_cohort.py::test_region_reference_single_region_excludes_unknown_source[RG05.filtered-explicit-__unknown__]
+PASSED tests/test_reference_region_cohort.py::test_region_reference_single_region_excludes_unknown_source[RG05.filtered-unregistered-region_unregistered_rg05]
+3 passed, 28 deselected in 0.20s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py -o addopts= -q -p no:cacheprovider
+...............................                                          [100%]
+31 passed in 0.28s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_region_cohort.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 51%]
+.....................................................................    [100%]
+141 passed in 0.63s
+退出码：0
