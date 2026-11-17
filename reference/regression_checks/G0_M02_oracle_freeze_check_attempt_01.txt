@@ -1,0 +1,11 @@
+M02独立Oracle v1冻结静态核对；2026-11-17（Asia/Shanghai）。
+命令：python3 -（标准库脚本经stdin执行）；不调用参考/生产函数、SQL或pytest，不回填预期。
+CPython 3.10.12
+
+实际stderr（工具返回）：
+Traceback (most recent call last):
+  File "<stdin>", line 73, in <module>
+AssertionError
+实际退出码：1
+定位：检查器误将categories目录主键category_id当成products的外键比较；结构化目录记录已在key中保存主键，只有products另存category_id外键。
+处理：只修正检查器的目录字段比较；Oracle与输入原字节和哈希不变，不依据运行结果修改预期。

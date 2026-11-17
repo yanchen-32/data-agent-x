@@ -1,0 +1,35 @@
+M02合法跨域正例及交错调用；2026-11-17（Asia/Shanghai）。本地开发工作树，不是CI、公开交付或用户本人L3。
+解释器：.venv/bin/python
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+d0d0b6ac618e11f7bc1fe524b0754b8309ede979d5eb81cbd22476250299d1ad  tests/test_reference_cross_domain_cohort.py
+f5be1f6e7740ed43f26231eaa62d51f75b59d4e16baf2e26821b71becd0387a5  tests/test_reference_category_cohort.py
+53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216  reference/category_cohort.py
+13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6  reference/cohort.py
+d6b831e08c943a259a56c4ed24db0dd153585c994c759685002dbc6be86ba8a6  reference/manual_checks/G0_M02_cross_domain_expected.json
+66e23c0f5988eefb3ef84b7ec0533fb601d4645e2dbbe494a30d79118b58f31a  reference/fixture_drafts/m02_cross_domain_scope_a.json
+77ebe993f50b56dbe22dfc0c50cd64d61e479b116afb9fe871becddece88b24e  reference/fixture_drafts/m02_cross_domain_scope_b.json
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_cross_domain_cohort.py -rA -o addopts= -q -p no:cacheprovider
+....                                                                     [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_cross_domain_cohort.py::test_cross_domain_scope_matches_frozen_oracle_and_sources[M02-A]
+PASSED tests/test_reference_cross_domain_cohort.py::test_cross_domain_scope_matches_frozen_oracle_and_sources[M02-B]
+PASSED tests/test_reference_cross_domain_cohort.py::test_cross_domain_interleaving_keeps_each_frozen_scope[A-B-A]
+PASSED tests/test_reference_cross_domain_cohort.py::test_cross_domain_interleaving_keeps_each_frozen_scope[B-A-B]
+4 passed in 0.25s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_category_cohort.py -o addopts= -q -p no:cacheprovider
+......................................                                   [100%]
+38 passed in 0.12s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_cross_domain_cohort.py tests/test_reference_category_cohort.py tests/test_reference_region_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 47%]
+........................................................................ [ 94%]
+.........                                                                [100%]
+153 passed in 0.75s
+退出码：0

@@ -1,0 +1,26 @@
+M02公开候选本地验证；2026-11-17（Asia/Shanghai）。不是GitHub Actions CI或用户本人L3。
+解释器：复用开发虚拟环境的python；命令中以<复用解释器>代称绝对机器路径。
+
+命令：PYTHONPATH=src <复用解释器> -c import platform,pytest;print(platform.python_implementation(),platform.python_version());print("pytest",pytest.__version__);print(platform.system(),platform.machine())
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+退出码：0
+
+命令：PYTHONPATH=src <复用解释器> -B -m pytest tests/test_reference_cross_domain_cohort.py tests/test_reference_category_cohort.py tests/test_reference_region_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 47%]
+........................................................................ [ 94%]
+.........                                                                [100%]
+153 passed in 0.76s
+退出码：0
+
+首次全量尝试：PYTHONPATH=src <复用解释器> -B -m pytest -o addopts= -q -p no:cacheprovider
+相关153项已结束；随后全量阶段在受限环境未结束，人工中断外层执行会话，工具返回退出码130。子pytest原始stdout未返回，不能据此判断具体用例失败或声称全量通过。以下另行记录解除沙箱限制后的真实重试。
+
+解除沙箱限制后的全量重试（本地公开候选，不是CI）：
+命令：PYTHONPATH=src <复用解释器> -B -m pytest -o addopts= -q -p no:cacheprovider
+........................................................................ [ 33%]
+........................................................................ [ 67%]
+.....................................................................    [100%]
+213 passed in 0.73s
+退出码：0

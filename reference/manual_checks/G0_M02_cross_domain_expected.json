@@ -1,0 +1,1067 @@
+{
+  "oracle_id": "G0-M02-cross-domain",
+  "freeze_version": "1",
+  "freeze_date": "2026-11-17",
+  "freeze_status": "M02-A/B开发数值、成员与来源Oracle v1已冻结并绑定当前独立草稿输入；未执行参考计算/pytest、生产批准或用户本人独立验收。",
+  "baseline": "DAX-RB-1.2.1",
+  "metric_version": null,
+  "rule_binding_version": "M02-DD02-v1.2-design-v1",
+  "rule_binding_note": "仅标识既有DD02 v1.2、指标目录及指定设计稿哈希的规则组合，不新增业务公式、生产metric_version或权限开关。",
+  "derivation": "直接手工转录bccd60e已提交逐单台账§4～6的成员、计数、Fraction、变化及来源；标准库只做结构化、上下文/源行装饰和指纹记录，不调用任何参考/生产函数、SQL或运行输出生成答案。已知预期，非首次盲审或用户签字。",
+  "sources": {
+    "design": {
+      "path": "reference/manual_checks/G0_M02_cross_domain_design.md",
+      "sha256": "9a80e46c09cdd81ac316f18b6d5effa7dd2596e31a157b90740a4934d77b5159",
+      "published_commit": "bccd60ef3ee278a4022cd780d450dfb531c13519",
+      "sections": [
+        "§2～3 Scope与目录",
+        "§4逐支付",
+        "§5逐退款",
+        "§6先行数值与来源"
+      ]
+    },
+    "DD02": {
+      "path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "sha256": "3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0",
+      "version": "v1.2"
+    },
+    "metric_catalog": {
+      "path": "docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "sha256": "51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce",
+      "version": "v1.2"
+    },
+    "object_schema": {
+      "path": "docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json",
+      "sha256": "e50b08ca770ef699dcc58db246782ff800eb2e7c856c9558369c25022528383a",
+      "version": "v1.2.1"
+    },
+    "input_a": {
+      "path": "reference/fixture_drafts/m02_cross_domain_scope_a.json",
+      "sha256": "66e23c0f5988eefb3ef84b7ec0533fb601d4645e2dbbe494a30d79118b58f31a",
+      "input_sha256": "2f0da4cb15e390f5042e32443415aa4e1d40ed1b510638e833fe13027eddbdcf",
+      "case_id": "M02-A",
+      "repository_state": "已落盘本地草稿；本轮不冒称其已公开或生产批准。"
+    },
+    "input_b": {
+      "path": "reference/fixture_drafts/m02_cross_domain_scope_b.json",
+      "sha256": "77ebe993f50b56dbe22dfc0c50cd64d61e479b116afb9fe871becddece88b24e",
+      "input_sha256": "8ef18ba042f9f6282391a3ff45575c043cf37a4f5365e744e00502bfb08169ce",
+      "case_id": "M02-B",
+      "repository_state": "已落盘本地草稿；本轮不冒称其已公开或生产批准。"
+    }
+  },
+  "canonicalization": "UTF-8编码json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':'))，不含尾换行；输入数组不重排。",
+  "numeric_representation": "计数为整数，率及变化为精确有理数字符串，比较端使用Fraction解码；不是正式API Decimal序列化。",
+  "comparison_semantics": "先检查聚合行身份唯一；每窗总计在前、类别ID排序。候选/组成员/来源按集合并核对唯一性；每个结果均附属于该case的完整context，不按裸ID跨域合并。",
+  "authorization_boundary": "仅用于两个分别合法的受控合成Scope；相同局部snapshot_id不表示共享真实快照，授权是案例前提，不提供或证明生产访问权。",
+  "cases": {
+    "M02-A": {
+      "input_source": "input_a",
+      "context": {
+        "domain_id": "domain_m02_a",
+        "snapshot_id": "snapshot_m02_pair_v1",
+        "metric_id": "refund_rate_order_horizon",
+        "horizon_seconds": 604800,
+        "business_timezone": "UTC",
+        "windows": {
+          "baseline": {
+            "start": "2026-09-01T00:00:00Z",
+            "end": "2026-09-08T00:00:00Z"
+          },
+          "current": {
+            "start": "2026-09-08T00:00:00Z",
+            "end": "2026-09-15T00:00:00Z"
+          }
+        },
+        "as_of": "2026-09-23T00:00:00Z",
+        "watermark": {
+          "payments_through": "2026-09-15T00:00:00Z",
+          "refunds_through": "2026-09-23T00:00:00Z"
+        },
+        "filters": {
+          "region_ids": [
+            "region_shared"
+          ]
+        }
+      },
+      "dimension_id": "category",
+      "expected": {
+        "outcome": "ready",
+        "reasons": [],
+        "quality_checks": {
+          "all_orders_mature": true,
+          "payments_watermark_covered": true,
+          "refunds_watermark_covered": true
+        },
+        "metrics": {
+          "baseline": {
+            "N": 2,
+            "U": 1,
+            "rate": "1/2"
+          },
+          "current": {
+            "N": 2,
+            "U": 0,
+            "rate": "0"
+          },
+          "absolute_change_ratio": "-1/2",
+          "relative_change": "-1"
+        },
+        "aggregate_rows": [
+          {
+            "window_index": 0,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 2,
+            "refunded_orders": 1,
+            "rate": "1/2"
+          },
+          {
+            "window_index": 0,
+            "dimension_id": "category",
+            "group_id": "category_1",
+            "group_label": "图书",
+            "paid_orders": 1,
+            "refunded_orders": 1,
+            "rate": "1"
+          },
+          {
+            "window_index": 0,
+            "dimension_id": "category",
+            "group_id": "category_2",
+            "group_label": "电子",
+            "paid_orders": 1,
+            "refunded_orders": 0,
+            "rate": "0"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 2,
+            "refunded_orders": 0,
+            "rate": "0"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": "category",
+            "group_id": "category_1",
+            "group_label": "图书",
+            "paid_orders": 1,
+            "refunded_orders": 0,
+            "rate": "0"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": "category",
+            "group_id": "category_2",
+            "group_label": "电子",
+            "paid_orders": 1,
+            "refunded_orders": 0,
+            "rate": "0"
+          }
+        ],
+        "candidate_order_ids": {
+          "baseline": [
+            "order_b_1",
+            "order_b_2"
+          ],
+          "current": [
+            "order_c_1",
+            "order_c_2"
+          ]
+        },
+        "group_order_ids": {
+          "baseline": {
+            "category_1": [
+              "order_b_1"
+            ],
+            "category_2": [
+              "order_b_2"
+            ]
+          },
+          "current": {
+            "category_1": [
+              "order_c_1"
+            ],
+            "category_2": [
+              "order_c_2"
+            ]
+          }
+        },
+        "group_refunded_order_ids": {
+          "baseline": {
+            "category_1": [
+              "order_b_1"
+            ],
+            "category_2": []
+          },
+          "current": {
+            "category_1": [],
+            "category_2": []
+          }
+        }
+      },
+      "expected_sha256": "dbd2eb3a1d42533d9d0ce6a247d1455c51449cd2ea0760103b93336be7e7be1f",
+      "evidence": {
+        "cohort_order_keys": {
+          "baseline": [
+            [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "order_b_1"
+            ],
+            [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "order_b_2"
+            ]
+          ],
+          "current": [
+            [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "order_c_1"
+            ],
+            [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "order_c_2"
+            ]
+          ]
+        },
+        "counted_refund_order_keys": {
+          "baseline": [
+            [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "order_b_1"
+            ]
+          ],
+          "current": []
+        },
+        "cohort_source_row_ids": {
+          "baseline": [
+            "m02-a-order-b-1",
+            "m02-a-order-b-2"
+          ],
+          "current": [
+            "m02-a-order-c-1",
+            "m02-a-order-c-2"
+          ]
+        },
+        "counted_refund_order_ids": {
+          "baseline": [
+            "order_b_1"
+          ],
+          "current": []
+        },
+        "qualifying_refund_event_ids": {
+          "baseline": [
+            "refund_shared_1"
+          ],
+          "current": []
+        },
+        "qualifying_refund_source_row_ids": {
+          "baseline": [
+            "m02-a-refund-1"
+          ],
+          "current": []
+        },
+        "group_cohort_source_row_ids": {
+          "baseline": {
+            "category_1": [
+              "m02-a-order-b-1"
+            ],
+            "category_2": [
+              "m02-a-order-b-2"
+            ]
+          },
+          "current": {
+            "category_1": [
+              "m02-a-order-c-1"
+            ],
+            "category_2": [
+              "m02-a-order-c-2"
+            ]
+          }
+        },
+        "group_refund_event_ids": {
+          "baseline": {
+            "category_1": [
+              "refund_shared_1"
+            ],
+            "category_2": []
+          },
+          "current": {
+            "category_1": [],
+            "category_2": []
+          }
+        },
+        "group_refund_source_row_ids": {
+          "baseline": {
+            "category_1": [
+              "m02-a-refund-1"
+            ],
+            "category_2": []
+          },
+          "current": {
+            "category_1": [],
+            "category_2": []
+          }
+        },
+        "max_paid_at_plus_h": "2026-09-17T00:00:00Z"
+      },
+      "source_order_ledger": {
+        "order_b_1": {
+          "order_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "order_b_1"
+          ],
+          "source_row_id": "m02-a-order-b-1",
+          "product_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "product_1"
+          ],
+          "category_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "category_1"
+          ],
+          "paid_at": "2026-09-02T00:00:00Z",
+          "mature_at": "2026-09-09T00:00:00Z",
+          "assigned_window": "baseline",
+          "assigned_category_id": "category_1",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        },
+        "order_b_2": {
+          "order_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "order_b_2"
+          ],
+          "source_row_id": "m02-a-order-b-2",
+          "product_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "product_2"
+          ],
+          "category_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "category_2"
+          ],
+          "paid_at": "2026-09-03T00:00:00Z",
+          "mature_at": "2026-09-10T00:00:00Z",
+          "assigned_window": "baseline",
+          "assigned_category_id": "category_2",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        },
+        "order_c_1": {
+          "order_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "order_c_1"
+          ],
+          "source_row_id": "m02-a-order-c-1",
+          "product_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "product_1"
+          ],
+          "category_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "category_1"
+          ],
+          "paid_at": "2026-09-09T00:00:00Z",
+          "mature_at": "2026-09-16T00:00:00Z",
+          "assigned_window": "current",
+          "assigned_category_id": "category_1",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        },
+        "order_c_2": {
+          "order_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "order_c_2"
+          ],
+          "source_row_id": "m02-a-order-c-2",
+          "product_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "product_2"
+          ],
+          "category_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "category_2"
+          ],
+          "paid_at": "2026-09-10T00:00:00Z",
+          "mature_at": "2026-09-17T00:00:00Z",
+          "assigned_window": "current",
+          "assigned_category_id": "category_2",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        }
+      },
+      "source_refund_ledger": {
+        "refund_shared_1": {
+          "refund_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "refund_shared_1"
+          ],
+          "order_key": [
+            "domain_m02_a",
+            "snapshot_m02_pair_v1",
+            "order_b_1"
+          ],
+          "source_row_id": "m02-a-refund-1",
+          "refund_at": "2026-09-03T00:00:00Z",
+          "status": "success",
+          "assigned_window": "baseline",
+          "assigned_category_id": "category_1"
+        }
+      },
+      "catalog_ledger": {
+        "products": {
+          "product_1": {
+            "key": [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "product_1"
+            ],
+            "source_row_id": "m02-a-product-1",
+            "category_id": "category_1"
+          },
+          "product_2": {
+            "key": [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "product_2"
+            ],
+            "source_row_id": "m02-a-product-2",
+            "category_id": "category_2"
+          }
+        },
+        "categories": {
+          "category_1": {
+            "key": [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "category_1"
+            ],
+            "source_row_id": "m02-a-category-1",
+            "label": "图书"
+          },
+          "category_2": {
+            "key": [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "category_2"
+            ],
+            "source_row_id": "m02-a-category-2",
+            "label": "电子"
+          }
+        },
+        "regions": {
+          "region_shared": {
+            "key": [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "region_shared"
+            ],
+            "source_row_id": "m02-a-region-shared",
+            "label": "西北"
+          }
+        },
+        "channels": {
+          "channel_shared": {
+            "key": [
+              "domain_m02_a",
+              "snapshot_m02_pair_v1",
+              "channel_shared"
+            ],
+            "source_row_id": "m02-a-channel-shared",
+            "label": "网页"
+          }
+        }
+      }
+    },
+    "M02-B": {
+      "input_source": "input_b",
+      "context": {
+        "domain_id": "domain_m02_b",
+        "snapshot_id": "snapshot_m02_pair_v1",
+        "metric_id": "refund_rate_order_horizon",
+        "horizon_seconds": 604800,
+        "business_timezone": "UTC",
+        "windows": {
+          "baseline": {
+            "start": "2026-09-01T00:00:00Z",
+            "end": "2026-09-08T00:00:00Z"
+          },
+          "current": {
+            "start": "2026-09-08T00:00:00Z",
+            "end": "2026-09-15T00:00:00Z"
+          }
+        },
+        "as_of": "2026-09-23T00:00:00Z",
+        "watermark": {
+          "payments_through": "2026-09-15T00:00:00Z",
+          "refunds_through": "2026-09-23T00:00:00Z"
+        },
+        "filters": {
+          "region_ids": [
+            "region_shared"
+          ]
+        }
+      },
+      "dimension_id": "category",
+      "expected": {
+        "outcome": "ready",
+        "reasons": [],
+        "quality_checks": {
+          "all_orders_mature": true,
+          "payments_watermark_covered": true,
+          "refunds_watermark_covered": true
+        },
+        "metrics": {
+          "baseline": {
+            "N": 2,
+            "U": 1,
+            "rate": "1/2"
+          },
+          "current": {
+            "N": 3,
+            "U": 2,
+            "rate": "2/3"
+          },
+          "absolute_change_ratio": "1/6",
+          "relative_change": "1/3"
+        },
+        "aggregate_rows": [
+          {
+            "window_index": 0,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 2,
+            "refunded_orders": 1,
+            "rate": "1/2"
+          },
+          {
+            "window_index": 0,
+            "dimension_id": "category",
+            "group_id": "category_1",
+            "group_label": "图书",
+            "paid_orders": 1,
+            "refunded_orders": 1,
+            "rate": "1"
+          },
+          {
+            "window_index": 0,
+            "dimension_id": "category",
+            "group_id": "category_2",
+            "group_label": "电子",
+            "paid_orders": 1,
+            "refunded_orders": 0,
+            "rate": "0"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": null,
+            "group_id": null,
+            "group_label": null,
+            "paid_orders": 3,
+            "refunded_orders": 2,
+            "rate": "2/3"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": "category",
+            "group_id": "category_1",
+            "group_label": "图书",
+            "paid_orders": 2,
+            "refunded_orders": 1,
+            "rate": "1/2"
+          },
+          {
+            "window_index": 1,
+            "dimension_id": "category",
+            "group_id": "category_2",
+            "group_label": "电子",
+            "paid_orders": 1,
+            "refunded_orders": 1,
+            "rate": "1"
+          }
+        ],
+        "candidate_order_ids": {
+          "baseline": [
+            "order_b_1",
+            "order_b_2"
+          ],
+          "current": [
+            "order_c_1",
+            "order_c_2",
+            "order_c_3"
+          ]
+        },
+        "group_order_ids": {
+          "baseline": {
+            "category_1": [
+              "order_b_2"
+            ],
+            "category_2": [
+              "order_b_1"
+            ]
+          },
+          "current": {
+            "category_1": [
+              "order_c_2",
+              "order_c_3"
+            ],
+            "category_2": [
+              "order_c_1"
+            ]
+          }
+        },
+        "group_refunded_order_ids": {
+          "baseline": {
+            "category_1": [
+              "order_b_2"
+            ],
+            "category_2": []
+          },
+          "current": {
+            "category_1": [
+              "order_c_3"
+            ],
+            "category_2": [
+              "order_c_1"
+            ]
+          }
+        }
+      },
+      "expected_sha256": "76b45bd9b2a7be877772b483ad5612b769f5842d972c71e3e01e120af7461e81",
+      "evidence": {
+        "cohort_order_keys": {
+          "baseline": [
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_b_1"
+            ],
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_b_2"
+            ]
+          ],
+          "current": [
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_c_1"
+            ],
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_c_2"
+            ],
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_c_3"
+            ]
+          ]
+        },
+        "counted_refund_order_keys": {
+          "baseline": [
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_b_2"
+            ]
+          ],
+          "current": [
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_c_1"
+            ],
+            [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "order_c_3"
+            ]
+          ]
+        },
+        "cohort_source_row_ids": {
+          "baseline": [
+            "m02-b-order-b-1",
+            "m02-b-order-b-2"
+          ],
+          "current": [
+            "m02-b-order-c-1",
+            "m02-b-order-c-2",
+            "m02-b-order-c-3"
+          ]
+        },
+        "counted_refund_order_ids": {
+          "baseline": [
+            "order_b_2"
+          ],
+          "current": [
+            "order_c_1",
+            "order_c_3"
+          ]
+        },
+        "qualifying_refund_event_ids": {
+          "baseline": [
+            "refund_shared_1"
+          ],
+          "current": [
+            "refund_shared_2",
+            "refund_shared_3"
+          ]
+        },
+        "qualifying_refund_source_row_ids": {
+          "baseline": [
+            "m02-b-refund-1"
+          ],
+          "current": [
+            "m02-b-refund-2",
+            "m02-b-refund-3"
+          ]
+        },
+        "group_cohort_source_row_ids": {
+          "baseline": {
+            "category_1": [
+              "m02-b-order-b-2"
+            ],
+            "category_2": [
+              "m02-b-order-b-1"
+            ]
+          },
+          "current": {
+            "category_1": [
+              "m02-b-order-c-2",
+              "m02-b-order-c-3"
+            ],
+            "category_2": [
+              "m02-b-order-c-1"
+            ]
+          }
+        },
+        "group_refund_event_ids": {
+          "baseline": {
+            "category_1": [
+              "refund_shared_1"
+            ],
+            "category_2": []
+          },
+          "current": {
+            "category_1": [
+              "refund_shared_3"
+            ],
+            "category_2": [
+              "refund_shared_2"
+            ]
+          }
+        },
+        "group_refund_source_row_ids": {
+          "baseline": {
+            "category_1": [
+              "m02-b-refund-1"
+            ],
+            "category_2": []
+          },
+          "current": {
+            "category_1": [
+              "m02-b-refund-3"
+            ],
+            "category_2": [
+              "m02-b-refund-2"
+            ]
+          }
+        },
+        "max_paid_at_plus_h": "2026-09-18T00:00:00Z"
+      },
+      "source_order_ledger": {
+        "order_b_1": {
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_b_1"
+          ],
+          "source_row_id": "m02-b-order-b-1",
+          "product_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "product_1"
+          ],
+          "category_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "category_2"
+          ],
+          "paid_at": "2026-09-02T00:00:00Z",
+          "mature_at": "2026-09-09T00:00:00Z",
+          "assigned_window": "baseline",
+          "assigned_category_id": "category_2",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        },
+        "order_b_2": {
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_b_2"
+          ],
+          "source_row_id": "m02-b-order-b-2",
+          "product_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "product_2"
+          ],
+          "category_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "category_1"
+          ],
+          "paid_at": "2026-09-03T00:00:00Z",
+          "mature_at": "2026-09-10T00:00:00Z",
+          "assigned_window": "baseline",
+          "assigned_category_id": "category_1",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        },
+        "order_c_1": {
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_c_1"
+          ],
+          "source_row_id": "m02-b-order-c-1",
+          "product_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "product_1"
+          ],
+          "category_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "category_2"
+          ],
+          "paid_at": "2026-09-09T00:00:00Z",
+          "mature_at": "2026-09-16T00:00:00Z",
+          "assigned_window": "current",
+          "assigned_category_id": "category_2",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        },
+        "order_c_2": {
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_c_2"
+          ],
+          "source_row_id": "m02-b-order-c-2",
+          "product_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "product_2"
+          ],
+          "category_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "category_1"
+          ],
+          "paid_at": "2026-09-10T00:00:00Z",
+          "mature_at": "2026-09-17T00:00:00Z",
+          "assigned_window": "current",
+          "assigned_category_id": "category_1",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        },
+        "order_c_3": {
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_c_3"
+          ],
+          "source_row_id": "m02-b-order-c-3",
+          "product_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "product_2"
+          ],
+          "category_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "category_1"
+          ],
+          "paid_at": "2026-09-11T00:00:00Z",
+          "mature_at": "2026-09-18T00:00:00Z",
+          "assigned_window": "current",
+          "assigned_category_id": "category_1",
+          "region_id": "region_shared",
+          "channel_id": "channel_shared",
+          "is_payment_valid": true
+        }
+      },
+      "source_refund_ledger": {
+        "refund_shared_1": {
+          "refund_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "refund_shared_1"
+          ],
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_b_2"
+          ],
+          "source_row_id": "m02-b-refund-1",
+          "refund_at": "2026-09-04T00:00:00Z",
+          "status": "success",
+          "assigned_window": "baseline",
+          "assigned_category_id": "category_1"
+        },
+        "refund_shared_2": {
+          "refund_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "refund_shared_2"
+          ],
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_c_1"
+          ],
+          "source_row_id": "m02-b-refund-2",
+          "refund_at": "2026-09-10T00:00:00Z",
+          "status": "success",
+          "assigned_window": "current",
+          "assigned_category_id": "category_2"
+        },
+        "refund_shared_3": {
+          "refund_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "refund_shared_3"
+          ],
+          "order_key": [
+            "domain_m02_b",
+            "snapshot_m02_pair_v1",
+            "order_c_3"
+          ],
+          "source_row_id": "m02-b-refund-3",
+          "refund_at": "2026-09-12T00:00:00Z",
+          "status": "success",
+          "assigned_window": "current",
+          "assigned_category_id": "category_1"
+        }
+      },
+      "catalog_ledger": {
+        "products": {
+          "product_1": {
+            "key": [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "product_1"
+            ],
+            "source_row_id": "m02-b-product-1",
+            "category_id": "category_2"
+          },
+          "product_2": {
+            "key": [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "product_2"
+            ],
+            "source_row_id": "m02-b-product-2",
+            "category_id": "category_1"
+          }
+        },
+        "categories": {
+          "category_1": {
+            "key": [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "category_1"
+            ],
+            "source_row_id": "m02-b-category-1",
+            "label": "图书"
+          },
+          "category_2": {
+            "key": [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "category_2"
+            ],
+            "source_row_id": "m02-b-category-2",
+            "label": "电子"
+          }
+        },
+        "regions": {
+          "region_shared": {
+            "key": [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "region_shared"
+            ],
+            "source_row_id": "m02-b-region-shared",
+            "label": "西北"
+          }
+        },
+        "channels": {
+          "channel_shared": {
+            "key": [
+              "domain_m02_b",
+              "snapshot_m02_pair_v1",
+              "channel_shared"
+            ],
+            "source_row_id": "m02-b-channel-shared",
+            "label": "网页"
+          }
+        }
+      }
+    }
+  },
+  "pair_contract": {
+    "local_order_id_intersection": [
+      "order_b_1",
+      "order_b_2",
+      "order_c_1",
+      "order_c_2"
+    ],
+    "local_refund_id_intersection": [
+      "refund_shared_1"
+    ],
+    "required_business_key_fields": [
+      "domain_id",
+      "snapshot_id",
+      "local_id"
+    ],
+    "full_order_and_refund_keys_disjoint": true,
+    "separate_calls": "分别只传各自input；交错A/B也各自对照先行Oracle，不将两域事实或聚合结果合并为一次查询。"
+  }
+}

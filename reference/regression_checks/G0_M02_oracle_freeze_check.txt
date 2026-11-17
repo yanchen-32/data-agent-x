@@ -1,0 +1,12 @@
+M02独立Oracle v1冻结静态核对；2026-11-17（Asia/Shanghai）。
+命令：python3 -（标准库脚本经stdin执行）；不调用参考/生产函数、SQL或pytest，不回填预期。
+CPython 3.10.12
+M02-A：六条聚合行、两窗P/R、Fraction、总计/变化及逐组来源与已提交手工台账一致，ΣN/ΣU分别守恒。
+input SHA-256：2f0da4cb15e390f5042e32443415aa4e1d40ed1b510638e833fe13027eddbdcf
+expected规范化SHA-256：dbd2eb3a1d42533d9d0ce6a247d1455c51449cd2ea0760103b93336be7e7be1f
+M02-B：六条聚合行、两窗P/R、Fraction、总计/变化及逐组来源与已提交手工台账一致，ΣN/ΣU分别守恒。
+input SHA-256：8ef18ba042f9f6282391a3ff45575c043cf37a4f5365e744e00502bfb08169ce
+expected规范化SHA-256：76b45bd9b2a7be877772b483ad5612b769f5842d972c71e3e01e120af7461e81
+配对及保护：9笔支付、4笔退款、25条来源完整键唯一，局部ID复用合法；输入/规则/草稿/Oracle字节不变。
+静态检查退出码：0；未调用参考函数、未运行pytest、未以计算输出生成或修改预期。
+Oracle完整文件SHA-256：d6b831e08c943a259a56c4ed24db0dd153585c994c759685002dbc6be86ba8a6

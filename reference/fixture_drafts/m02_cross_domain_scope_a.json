@@ -1,0 +1,157 @@
+{
+  "draft_format_version": "1",
+  "case_id": "M02-A",
+  "pair_id": "M02",
+  "baseline": "DAX-RB-1.2.1",
+  "status": "合成输入草稿已装配；未冻结、未作参考计算或pytest回归",
+  "synthetic": true,
+  "generation_method": "按既有人工设计逐行录入，以标准库机械装配；无随机生成器或种子",
+  "metric_version": null,
+  "created_on": "2026-11-17",
+  "planned_dimension": "category",
+  "planned_dimension_note": "仅为草稿目标元数据，不向input context或正式QuerySpec新增字段。",
+  "design_record": "../manual_checks/G0_M02_cross_domain_design.md",
+  "design_sha256": "9a80e46c09cdd81ac316f18b6d5effa7dd2596e31a157b90740a4934d77b5159",
+  "authorization_assumption": "仅假定合成主体已获domain_m02_a固定域/快照及region_shared的访问权；不表示生产注册或approved快照，不向input提供权限开关。",
+  "usage": "本文件input必须独立调用；不与另一域订单、退款或目录合并为一次查询；不是已验收Fixture或机器Oracle。",
+  "input_sha256": "2f0da4cb15e390f5042e32443415aa4e1d40ed1b510638e833fe13027eddbdcf",
+  "canonicalization": "UTF-8编码json.dumps(input,ensure_ascii=False,sort_keys=True,separators=(',',':'))，不含尾换行；数组顺序参与指纹。",
+  "input": {
+    "context": {
+      "domain_id": "domain_m02_a",
+      "snapshot_id": "snapshot_m02_pair_v1",
+      "metric_id": "refund_rate_order_horizon",
+      "horizon_seconds": 604800,
+      "business_timezone": "UTC",
+      "windows": {
+        "baseline": {
+          "start": "2026-09-01T00:00:00Z",
+          "end": "2026-09-08T00:00:00Z"
+        },
+        "current": {
+          "start": "2026-09-08T00:00:00Z",
+          "end": "2026-09-15T00:00:00Z"
+        }
+      },
+      "as_of": "2026-09-23T00:00:00Z",
+      "watermark": {
+        "payments_through": "2026-09-15T00:00:00Z",
+        "refunds_through": "2026-09-23T00:00:00Z"
+      },
+      "filters": {
+        "region_ids": [
+          "region_shared"
+        ]
+      }
+    },
+    "orders": [
+      {
+        "source_row_id": "m02-a-order-b-1",
+        "domain_id": "domain_m02_a",
+        "snapshot_id": "snapshot_m02_pair_v1",
+        "order_id": "order_b_1",
+        "product_id": "product_1",
+        "region_id": "region_shared",
+        "channel_id": "channel_shared",
+        "paid_at": "2026-09-02T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "m02-a-order-b-2",
+        "domain_id": "domain_m02_a",
+        "snapshot_id": "snapshot_m02_pair_v1",
+        "order_id": "order_b_2",
+        "product_id": "product_2",
+        "region_id": "region_shared",
+        "channel_id": "channel_shared",
+        "paid_at": "2026-09-03T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "m02-a-order-c-1",
+        "domain_id": "domain_m02_a",
+        "snapshot_id": "snapshot_m02_pair_v1",
+        "order_id": "order_c_1",
+        "product_id": "product_1",
+        "region_id": "region_shared",
+        "channel_id": "channel_shared",
+        "paid_at": "2026-09-09T00:00:00Z",
+        "is_payment_valid": true
+      },
+      {
+        "source_row_id": "m02-a-order-c-2",
+        "domain_id": "domain_m02_a",
+        "snapshot_id": "snapshot_m02_pair_v1",
+        "order_id": "order_c_2",
+        "product_id": "product_2",
+        "region_id": "region_shared",
+        "channel_id": "channel_shared",
+        "paid_at": "2026-09-10T00:00:00Z",
+        "is_payment_valid": true
+      }
+    ],
+    "refunds": [
+      {
+        "source_row_id": "m02-a-refund-1",
+        "domain_id": "domain_m02_a",
+        "snapshot_id": "snapshot_m02_pair_v1",
+        "refund_id": "refund_shared_1",
+        "order_id": "order_b_1",
+        "refund_at": "2026-09-03T00:00:00Z",
+        "status": "success"
+      }
+    ],
+    "dimensions": {
+      "products": [
+        {
+          "source_row_id": "m02-a-product-1",
+          "domain_id": "domain_m02_a",
+          "snapshot_id": "snapshot_m02_pair_v1",
+          "product_id": "product_1",
+          "category_id": "category_1"
+        },
+        {
+          "source_row_id": "m02-a-product-2",
+          "domain_id": "domain_m02_a",
+          "snapshot_id": "snapshot_m02_pair_v1",
+          "product_id": "product_2",
+          "category_id": "category_2"
+        }
+      ],
+      "categories": [
+        {
+          "source_row_id": "m02-a-category-1",
+          "domain_id": "domain_m02_a",
+          "snapshot_id": "snapshot_m02_pair_v1",
+          "category_id": "category_1",
+          "label": "图书"
+        },
+        {
+          "source_row_id": "m02-a-category-2",
+          "domain_id": "domain_m02_a",
+          "snapshot_id": "snapshot_m02_pair_v1",
+          "category_id": "category_2",
+          "label": "电子"
+        }
+      ],
+      "regions": [
+        {
+          "source_row_id": "m02-a-region-shared",
+          "domain_id": "domain_m02_a",
+          "snapshot_id": "snapshot_m02_pair_v1",
+          "region_id": "region_shared",
+          "label": "西北"
+        }
+      ],
+      "channels": [
+        {
+          "source_row_id": "m02-a-channel-shared",
+          "domain_id": "domain_m02_a",
+          "snapshot_id": "snapshot_m02_pair_v1",
+          "channel_id": "channel_shared",
+          "label": "网页"
+        }
+      ]
+    }
+  }
+}

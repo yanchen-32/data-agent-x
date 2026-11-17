@@ -215,3 +215,21 @@ label-absent和W联合逆序仍未执行，按最小规则已有替代代表控�
 核验M01本地最小参考层关闭记录和绑定版本仍一致后，形成[M02输入设计草案](../manual_checks/G0_M02_cross_domain_design.md)：两个分别合法的域/快照Scope复用局部订单/退款/产品/类别及展示名，产品→类别映射反转，A总率1/2→0、B总率1/2→2/3。原始9笔支付、4笔退款及目录来源和逐单P/R均先手写，标准库静态核对时间、Fraction、唯一性及各Scope守恒通过；未调用参考函数或pytest。
 
 本轮只准备最小配对方案，不把foreign_scope拒绝负例当作合法正例；后续需各自只传input计算并对照先行冻结预期，交错调用和完整键/来源定位用于检出裸ID复用。两个JSON输入及机器expected尚未创建或冻结，M02仍为准备阶段；M01已本地关闭状态不变，G0、真实授权/SQL及本人验收不推进。
+
+## M02独立配对输入落盘（2026-11-17）
+
+按既有设计分别创建[Scope A草稿](../fixture_drafts/m02_cross_domain_scope_a.json)和[Scope B草稿](../fixture_drafts/m02_cross_domain_scope_b.json)：A为4单/1退款，B为5单/3退款；共享局部ID、反向产品类别映射、独立完整Scope及来源均与手工设计一致。标准库静态检查退出0，核对目录完整键、关联、半开支付窗、7天成熟、水位、25条来源及input/文件指纹，见[装配记录](../manual_checks/G0_M02_input_check.md)和[原始输出](G0_M02_input_check.txt)。
+
+本轮只推进输入草稿阶段，不纳入已冻结主Fixture数量；未生成机器expected、运行参考计算/pytest或合并跨域查询，M02仍未验收。不修改M01关闭结论、旧Fixture/expected或生产Runtime，也不转记为CI或本人验收。
+
+## M02独立Oracle v1冻结（2026-11-17）
+
+已据公开提交bccd60e的逐单台账手工整理[M02-A/B独立预期](../manual_checks/G0_M02_cross_domain_expected.json)，每域六条类别/总计行、P/R、Fraction、退款事件与来源均绑定规则及两份输入指纹；A总率1/2→0，B总率1/2→2/3，各域分别ΣN/ΣU守恒。静态重验退出0，失败检查器记录及修正原因均保留，详见[冻结记录](../manual_checks/G0_M02_cross_domain_freeze_review.md)。
+
+冻结对象是绑定当前两份草稿输入的开发Oracle，未修改原input/设计/规则或从参考输出生成答案；未运行参考函数/pytest，不扩增主Fixture数量。M02仍待固定及交错调用回归，不能据静态冻结宣称M02、CI、本人验收、G0或生产隔离通过；M01本地关闭状态保持。
+
+## M02最小合法跨域正例本地回归（2026-11-17）
+
+A/B分别调用现有类别参考入口，完整冻结六行、N/U/Fraction、两窗P/R及完整事实键/目录/来源直接核对，A→B→A及B→A→B交错调用与旧返回值隔离均通过。专项4项、原category38项、相关组合153项真实退出0，见[回归记录](G0_M02_cross_domain.md)及[原始输出](G0_M02_cross_domain_pytest.txt)。原计算器、输入、规则和Oracle不改，没有用foreign_scope拒绝负例替代合法正例。
+
+这补齐M02最小配对计算与交错调用的本地证据，但本轮未做全量/公开候选或局部Must关闭评审，未提交/推送；不自动关闭M02/G0或视为CI/本人签收/真实授权SQL隔离。相同局部snapshot_id用于隔离域变量，完整键仍保留snapshot_id，范围不扩展成同域多快照正例。
