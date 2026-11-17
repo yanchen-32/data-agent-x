@@ -379,3 +379,98 @@ W绝对变化5/12、相对变化5/4；A绝对变化4/15、相对变化2/3。三�
 ## RG05/RG06公开交付版本核对（2026-11-13）
 
 本次将当前39项地区测试及对应阶段输出/局部Must评审转入公开候选，实际209项全量证据与本次59份运行文件指纹一致；详见[本轮公开交付记录](G0_M01_region_RG05_RG06_publication.md)。不把开发149项或公开候选209项称为CI，不因交付关闭仍缺来源断言的M01参考层。此前“未提交/推送”保留各阶段含义，实际公开状态以最终提交及远程refs核验为准。
+
+## RG03.D：多退款事件来源断言补齐（2026-11-16）
+
+### 本地起点与先行依据
+
+本轮先核对活动测试与本地已知公开b952916的地区测试逐字节一致，并检索当前tests/reference中的RG03.D相关代码；未发现这部分未公开补强。原测试已有两笔不同refund_id及U去重断言，但没有从实际退款订单结果回查完整事件来源。本轮仅增强原test_region_reference_deduplicates_refunds_for_southeast_order，不新增pytest用例、不修改计算器或冻结expected。
+
+变体仍是已登记RG03.D，规范化input SHA-256为4fa22184fbc13ea25529d7668d34ce714da0867108647869ec7703aaff389ac9。独立依据为[人工台账§3/5 D](../manual_checks/G0_M01_region_expected_draft.md)、冻结JSON的source_order_ledger/source_refund_ledger及D的明确append_refund记录；前者绑定原退款，后者绑定新增事件，不假称完整D输出已另冻为机器Oracle。
+
+### 直接来源与观察期断言
+
+从实际返回的current/region_southeast去重退款订单集合出发，构造完整(domain_id,snapshot_id,order_id)键并回查原始订单及退款，而非用裸order_id过滤。唯一退款订单完整键为(domain_a,fixture_single_region_channel_v1_draft,K11-S-C-A1)，支付来源r11-order-s-c-app-1，支付日2026-09-14，属当前支付窗和东南组。
+
+| refund_id | source_row_id | 成功退款时间（UTC） |
+| --- | --- | --- |
+| KR11-S-C-A1 | r11-refund-s-c-app-1 | 2026-09-15T00:00:00Z |
+| KR11-RG03-S-C-SECOND | r11-rg03-s-c-second | 2026-09-16T00:00:00Z |
+
+测试明确比较refund_id→source_row_id配对，防止来源互换仍被两个独立集合掩盖；每笔完整退款事件键与原台账或新增登记行一致，关联的完整订单键均为上述唯一键，status均为success、refund_at与先行记录一致。
+
+H必须恰为604800秒，支付时刻加7天为2026-09-21T00:00:00Z，并与冻结逐单成熟时刻一致；逐事件核对paid_at≤refund_at≤paid_at+7天且refund_at≤as_of。另核对支付处于当前半开支付窗、原订单来源和地区与台账一致。以上只验证固定原始事件的既定属性，没有重新生成退款Oracle或重写退款扫描实现。
+
+两笔事件回查后数量及不同refund_id数量均为2，实际去重订单完整键集合只有1项；current/SE聚合行的U显式等于该集合大小1。原_assert_frozen继续完整比较RG02.A六行、N/U/Fraction、变化和两类订单台账，确认新增事件不改变总体或分组的退款订单数。没有复用“一单只有一事件”的来源辅助断言。
+
+### 实际执行与版本
+
+环境为本地开发工作树、.venv/bin/python、CPython 3.10.12、pytest 9.1.1、Linux x86_64，显式PYTHONPATH=src，未安装依赖。完整命令、原始stdout、定向用例身份、退出码及源码/冻结指纹见[G0_M01_region_RG03_D_sources_pytest.txt](G0_M01_region_RG03_D_sources_pytest.txt)，SHA-256为`a0e173b4054a31ff1d52aec5eba640ec5955f98a807a0b9e4f678828fa58ea33`。
+
+| 实际范围 | 实际结果 | 退出码 |
+| --- | --- | --- |
+| 地区文件-k deduplicates_refunds_for_southeast_order，附-rA | 1 passed, 38 deselected in 0.22s | 0 |
+| 地区专项整个文件 | 39 passed in 0.34s | 0 |
+| 地区＋总体＋类别＋渠道＋静态Fixture | 149 passed in 0.82s | 0 |
+
+范围重叠不累加。39项收集数量不变；本次是原1项断言补强，不称新增1项。没有失败或按实现修改答案，原回归实际通过。当前测试SHA-256为`514f7d34eb346d84799339380e6c6e2b40978fee876abc327d07b6a2013da12e`；地区实现仍为`4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba`，冻结Oracle仍为`50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce`。
+
+input-only、调用前后深拷贝及磁盘冻结字节保护均沿用原机制。参考/生产代码、Fixture/expected、旧台账/规则、其他测试、Provider及旧证据不变。本轮未执行全量或公开工作树测试，未查询CI，未提交/推送；当前本地公开基线不作为本轮新断言已交付的证据。
+
+RG03.D来源缺口现有本地执行证据，状态追加至[局部Must评审](G0_M01_region_local_Must_review.md)；RG05全地区未知组来源缺口仍在，M01/G0保持开放，不将本地pytest称为本人L3或生产验收。
+
+## RG05.A：未知地区来源与两窗成员补齐（2026-11-16）
+
+### 起点、独立映射与冻结保护
+
+本轮核对原unknown测试函数与本地公开b952916版本一致，尚无本项来源补强；同文件内上一阶段RG03.D补强保留。本次只增强原test_region_reference_preserves_preapproved_noncritical_unknown的两个参数用例，并给原来源/守恒辅助函数增加可选的手工原始ID映射；没有新增pytest用例或修改生产/参考计算器。
+
+explicit与unregistered仍分别使用已登记的RG05.unknown-explicit和RG05.unknown-unregistered，规范化input指纹保持bf73cb8d6fa888a6fcdd8577c5b54c2a88c0ccf0f98de207130f669ec549713f和8fc595d38da73b8fd3adfd1af41cf763baa410a54a465cbfbfcd2c8c011cdcf5。全地区过滤列表仍为[]，只在已预审受控合成输入的前提下验证非关键未知归组，不把此假设当成真实授权实现。
+
+目标订单完整键固定为(domain_a,fixture_single_region_channel_v1_draft,K11-S-C-A1)。原Fixture和source_order_ledger登记的地区是region_southeast；两个输入变体分别只将该订单region_id改为__unknown__或region_unregistered_rg05，计算结果均应映射到(region,__unknown__)。测试明确核对输入中的原始ID没有目录实体，恢复这一字段后整条订单与原Fixture完全相同，保证支付、产品、来源、时间等字段未被顺带修改。映射由用例字面值和[先行台账§7 U](../manual_checks/G0_M01_region_expected_draft.md)指定，不调用待测归一化逻辑生成答案。
+
+### 完整独立预期与来源核对
+
+先在冻结A预期的深拷贝上按台账静态迁移当前SE的一笔支付及退款订单，再调用参考入口。预期仍保留原A的两窗候选、总体、基期及NW；仅当前SE/unknown的行、成员和组来源作以下变更：
+
+| 窗口/行 | N/U | 精确率 |
+| --- | --- | --- |
+| 基期总计 | 5/2 | 2/5 |
+| 基期NW | 3/1 | 1/3 |
+| 基期SE | 2/1 | 1/2 |
+| 当前总计 | 6/4 | 2/3 |
+| 当前unknown | 1/1 | 1 |
+| 当前NW | 4/3 | 3/4 |
+| 当前SE | 1/0 | 0 |
+
+基期不输出unknown。当前unknown的支付/退款订单集合均为{K11-S-C-A1}；SE只剩支付{K11-S-C-W1}、退款集合为空。完整七行、Fraction、两窗成员、quality、候选及总体变化4/15和相对变化2/3全部对照先行预期，而非只核对当前代表数字；没有将运行结果写回expected文件，也没有扩大冻结JSON中完整expected的范围。
+
+unknown支付来源为r11-order-s-c-app-1；退款事件KR11-S-C-A1、退款来源r11-refund-s-c-app-1。测试从实际unknown退款订单集合回查原始事件，逐项对照冻结refund_key/order_key、成功状态、退款时间及source_row_id；从实际支付成员按完整订单键回查原始地区ID和来源。原退款事件仍关联同一订单，不因为归unknown改键、改来源或删除事件；当前SE仅保留r11-order-s-c-web-1支付来源，退款事件/来源集合为空。
+
+每窗每组均通过既有辅助断言比较支付来源、退款事件ID及退款来源集合与冻结A来源按台账迁移后的集合。可选original_region_ids只为unknown明确指定该变体的原始ID，其他调用默认保持已登记group_id等于源region_id的原规则；不是新增业务分类器。两窗支付/退款集合分别互斥穷尽，ΣN/ΣU与总体一致。没有要求参考函数返回来源或归类原因新字段。
+
+### 实际执行与本地状态
+
+环境为本地开发工作树，解释器.venv/bin/python，CPython 3.10.12、pytest 9.1.1、Linux x86_64，显式PYTHONPATH=src；未安装依赖。完整命令、两个用例身份、stdout、退出码及版本指纹见[G0_M01_region_RG05_A_sources_pytest.txt](G0_M01_region_RG05_A_sources_pytest.txt)，SHA-256为`2f8e60c5fee52551a681260c0a09aa3ccf5b1bf000cc6487d991d138642df704`。
+
+| 实际范围 | 实际结果 | 退出码 |
+| --- | --- | --- |
+| 地区文件-k preserves_preapproved_noncritical_unknown，附-rA | 2 passed, 37 deselected in 0.21s | 0 |
+| 地区专项整个文件 | 39 passed in 0.33s | 0 |
+| 地区＋总体＋类别＋渠道＋静态Fixture | 149 passed in 0.69s | 0 |
+
+范围重叠不累加；本次是原2项补断言，不称新增2项，收集数量仍39。原RG03.D及其他相关测试随回归保持通过；没有失败或修改冻结答案迎合实现。当前地区测试SHA-256为`fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec`；地区实现仍为`4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba`，冻结Oracle仍为`50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce`。
+
+input-only、调用前后深拷贝和冻结文件字节检查沿用原机制。原Fixture/expected、台账/规则、参考/生产源码、其他测试、Provider及旧输出保持不变。本次RG05.A来源缺口记为本地断言补齐且计算通过，并追加至[局部Must评审](G0_M01_region_local_Must_review.md)。两处直接来源缺口现在均有本地证据，但尚未以本轮新测试版本执行公开候选全量或完成新的局部关闭复评，不将旧209项记作本轮结果；M01仍待该复评。
+
+本轮未提交/推送，未触发或查询CI，不代签用户本人L3，也不宣称G0或生产验收通过。
+
+## M01关闭与M02准备的公开交付（2026-11-17）
+
+两处来源断言随本次公开候选交付，当前地区测试版本为fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec。2026-11-16已据该版本真实通过开发region39项、相关149项和隔离公开候选全量209项，并关闭本地M01最小参考层Must；见[公开关闭评审](G0_M01_region_Must_closure.md)、[安全输出选编](G0_M01_region_Must_closure_public_pytest.txt)及[候选59份版本清单](G0_M01_region_Must_closure_public_manifest.json)。本次未重新运行pytest，不把旧209项的同数量输出冒充新版；选编来自最终来源补强后的真实执行。
+
+原完整开发证据及本地完整版评审保持原字节并留本地，公开选编不包含私有开发完整清单/全量阶段。原阶段中的“来源未补齐”“未提交/推送”保留其当时含义，当前状态以关闭评审和本次最终提交/远程核验为准。
+
+[M02输入设计草案](../manual_checks/G0_M02_cross_domain_design.md)已形成两个分别合法的域/快照配对方案，先行手写9笔支付、4笔退款与独立预期；静态自检不是M02参考计算回归，两个JSON及机器预期尚未创建/冻结。M02保持准备状态。
+
+公开交付范围见[本次交付记录](G0_M01_M02_publication.md)。不把M01参考层关闭等同G0、CI、本人L3或生产验收；其他Must及C08非阻塞Should边界不变。

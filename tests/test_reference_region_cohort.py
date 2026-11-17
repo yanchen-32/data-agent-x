@@ -3,6 +3,7 @@
 import copy
 import hashlib
 import json
+from datetime import datetime, timedelta
 from fractions import Fraction
 from pathlib import Path
 
@@ -262,23 +263,76 @@ def test_reference_dimensions_share_frozen_scope_and_conserve_groups(region_fixt
 
 def test_region_reference_deduplicates_refunds_for_southeast_order(region_fixture):
     data = _variant(region_fixture, "RG03.D")
-    events = [r for r in data["refunds"] if r["order_id"] == "K11-S-C-A1"]
-    assert len(events) == len({r["refund_id"] for r in events}) == 2
     actual = _calculate(data)
     # 原人工台账§5 D：仅事件数增加，四个地区组及两总计不变。
     _assert_frozen(actual, region_fixture[1]["cases"]["RG02.A"])
-    assert actual["group_refunded_order_ids"]["current"]["region_southeast"] == ["K11-S-C-A1"]
-
-
-def _assert_refund_control_sources_and_conservation(actual, data, evidence):
+    refunded_ids = actual["group_refunded_order_ids"]["current"]["region_southeast"]
+    assert refunded_ids == ["K11-S-C-A1"]
     scope = data["context"]["domain_id"], data["context"]["snapshot_id"]
+    order_key = ("domain_a", "fixture_single_region_channel_v1_draft", "K11-S-C-A1")
+    refunded_keys = {(*scope, oid) for oid in refunded_ids}
+    assert refunded_keys == {order_key}
+    orders = {(r["domain_id"], r["snapshot_id"], r["order_id"]): r for r in data["orders"]}
+    order = orders[order_key]
+    oracle = region_fixture[1]
+    payment_ledger = oracle["source_order_ledger"]["K11-S-C-A1"]
+    assert tuple(payment_ledger["order_key"]) == order_key
+    assert order["source_row_id"] == payment_ledger["source_row_id"] == "r11-order-s-c-app-1"
+    assert order["region_id"] == payment_ledger["original_region_id"] == "region_southeast"
+    assert order["paid_at"] == payment_ledger["paid_at"] == "2026-09-14T00:00:00Z"
+    assert payment_ledger["assigned_window"] == "current"
+
+    # 从实际去重退款订单回查事件，不能套用“一单一事件”的来源辅助断言。
+    events = [r for r in data["refunds"] if (
+        r["domain_id"], r["snapshot_id"], r["order_id"]
+    ) in refunded_keys]
+    assert len(events) == len({r["refund_id"] for r in events}) == 2
+    assert {r["refund_id"]: r["source_row_id"] for r in events} == {
+        "KR11-S-C-A1": "r11-refund-s-c-app-1",
+        "KR11-RG03-S-C-SECOND": "r11-rg03-s-c-second",
+    }
+    first = oracle["source_refund_ledger"]["KR11-S-C-A1"]
+    second = oracle["input_variants"]["RG03.D"]["changes"][0]["row"]
+    expected_events = {first["refund_key"][2]: first, second["refund_id"]: second}
+    assert tuple(first["order_key"]) == order_key
+    assert first["assigned_window"] == "current" and first["assigned_region_id"] == "region_southeast"
+    paid_at = datetime.fromisoformat(order["paid_at"].replace("Z", "+00:00"))
+    window = data["context"]["windows"]["current"]
+    assert datetime.fromisoformat(window["start"].replace("Z", "+00:00")) <= paid_at < datetime.fromisoformat(window["end"].replace("Z", "+00:00"))
+    assert data["context"]["horizon_seconds"] == 7 * 24 * 60 * 60
+    mature_at = paid_at + timedelta(days=7)
+    assert mature_at == datetime.fromisoformat(payment_ledger["mature_at"].replace("Z", "+00:00"))
+    assert mature_at.isoformat() == "2026-09-21T00:00:00+00:00"
+    as_of = datetime.fromisoformat(data["context"]["as_of"].replace("Z", "+00:00"))
+    for event in events:
+        expected = expected_events[event["refund_id"]]
+        event_key = event["domain_id"], event["snapshot_id"], event["refund_id"]
+        expected_key = tuple(first["refund_key"]) if event["refund_id"] == "KR11-S-C-A1" else (
+            second["domain_id"], second["snapshot_id"], second["refund_id"]
+        )
+        assert event_key == expected_key
+        assert (event["domain_id"], event["snapshot_id"], event["order_id"]) == order_key
+        assert event["source_row_id"] == expected["source_row_id"]
+        assert event["status"] == expected["status"] == "success"
+        assert event["refund_at"] == expected["refund_at"]
+        refund_at = datetime.fromisoformat(event["refund_at"].replace("Z", "+00:00"))
+        assert paid_at <= refund_at <= mature_at and refund_at <= as_of
+    row, = [r for r in actual["aggregate_rows"] if (r["window_index"], r["dimension_id"], r["group_id"]) == (
+        1, "region", "region_southeast",
+    )]
+    assert row["refunded_orders"] == len(refunded_keys) == 1
+
+
+def _assert_refund_control_sources_and_conservation(actual, data, evidence, *, original_region_ids=None):
+    scope = data["context"]["domain_id"], data["context"]["snapshot_id"]
+    original_region_ids = original_region_ids or {}
     orders = {(row["domain_id"], row["snapshot_id"], row["order_id"]): row for row in data["orders"]}
     for index, window in enumerate(("baseline", "current")):
         paid_members, refunded_members = [], []
         for gid, ids in actual["group_order_ids"][window].items():
             refunded = actual["group_refunded_order_ids"][window][gid]
             assert set(refunded) <= set(ids)
-            assert all(orders[(*scope, oid)]["region_id"] == gid for oid in ids)
+            assert all(orders[(*scope, oid)]["region_id"] == original_region_ids.get(gid, gid) for oid in ids)
             assert {orders[(*scope, oid)]["source_row_id"] for oid in ids} == set(
                 evidence["group_cohort_source_row_ids"][window][gid]
             )
@@ -546,7 +600,67 @@ def test_region_reference_rejects_foreign_catalog_scope(region_fixture, catalog,
 
 @pytest.mark.parametrize("variant_id", ("RG05.unknown-explicit", "RG05.unknown-unregistered"))
 def test_region_reference_preserves_preapproved_noncritical_unknown(region_fixture, variant_id):
-    actual = _calculate(_variant(region_fixture, variant_id))
+    data = _variant(region_fixture, variant_id)
+    expected_original_id = {
+        "RG05.unknown-explicit": "__unknown__",
+        "RG05.unknown-unregistered": "region_unregistered_rg05",
+    }[variant_id]
+    assert data["context"]["filters"]["region_ids"] == []
+    scope = data["context"]["domain_id"], data["context"]["snapshot_id"]
+    order_key = ("domain_a", "fixture_single_region_channel_v1_draft", "K11-S-C-A1")
+    orders = {(r["domain_id"], r["snapshot_id"], r["order_id"]): r for r in data["orders"]}
+    source_orders = {(r["domain_id"], r["snapshot_id"], r["order_id"]): r for r in region_fixture[0]["orders"]}
+    unknown_order = orders[order_key]
+    assert scope == order_key[:2]
+    assert unknown_order["region_id"] == expected_original_id
+    assert expected_original_id not in {r["region_id"] for r in data["dimensions"]["regions"]}
+    payment_ledger = region_fixture[1]["source_order_ledger"][order_key[2]]
+    assert tuple(payment_ledger["order_key"]) == order_key
+    assert source_orders[order_key]["region_id"] == payment_ledger["original_region_id"] == "region_southeast"
+    assert unknown_order["source_row_id"] == payment_ledger["source_row_id"] == "r11-order-s-c-app-1"
+    restored = copy.deepcopy(unknown_order)
+    restored["region_id"] = source_orders[order_key]["region_id"]
+    assert restored == source_orders[order_key]
+
+    # 人工台账§7 U：仅把当前SE的一笔支付及退款订单转入unknown，先写预期再计算。
+    frozen = copy.deepcopy(region_fixture[1]["cases"]["RG02.A"])
+    expected = frozen["expected"]
+    expected["group_order_ids"]["current"]["region_southeast"] = ["K11-S-C-W1"]
+    expected["group_order_ids"]["current"]["__unknown__"] = ["K11-S-C-A1"]
+    expected["group_refunded_order_ids"]["current"]["region_southeast"] = []
+    expected["group_refunded_order_ids"]["current"]["__unknown__"] = ["K11-S-C-A1"]
+    for row in expected["aggregate_rows"]:
+        if row["window_index"] == 1 and row["group_id"] == "region_southeast":
+            row.update(paid_orders=1, refunded_orders=0, rate="0")
+    expected["aggregate_rows"].append({
+        "window_index": 1, "dimension_id": "region", "group_id": "__unknown__", "group_label": None,
+        "paid_orders": 1, "refunded_orders": 1, "rate": "1",
+    })
+    expected["aggregate_rows"].sort(key=lambda r: (r["window_index"], r["dimension_id"] is not None, r["group_id"] or ""))
+    evidence = frozen["evidence"]
+    evidence["group_cohort_source_row_ids"]["current"]["region_southeast"] = ["r11-order-s-c-web-1"]
+    evidence["group_cohort_source_row_ids"]["current"]["__unknown__"] = ["r11-order-s-c-app-1"]
+    evidence["group_refund_event_ids"]["current"]["region_southeast"] = []
+    evidence["group_refund_event_ids"]["current"]["__unknown__"] = ["KR11-S-C-A1"]
+    evidence["group_refund_source_row_ids"]["current"]["region_southeast"] = []
+    evidence["group_refund_source_row_ids"]["current"]["__unknown__"] = ["r11-refund-s-c-app-1"]
+
+    actual = _calculate(data)
+    _assert_frozen(actual, frozen)
+    _assert_refund_control_sources_and_conservation(
+        actual, data, evidence, original_region_ids={"__unknown__": expected_original_id},
+    )
+    # 从实际unknown退款订单回查完整事件/订单键及冻结来源，不向函数索要来源新字段。
+    refunded_keys = {(*scope, oid) for oid in actual["group_refunded_order_ids"]["current"]["__unknown__"]}
+    assert refunded_keys == {order_key}
+    events = [r for r in data["refunds"] if (r["domain_id"], r["snapshot_id"], r["order_id"]) in refunded_keys]
+    event, = events
+    refund_ledger = region_fixture[1]["source_refund_ledger"]["KR11-S-C-A1"]
+    assert (event["domain_id"], event["snapshot_id"], event["refund_id"]) == tuple(refund_ledger["refund_key"])
+    assert (event["domain_id"], event["snapshot_id"], event["order_id"]) == tuple(refund_ledger["order_key"]) == order_key
+    assert event["source_row_id"] == refund_ledger["source_row_id"] == "r11-refund-s-c-app-1"
+    assert event["status"] == refund_ledger["status"] == "success"
+    assert event["refund_at"] == refund_ledger["refund_at"]
     rows = {row["group_id"]: row for row in actual["aggregate_rows"] if row["window_index"] == 1}
     assert actual["outcome"] == "ready" and len(actual["aggregate_rows"]) == 7
     assert (rows["__unknown__"]["paid_orders"], rows["__unknown__"]["refunded_orders"], rows["__unknown__"]["rate"]) == (1, 1, Fraction(1))
