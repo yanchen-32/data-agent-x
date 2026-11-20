@@ -1,0 +1,25 @@
+M03 A3-08v2手工贡献草稿：先保存后进行独立算术/来源静态核验；2026-11-18（Asia/Shanghai）。
+命令：python3 -（标准库Fraction及JSON/来源检查脚本经stdin执行）。
+CPython 3.10.12
+未调用任何参考/生产计算器、待实现贡献函数或SQL；未运行pytest；不生成或回填贡献expected。
+先行保存草稿SHA-256：1e9f69c7887dd49047ab6888293de078c7544fcd438e0c01338f5ca673466327
+来源逐行检查：8笔支付与6笔成功退款的14条source_row_id匹配既有人工台账及原input；完整Scope和产品类别键一致。
+目录无source_row_id，按原数组位置/完整键定位；不虚构目录来源。
+G0={A,B}；G1={A,C}；shared={A}、exit={B}、entry={C}，与既有冻结台账一致。
+既有双窗N/U：基期A=2/0、B=2/2、总体4/2；当前A=1/1、C=3/3、总体4/4。
+权重：A基期2/4=1/2、当前1/4；B基期1/2；C当前3/4。两窗权重各自和为1，缺席窗无虚构率。
+手填within_A=3/8；字面式(1/4+1/2)/2*(1-0)精确验算=3/8
+手填structure_A=-1/8；字面式(1+0)/2*(1/4-1/2)精确验算=-1/8
+手填exit_B=-1/2；字面式-(2/4)*(2/2)精确验算=-1/2
+手填entry_C=3/4；字面式(3/4)*(3/3)精确验算=3/4
+共享A净贡献3/8-1/8=1/4，组贡献1/4-1/2+3/4=1/2。
+四类合计3/8-1/8+3/4-1/2=1/2；总体变化4/4-2/4=1/2；精确残差=0
+计数与四类贡献表逐项检查通过；不是仅通过合计反推分项。
+来源与公式绑定：
+3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0  docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md
+51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce  docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md
+f81fa9941ca9a74ed1b2ae8aa00a1ec0487cc2cce195e65cc65965f30449d995  reference/manual_checks/G0_M03_formula_boundary_review.md
+79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58  tests/fixtures/order_boundaries/08_category_entry_exit.json
+5100c04b432ca3eb21214f6b8d14d4dbd9be3313798aab854f98d88098d9dbb6  reference/manual_checks/A3-08_v2_expected.md
+1b1d63e22f6285cf43f64f8c2db1ce1da39070af6f801840cc47ba596aa159da  reference/manual_checks/A3-08_v2_expected.json
+静态核验退出码：0。先行草稿和全部既有来源字节不变；不是pytest、CI、本人签收或M03关闭证据。

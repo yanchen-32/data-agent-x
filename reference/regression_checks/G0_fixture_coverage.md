@@ -233,3 +233,9 @@ label-absent和W联合逆序仍未执行，按最小规则已有替代代表控�
 A/B分别调用现有类别参考入口，完整冻结六行、N/U/Fraction、两窗P/R及完整事实键/目录/来源直接核对，A→B→A及B→A→B交错调用与旧返回值隔离均通过。专项4项、原category38项、相关组合153项真实退出0，见[回归记录](G0_M02_cross_domain.md)及[原始输出](G0_M02_cross_domain_pytest.txt)。原计算器、输入、规则和Oracle不改，没有用foreign_scope拒绝负例替代合法正例。
 
 这补齐M02最小配对计算与交错调用的本地证据，但本轮未做全量/公开候选或局部Must关闭评审，未提交/推送；不自动关闭M02/G0或视为CI/本人签收/真实授权SQL隔离。相同局部snapshot_id用于隔离域变量，完整键仍保留snapshot_id，范围不扩展成同域多快照正例。
+
+## M03 公式核对与 A3-08v2 人工贡献草稿
+
+共享 A 的 `within` 为 3/8，`structure` 为 −1/8。退出 B 的 `exit` 为 −1/2，新增 C 的 `entry` 为 3/4。四项精确重构总体退款率差 1/2（50 个百分点），残差为 0。台账记录四组窗口权重与退款率，以及八笔支付和六笔退款的来源。[独立贡献台账草稿](../manual_checks/G0_M03_A3-08_v2_contribution_draft.md)
+
+公式按 DD02 §2 固定引用。两份静态核验分别记录公式恒等式，以及手算分数与先行来源的核对。M03 仍处于人工草稿阶段，正式预期冻结、参考实现及回归属于后续验收。[公式与边界](../manual_checks/G0_M03_formula_boundary_review.md) · [公式核验](G0_M03_formula_check.txt) · [算术与来源核验](G0_M03_A3-08_v2_manual_check.txt)
