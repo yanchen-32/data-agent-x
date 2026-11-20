@@ -1,0 +1,39 @@
+M03 公开候选本地验证。2026-11-20（Asia/Shanghai）。
+公开基线：d512fa3c86e5dbfcc195b81c26a8f12744267ebc
+解释器：复用本地虚拟环境，命令中以<复用解释器>显示。
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+候选版本 SHA-256：
+639c432993cec581a5428cda3100c85835c4992af26e968622791cd607b96ff1  tests/test_reference_contribution.py
+23076d69d7f9283c7271252539a866bae9d3512c428a45933b2897ddc97a4b62  reference/contribution.py
+53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216  reference/category_cohort.py
+13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6  reference/cohort.py
+5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0  pyproject.toml
+8a583a41f4bb557c016fd1c548345d9f824ed1450911f6bf262252e0cf271a0d  reference/manual_checks/G0_M03_A3-08_v2_contribution_expected.json
+1b1d63e22f6285cf43f64f8c2db1ce1da39070af6f801840cc47ba596aa159da  reference/manual_checks/A3-08_v2_expected.json
+79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58  tests/fixtures/order_boundaries/08_category_entry_exit.json
+
+相关参考回归
+命令：PYTHONPATH=src <复用解释器> -B -m pytest -o addopts= -q -p no:cacheprovider tests/test_reference_contribution.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_region_cohort.py tests/test_reference_cross_domain_cohort.py tests/test_boundary_fixtures.py
+........................................................................ [ 39%]
+........................................................................ [ 79%]
+......................................                                   [100%]
+182 passed in 0.90s
+退出码：0
+候选绑定文件的执行前后指纹一致。
+
+全量回归（沙箱内）
+命令：PYTHONPATH=src <复用解释器> -B -m pytest -o addopts= -q -p no:cacheprovider
+.................................
+18 秒超时，外层脚本退出码：124。未获取子进程完成退出码。
+
+全量回归（解除沙箱限制重试）
+命令：PYTHONPATH=src <复用解释器> -B -m pytest -o addopts= -q -p no:cacheprovider
+........................................................................ [ 29%]
+........................................................................ [ 59%]
+........................................................................ [ 89%]
+..........................                                               [100%]
+242 passed in 0.80s
+退出码：0
+候选绑定文件的执行前后指纹一致。

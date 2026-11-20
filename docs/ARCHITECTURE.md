@@ -15,7 +15,7 @@
 
 ## 独立参考计算
 
-`reference/cohort.py` 的 `calculate_reference(input)` 仅使用标准库，位于生产包外，不导入 `dataagentx` 或共享生产校验工具，也不读取 Fixture 的 `expected`。它对小型合成输入独立解析 UTC 时间、构造半开支付队列、检查逐单成熟与两类水位，按订单集合去重成功退款，使用 `Fraction` 计算率及变化。前提不足时业务指标为空，候选订单另列为诊断。重复订单/事件、域快照混入、孤立或支付前退款以 `ValueError` 拒绝；这不是生产 DQ 结果映射。授权、维度目录、批准导入、SQL/数据库和贡献分解均未实现。
+`reference/cohort.py` 的 `calculate_reference(input)` 仅使用标准库，位于生产包外，不导入 `dataagentx` 或共享生产校验工具，也不读取 Fixture 的 `expected`。它对小型合成输入独立解析 UTC 时间、构造半开支付队列、检查逐单成熟与两类水位，按订单集合去重成功退款，使用 `Fraction` 计算率及变化。前提不足时业务指标为空，候选订单另列为诊断。重复订单/事件、域快照混入、孤立或支付前退款以 `ValueError` 拒绝；这不是生产 DQ 结果映射。该入口的职责限于订单队列和总体退款率。
 
 `reference/manual_checks/2026-10-14.md` 与 JSON 先于参考函数保存两个 Fixture 的输入驱动逐单推导及静态数值，标注输入 hash 和既有预期曾被阅读的限制；不声称首次盲审或用户独立验收。`tests/test_reference_cohort.py` 将实际参考计算与该记录、原静态预期对照，并验证水位/未成熟控制变体、重复订单拒绝、空队列阻断和输入不被修改。
 
@@ -68,3 +68,9 @@ A3-10 `10_missing_product_join_blocks.json` 新增四笔支付、两笔合法退
 已登记ID缺label保留ID；调用侧已预审的合成Scope内，非关键未登记地区或显式__unknown__留在候选并归未知组。非法过滤、源地区坏格式及关键关联故障拒绝，unknown归类不证明权限；函数不实现授权、不接受权限开关、不读取expected/文件或修改input。输出保留overall并增加aggregate_rows、group_order_ids及group_refunded_order_ids；不足时不发布聚合行或组台账，异常用ValueError，不新增生产DQ映射。
 
 RG01.W返回四行，RG02.A合成全地区返回六行，均匹配先行冻结Oracle；首批13项同时检查来源/守恒、SE退款去重、过滤Scope成熟差异、关键产品拒绝、代表性未知/缺label及输入隔离。运行与版本见[region回归记录](../reference/regression_checks/G0_M01_region.md)。公开工作树地区13项、相关123项及全量183项实际本地通过，源码和冻结文件由[公开版本清单](../reference/regression_checks/G0_M01_region_public_manifest.json)绑定；开发188项保留原版本/范围。完整矩阵和三维共同Scope仍待验收，M01/G0未关闭，没有生产Runtime或真实授权能力变更，本地公开pytest不是CI。
+
+## 最小贡献参考计算
+
+`calculate_contribution_reference(grouped_result, dimension_id=...)` 接收同一 Scope 的一次完整参考聚合。可直接传入类别、地区或渠道参考入口的双窗结果。调用方负责保持 Scope 与上游聚合的来源绑定。现有聚合行没有域或快照字段，分解入口能检查维度、聚合完整性和统计一致性，无法从聚合数字重建 Scope 或验证授权。[贡献参考函数](../reference/contribution.py)
+
+函数校验 `ready` 状态、成熟期和两类水位、双窗总计、行身份唯一性以及 N/U 守恒，再按 DD02 计算 `within`、`structure`、`entry` 和 `exit`。结果包含互斥且穷尽的生命周期集合、实际组窗、各项贡献和精确残差。权重、率与贡献采用 `Fraction`，贡献单位为比例差。缺席窗口从组窗映射省略。非法输入抛出 `ValueError`。函数只依赖标准库，从输入计数构造新结果，保留输入对象的原始内容。

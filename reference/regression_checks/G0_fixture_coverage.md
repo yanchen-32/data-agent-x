@@ -239,3 +239,31 @@ A/B分别调用现有类别参考入口，完整冻结六行、N/U/Fraction、�
 共享 A 的 `within` 为 3/8，`structure` 为 −1/8。退出 B 的 `exit` 为 −1/2，新增 C 的 `entry` 为 3/4。四项精确重构总体退款率差 1/2（50 个百分点），残差为 0。台账记录四组窗口权重与退款率，以及八笔支付和六笔退款的来源。[独立贡献台账草稿](../manual_checks/G0_M03_A3-08_v2_contribution_draft.md)
 
 公式按 DD02 §2 固定引用。两份静态核验分别记录公式恒等式，以及手算分数与先行来源的核对。M03 仍处于人工草稿阶段，正式预期冻结、参考实现及回归属于后续验收。[公式与边界](../manual_checks/G0_M03_formula_boundary_review.md) · [公式核验](G0_M03_formula_check.txt) · [算术与来源核验](G0_M03_A3-08_v2_manual_check.txt)
+
+## M03 贡献 Oracle v1 冻结（2026-11-20）
+
+已将已审阅台账直接转录为机器可读 JSON。静态核验逐项对照四个实际组窗、生命周期、贡献分量及八笔支付和六笔退款的来源，同时核对八份来源文件和规范化输入的 SHA-256。`Fraction` 核验退出码为 0，四项合计与总体变化均为 `1/2`，精确残差为 `0`。冻结文件 SHA-256 为 `8a583a41f4bb557c016fd1c548345d9f824ed1450911f6bf262252e0cf271a0d`。[冻结贡献 Oracle](../manual_checks/G0_M03_A3-08_v2_contribution_expected.json)
+
+旧 A3-08v2 分组 Oracle 的字节与公开提交 `d512fa3` 一致。冻结证据采用手工台账和静态核验，M03 参考实现及回归仍待完成。
+
+## M03 最小贡献函数与相关回归（2026-11-20）
+
+贡献入口接收单次同 Scope 聚合，校验可比状态、完整性、单一维度、行身份和 N/U 守恒，按 DD02 返回精确 `Fraction`。A3-08v2 由既有类别入口产生输入统计，四项分量及组窗结果分别通过冻结预期对照，总体变化 `1/2`，残差 `0`。负例覆盖重复行、缺行、混入其他维度、非法计数及总计冲突。两个合成控制覆盖无共享组、零基期率和合法未知组进入。[参考函数](../contribution.py) · [专项测试](../../tests/test_reference_contribution.py) · [冻结贡献 Oracle](../manual_checks/G0_M03_A3-08_v2_contribution_expected.json)
+
+在 CPython 3.10.12 和 pytest 9.1.1 下，本地相关参考回归共 180 项通过，包含 27 项贡献专项，退出码为 0。实际命令如下。
+
+```bash
+PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_contribution.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_region_cohort.py tests/test_reference_cross_domain_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+```
+
+本项登记覆盖参考函数和本地回归。生产权限、正式序列化及 G0 整体验收仍按各自边界评审。
+
+## M03 最小固定回归补验（2026-11-20）
+
+固定样例核对原始输入指纹和 Scope，再独立对照冻结 Oracle 中的各组窗权重和组率、生命周期、四类贡献、各组净贡献及精确残差。重复组即使更换展示名也会被拒绝。两项守恒控制分别在聚合行齐全时制造 N 或 U 差异。基期和当前各有一项零分母控制，即使结果标为 `ready`，分解入口仍抛出 `ValueError`。[贡献专项测试](../../tests/test_reference_contribution.py)
+
+实际贡献专项 **29 项**、相关参考回归 **182 项**通过，两次退出码均为 0。前后指纹显示参考实现、冻结输入和预期保持原样。执行记录包含本地解释器及 pytest 版本、命令和原始输出。[执行记录](G0_M03_fixed_pytest.txt)
+
+## M03 公开候选验证（2026-11-20）
+
+基于公开分支 `d512fa3` 准备的候选版本通过本地相关参考回归 **182 项**、全量回归 **242 项**，两轮退出码均为 0。沙箱内首次全量超时，解除沙箱限制后重试通过。命令、输出和绑定文件指纹已保存。执行记录 SHA-256 为 `3333d1e18eafd99b0c6b68618a2adfd7c572b7ebcc0ec5302c342a8a474cac30`。[公开候选执行记录](G0_M03_public_pytest.txt)

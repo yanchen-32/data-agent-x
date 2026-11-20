@@ -1,0 +1,191 @@
+{
+  "oracle_id": "G0-M03-A3-08-v2-contribution",
+  "freeze_version": "1",
+  "freeze_date": "2026-11-20",
+  "freeze_status": "已冻结参考层贡献预期",
+  "case_id": "A3-08",
+  "fixture_revision": "2",
+  "derivation": "直接转录手工贡献台账第2至6节的来源、计数、权重、组率、生命周期和贡献分数。待测贡献函数未参与生成预期。",
+  "numeric_representation": "计数为整数。权重、率、贡献、变化和残差均为约分后的有理数字符串，比较时使用Fraction。",
+  "unit": "ratio",
+  "absent_group_policy": "windows仅列出实际有支付的窗口。缺席窗口无权重或退款率，contributions仅列出该生命周期适用的项。",
+  "residual_definition": "总体当前退款率减基期退款率，再减四项贡献之和。",
+  "sources": {
+    "fixture": {
+      "path": "tests/fixtures/order_boundaries/08_category_entry_exit.json",
+      "sha256": "79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58",
+      "input_sha256": "4cf45c7f2404ffd854393e21936fb288981491d98d5cd2e9951bcfedf46f49fb",
+      "input_canonicalization": "UTF-8 json.dumps(input,ensure_ascii=False,sort_keys=True,separators=(',',':'))，不含尾换行，保留数组顺序。"
+    },
+    "DD02": {
+      "path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+      "version": "v1.2",
+      "section": "§2 贡献定义",
+      "sha256": "3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0"
+    },
+    "metric_catalog": {
+      "path": "docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+      "version": "v1.2",
+      "sha256": "51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce"
+    },
+    "formula_review": {
+      "path": "reference/manual_checks/G0_M03_formula_boundary_review.md",
+      "sha256": "f81fa9941ca9a74ed1b2ae8aa00a1ec0487cc2cce195e65cc65965f30449d995"
+    },
+    "order_ledger": {
+      "path": "reference/manual_checks/A3-08_v2_expected.md",
+      "sha256": "5100c04b432ca3eb21214f6b8d14d4dbd9be3313798aab854f98d88098d9dbb6"
+    },
+    "cohort_oracle": {
+      "path": "reference/manual_checks/A3-08_v2_expected.json",
+      "sha256": "1b1d63e22f6285cf43f64f8c2db1ce1da39070af6f801840cc47ba596aa159da"
+    },
+    "contribution_ledger": {
+      "path": "reference/manual_checks/G0_M03_A3-08_v2_contribution_draft.md",
+      "sha256": "1e9f69c7887dd49047ab6888293de078c7544fcd438e0c01338f5ca673466327",
+      "published_commit": "d512fa3c86e5dbfcc195b81c26a8f12744267ebc"
+    },
+    "manual_check": {
+      "path": "reference/regression_checks/G0_M03_A3-08_v2_manual_check.txt",
+      "sha256": "14951f2caef4115b3a05e0c0e5baeaa7f423b34d4c0b21d8d2a65894f8e647a9"
+    }
+  },
+  "context": {
+    "domain_id": "domain_a",
+    "snapshot_id": "fixture_category_entry_exit_v2",
+    "metric_id": "refund_rate_order_horizon",
+    "horizon_seconds": 604800,
+    "business_timezone": "UTC",
+    "windows": {
+      "baseline": {
+        "start": "2026-09-01T00:00:00Z",
+        "end": "2026-09-08T00:00:00Z"
+      },
+      "current": {
+        "start": "2026-09-08T00:00:00Z",
+        "end": "2026-09-15T00:00:00Z"
+      }
+    },
+    "as_of": "2026-09-23T00:00:00Z",
+    "watermark": {
+      "payments_through": "2026-09-15T00:00:00Z",
+      "refunds_through": "2026-09-23T00:00:00Z"
+    },
+    "filters": {
+      "region_ids": []
+    }
+  },
+  "dimension_id": "category",
+  "expected": {
+    "group_lifecycle": {
+      "shared": ["category_a"],
+      "exit": ["category_b"],
+      "entry": ["category_c"]
+    },
+    "groups": {
+      "category_a": {
+        "windows": {
+          "baseline": {
+            "N": 2,
+            "U": 0,
+            "weight": "1/2",
+            "rate": "0",
+            "weighted_rate": "0",
+            "paid_order_sources": {
+              "E2-A-B1": "r08v2-row-a-b1",
+              "E2-A-B2": "r08v2-row-a-b2"
+            },
+            "refund_event_sources": {}
+          },
+          "current": {
+            "N": 1,
+            "U": 1,
+            "weight": "1/4",
+            "rate": "1",
+            "weighted_rate": "1/4",
+            "paid_order_sources": {
+              "E2-A-C1": "r08v2-row-a-c1"
+            },
+            "refund_event_sources": {
+              "ER2-A-C1": "r08v2-refund-a-c1"
+            }
+          }
+        },
+        "contributions": {
+          "within": "3/8",
+          "structure": "-1/8"
+        },
+        "net_contribution": "1/4"
+      },
+      "category_b": {
+        "windows": {
+          "baseline": {
+            "N": 2,
+            "U": 2,
+            "weight": "1/2",
+            "rate": "1",
+            "weighted_rate": "1/2",
+            "paid_order_sources": {
+              "E2-B-B1": "r08v2-row-b-b1",
+              "E2-B-B2": "r08v2-row-b-b2"
+            },
+            "refund_event_sources": {
+              "ER2-B-B1": "r08v2-refund-b-b1",
+              "ER2-B-B2": "r08v2-refund-b-b2"
+            }
+          }
+        },
+        "contributions": {
+          "exit": "-1/2"
+        },
+        "net_contribution": "-1/2"
+      },
+      "category_c": {
+        "windows": {
+          "current": {
+            "N": 3,
+            "U": 3,
+            "weight": "3/4",
+            "rate": "1",
+            "weighted_rate": "3/4",
+            "paid_order_sources": {
+              "E2-C-C1": "r08v2-row-c-c1",
+              "E2-C-C2": "r08v2-row-c-c2",
+              "E2-C-C3": "r08v2-row-c-c3"
+            },
+            "refund_event_sources": {
+              "ER2-C-C1": "r08v2-refund-c-c1",
+              "ER2-C-C2": "r08v2-refund-c-c2",
+              "ER2-C-C3": "r08v2-refund-c-c3"
+            }
+          }
+        },
+        "contributions": {
+          "entry": "3/4"
+        },
+        "net_contribution": "3/4"
+      }
+    },
+    "totals": {
+      "baseline": {
+        "N": 4,
+        "U": 2,
+        "rate": "1/2"
+      },
+      "current": {
+        "N": 4,
+        "U": 4,
+        "rate": "1"
+      },
+      "contributions": {
+        "within": "3/8",
+        "structure": "-1/8",
+        "entry": "3/4",
+        "exit": "-1/2"
+      },
+      "contribution_sum": "1/2",
+      "absolute_change_ratio": "1/2",
+      "residual": "0"
+    }
+  }
+}
