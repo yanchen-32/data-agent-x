@@ -1,0 +1,77 @@
+M03 局部 Must 关闭复验，2026-11-22（Asia/Shanghai）。
+执行位置为本地开发工作树。
+解释器：.venv/bin/python
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+源码及冻结数据对照公开提交 7d509cdea8bf4c5b3f7c53e045513c214b074f1c。
+下列绑定文件中仅 pyproject.toml 使用既有开发配置。
+执行与来源 SHA-256：
+2d3d786d9a75e1b459c10b3202f2a4a634ec29169758316f5bfb0c70110e2c6e  pyproject.toml
+639c432993cec581a5428cda3100c85835c4992af26e968622791cd607b96ff1  tests/test_reference_contribution.py
+f0f7257f9471b4cff6a195332b54d37fc9833682ebd3ac5048739e4dc17c3fe0  tests/test_reference_cohort.py
+f5be1f6e7740ed43f26231eaa62d51f75b59d4e16baf2e26821b71becd0387a5  tests/test_reference_category_cohort.py
+d4fb4abaf6ade2d2fadbf20385943011e02db9b3e015a90b66da452712477817  tests/test_reference_channel_cohort.py
+fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec  tests/test_reference_region_cohort.py
+d0d0b6ac618e11f7bc1fe524b0754b8309ede979d5eb81cbd22476250299d1ad  tests/test_reference_cross_domain_cohort.py
+1c092ecf94fc13f43b7f5eaa65bf40357fa510a3d27408f8ea8722a979d4a7f8  tests/test_boundary_fixtures.py
+23076d69d7f9283c7271252539a866bae9d3512c428a45933b2897ddc97a4b62  reference/contribution.py
+13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6  reference/cohort.py
+53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216  reference/category_cohort.py
+207071252972bbd3cf6de22bc463fbd0c444068966cbb9cfd176b37f2d61629c  reference/channel_cohort.py
+4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba  reference/region_cohort.py
+8a583a41f4bb557c016fd1c548345d9f824ed1450911f6bf262252e0cf271a0d  reference/manual_checks/G0_M03_A3-08_v2_contribution_expected.json
+79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58  tests/fixtures/order_boundaries/08_category_entry_exit.json
+3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0  docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md
+51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce  docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md
+f81fa9941ca9a74ed1b2ae8aa00a1ec0487cc2cce195e65cc65965f30449d995  reference/manual_checks/G0_M03_formula_boundary_review.md
+5100c04b432ca3eb21214f6b8d14d4dbd9be3313798aab854f98d88098d9dbb6  reference/manual_checks/A3-08_v2_expected.md
+1b1d63e22f6285cf43f64f8c2db1ce1da39070af6f801840cc47ba596aa159da  reference/manual_checks/A3-08_v2_expected.json
+1e9f69c7887dd49047ab6888293de078c7544fcd438e0c01338f5ca673466327  reference/manual_checks/G0_M03_A3-08_v2_contribution_draft.md
+14951f2caef4115b3a05e0c0e5baeaa7f423b34d4c0b21d8d2a65894f8e647a9  reference/regression_checks/G0_M03_A3-08_v2_manual_check.txt
+A3-08v2 规范化 input SHA-256：4cf45c7f2404ffd854393e21936fb288981491d98d5cd2e9951bcfedf46f49fb
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_contribution.py -rA -o addopts= -q -p no:cacheprovider
+.............................                                            [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_contribution.py::test_a3_08_v2_matches_frozen_contribution_oracle
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path0-insufficient_evidence-\u53ef\u6bd4]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path1-value1-\u53ef\u6bd4]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path2-False-\u6210\u719f\u671f\u53ca\u4e24\u7c7b\u6c34\u4f4d]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path3-False-\u6210\u719f\u671f\u53ca\u4e24\u7c7b\u6c34\u4f4d]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path4-False-\u6210\u719f\u671f\u53ca\u4e24\u7c7b\u6c34\u4f4d]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path5-True-\u672a\u622a\u65ad]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path6-False-\u5b8c\u6574]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path7-False-window_index]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path8-channel-\u6307\u5b9a\u5355\u7ef4\u5ea6]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path9--\u975e\u7a7a\u7ec4 ID]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path10-0-\u8ba1\u6570]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path11-True-\u8ba1\u6570]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path12--1-\u8ba1\u6570]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path13-3-\u8ba1\u6570]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path14-value14-\u4e0e U/N \u4e00\u81f4]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path15-0.5-Fraction]
+PASSED tests/test_reference_contribution.py::test_rejects_invalid_aggregate_fields[path16-value16-\u603b\u4f53\u53d8\u5316]
+PASSED tests/test_reference_contribution.py::test_rejects_duplicate_or_incomplete_rows[duplicate-total]
+PASSED tests/test_reference_contribution.py::test_rejects_duplicate_or_incomplete_rows[duplicate-group-id]
+PASSED tests/test_reference_contribution.py::test_rejects_duplicate_or_incomplete_rows[missing-total]
+PASSED tests/test_reference_contribution.py::test_rejects_duplicate_or_incomplete_rows[missing-group]
+PASSED tests/test_reference_contribution.py::test_rejects_nonconservation_with_all_rows_present[N-only]
+PASSED tests/test_reference_contribution.py::test_rejects_nonconservation_with_all_rows_present[U-only]
+PASSED tests/test_reference_contribution.py::test_rejects_total_row_that_disagrees_with_metrics
+PASSED tests/test_reference_contribution.py::test_rejects_zero_total_denominator_even_if_marked_ready[baseline]
+PASSED tests/test_reference_contribution.py::test_rejects_zero_total_denominator_even_if_marked_ready[current]
+PASSED tests/test_reference_contribution.py::test_all_groups_turn_over_with_zero_baseline_and_unknown_entry[region]
+PASSED tests/test_reference_contribution.py::test_all_groups_turn_over_with_zero_baseline_and_unknown_entry[channel]
+29 passed in 0.05s
+退出码：0
+
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_contribution.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_region_cohort.py tests/test_reference_cross_domain_cohort.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 39%]
+........................................................................ [ 79%]
+......................................                                   [100%]
+182 passed in 0.81s
+退出码：0
+
+复核：全部绑定文件在执行前后逐字节一致。
