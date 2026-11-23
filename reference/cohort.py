@@ -21,7 +21,7 @@ def calculate_reference(data: Mapping[str, Any]) -> dict[str, Any]:
     仅用于小型合成样例；输入字段应先完成结构核验。
     不读取 expected、不访问数据库、不验证目录或授权，不作贡献分解。
     率和变化返回 Fraction；阻断时 metrics 为 None，候选订单另列诊断。
-    重复订单/事件、域快照混入、孤立或支付前退款以 ValueError 拒绝，
+    重复订单/事件、域快照混入、孤立、支付前或缺少必需时间的退款以 ValueError 拒绝，
     不冒充生产批次 DQ 的错误码、修复或批准流程。
     """
     context = data["context"]
@@ -89,6 +89,11 @@ def calculate_reference(data: Mapping[str, Any]) -> dict[str, Any]:
         refund_ids.add(row["refund_id"])
         if row["order_id"] not in orders:
             raise ValueError("孤立退款")
+        if "refund_at" not in row:
+            raise ValueError(
+                "退款缺少必需时间 refund_at："
+                f"refund_id={row['refund_id']}, source_row_id={row.get('source_row_id')}"
+            )
         paid_at = orders[row["order_id"]][1]
         refund_at = _instant(row["refund_at"])
         if refund_at < paid_at:

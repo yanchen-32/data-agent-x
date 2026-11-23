@@ -1,0 +1,61 @@
+M04 缺失必需退款时间回归。本地开发工作树，2026-11-23（Asia/Shanghai）。
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+修复前执行文件 SHA-256：
+13b5ced6824c1b8548eaa55b8014f4f87c35562fbe24eead2f0408afbefa96c6  reference/cohort.py
+3e2f008c2c2e859913f56839763d4bfa93347a306373f0631173865f2f4f9909  tests/test_reference_refund_dq.py
+e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac  tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json
+
+修复前单项重现
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_refund_dq.py::test_reference_rejects_missing_required_refund_time -o addopts= -q -p no:cacheprovider --tb=short
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_____________ test_reference_rejects_missing_required_refund_time ______________
+tests/test_reference_refund_dq.py:67: in test_reference_rejects_missing_required_refund_time
+    calculate_reference(data)
+reference/cohort.py:93: in calculate_reference
+    refund_at = _instant(row["refund_at"])
+E   KeyError: 'refund_at'
+=========================== short test summary info ============================
+FAILED tests/test_reference_refund_dq.py::test_reference_rejects_missing_required_refund_time
+1 failed in 0.02s
+退出码：1
+
+修复后执行文件 SHA-256：
+3e2f008c2c2e859913f56839763d4bfa93347a306373f0631173865f2f4f9909  tests/test_reference_refund_dq.py
+596bbce438326ad3f4f537c20a78b80190a36efde4cd97983eff8417e84cb1b3  reference/cohort.py
+f0f7257f9471b4cff6a195332b54d37fc9833682ebd3ac5048739e4dc17c3fe0  tests/test_reference_cohort.py
+f5be1f6e7740ed43f26231eaa62d51f75b59d4e16baf2e26821b71becd0387a5  tests/test_reference_category_cohort.py
+d4fb4abaf6ade2d2fadbf20385943011e02db9b3e015a90b66da452712477817  tests/test_reference_channel_cohort.py
+fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec  tests/test_reference_region_cohort.py
+d0d0b6ac618e11f7bc1fe524b0754b8309ede979d5eb81cbd22476250299d1ad  tests/test_reference_cross_domain_cohort.py
+639c432993cec581a5428cda3100c85835c4992af26e968622791cd607b96ff1  tests/test_reference_contribution.py
+1c092ecf94fc13f43b7f5eaa65bf40357fa510a3d27408f8ea8722a979d4a7f8  tests/test_boundary_fixtures.py
+a7fdc991ce7df027cc48630f76da1f733bc3a11742ea046d219b7acee1ed66fd  tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json
+e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac  tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json
+56f61c74eb07b6df94e294a68f32791eb4f0f4c9ad8d6eee6e3934d10967952e  reference/fixture_drafts/m04_01_duplicate_refund_event.json
+0787622080be1bd10a8a10e2a8e83bec42201671edc5981da3fff26aae68c226  reference/fixture_drafts/m04_02_orphan_refund.json
+cb8a24516c2792db82653a07c848cdcee36565212a71a336e843ed6955605d1a  reference/fixture_drafts/m04_03_refund_before_payment.json
+
+M04 专项回归
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_refund_dq.py -rA -o addopts= -q -p no:cacheprovider
+....                                                                     [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_single_refund_fault[M04-01]
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_single_refund_fault[M04-02]
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_single_refund_fault[M04-03]
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_missing_required_refund_time
+4 passed in 0.02s
+退出码：0
+
+相关参考回归
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_refund_dq.py tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_region_cohort.py tests/test_reference_cross_domain_cohort.py tests/test_reference_contribution.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 38%]
+........................................................................ [ 77%]
+..........................................                               [100%]
+186 passed in 0.82s
+退出码：0
+
+复核：修复后绑定文件在执行前后逐字节一致。A3-06、A3-07 和首批三个变体沿用冻结字节。

@@ -1,0 +1,77 @@
+M04 局部验收复跑，本地开发工作树，2026-11-23（Asia/Shanghai）。
+解释器：.venv/bin/python
+CPython 3.10.12
+pytest 9.1.1
+Linux x86_64
+已发布对照基线：fdee38637864f20f6a035432e51eb611fed53e30
+M04 参考入口、专项及变体以修复后实际文件指纹为准。原总体和分组测试、A3-06/A3-07 及两份已提交规则文件与公开基线一致。
+执行绑定文件 SHA-256：
+3e2f008c2c2e859913f56839763d4bfa93347a306373f0631173865f2f4f9909  tests/test_reference_refund_dq.py
+f0f7257f9471b4cff6a195332b54d37fc9833682ebd3ac5048739e4dc17c3fe0  tests/test_reference_cohort.py
+f5be1f6e7740ed43f26231eaa62d51f75b59d4e16baf2e26821b71becd0387a5  tests/test_reference_category_cohort.py
+d4fb4abaf6ade2d2fadbf20385943011e02db9b3e015a90b66da452712477817  tests/test_reference_channel_cohort.py
+fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec  tests/test_reference_region_cohort.py
+d0d0b6ac618e11f7bc1fe524b0754b8309ede979d5eb81cbd22476250299d1ad  tests/test_reference_cross_domain_cohort.py
+639c432993cec581a5428cda3100c85835c4992af26e968622791cd607b96ff1  tests/test_reference_contribution.py
+1c092ecf94fc13f43b7f5eaa65bf40357fa510a3d27408f8ea8722a979d4a7f8  tests/test_boundary_fixtures.py
+48aa9aabb44a5512f257a576d4782550663cf51c4a5d9a39c6efeaaa18816bb9  reference/__init__.py
+53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216  reference/category_cohort.py
+207071252972bbd3cf6de22bc463fbd0c444068966cbb9cfd176b37f2d61629c  reference/channel_cohort.py
+596bbce438326ad3f4f537c20a78b80190a36efde4cd97983eff8417e84cb1b3  reference/cohort.py
+23076d69d7f9283c7271252539a866bae9d3512c428a45933b2897ddc97a4b62  reference/contribution.py
+4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba  reference/region_cohort.py
+a7fdc991ce7df027cc48630f76da1f733bc3a11742ea046d219b7acee1ed66fd  tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json
+e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac  tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json
+56f61c74eb07b6df94e294a68f32791eb4f0f4c9ad8d6eee6e3934d10967952e  reference/fixture_drafts/m04_01_duplicate_refund_event.json
+0787622080be1bd10a8a10e2a8e83bec42201671edc5981da3fff26aae68c226  reference/fixture_drafts/m04_02_orphan_refund.json
+cb8a24516c2792db82653a07c848cdcee36565212a71a336e843ed6955605d1a  reference/fixture_drafts/m04_03_refund_before_payment.json
+3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0  docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md
+6e8edd62e902f9417a46b84278d5eb8ccffea4d63937441580665a375747d784  reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md
+7f0c82d73fa39d60c333c1f3d76b45e979f2537af87156d3a7dc457753610190  reference/regression_checks/G0_M04_refund_dq_variants.md
+2d3d786d9a75e1b459c10b3202f2a4a634ec29169758316f5bfb0c70110e2c6e  pyproject.toml
+规范化 input SHA-256：
+94511257e4a84e8ab7c0c3b6f130c64b9719598c450072659b071cab11b9f4df  tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json
+cb458cfb0bc5555c8c680bab64885c0f2fd2e212951a12143260eb9ea3e339ca  tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json
+f7f283466f32ce5988308ffb3a8a4830fa8350277c3d3991e81b681efc336fdc  reference/fixture_drafts/m04_01_duplicate_refund_event.json
+2b3a809d80d621ea49b6f96b1796c00242df0632393596a6131cdcd61eb40151  reference/fixture_drafts/m04_02_orphan_refund.json
+0a0c4aa78e58ddede8b851d5c8b44074a399114127f0d31c47e53da9a28b20b1  reference/fixture_drafts/m04_03_refund_before_payment.json
+f87758cc81977969fc57b73886f3205fb186ef5d8a684806b6eee8566cc38580  缺失时间控制（从 A3-07 深拷贝，仅删除 r07-refund-a-c1 的 refund_at，内存构造）
+
+M04 四项专项
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_refund_dq.py -rA -o addopts= -q -p no:cacheprovider
+....                                                                     [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_single_refund_fault[M04-01]
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_single_refund_fault[M04-02]
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_single_refund_fault[M04-03]
+PASSED tests/test_reference_refund_dq.py::test_reference_rejects_missing_required_refund_time
+4 passed in 0.01s
+退出码：0
+
+原有总体参考
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_cohort.py -rA -o addopts= -q -p no:cacheprovider
+.........                                                                [100%]
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/test_reference_cohort.py::test_reference_matches_precomputed_manual_record_and_fixture[01_maturity_watermark.json]
+PASSED tests/test_reference_cohort.py::test_reference_matches_precomputed_manual_record_and_fixture[02_utc_boundaries.json]
+PASSED tests/test_reference_cohort.py::test_reference_matches_existing_control_variant[watermark_equal]
+PASSED tests/test_reference_cohort.py::test_reference_matches_existing_control_variant[as_of_one_microsecond_early]
+PASSED tests/test_reference_cohort.py::test_reference_rejects_duplicate_orders_instead_of_silent_deduplication
+PASSED tests/test_reference_cohort.py::test_reference_blocks_empty_cohorts_instead_of_dividing_by_zero
+PASSED tests/test_reference_cohort.py::test_reference_matches_frozen_boundary_fixture[A3-04]
+PASSED tests/test_reference_cohort.py::test_reference_matches_frozen_boundary_fixture[A3-05]
+PASSED tests/test_reference_cohort.py::test_reference_a3_06_counts_refund_orders_not_events
+9 passed in 0.03s
+退出码：0
+
+相关分组、跨域、贡献及静态 Fixture
+命令：PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_region_cohort.py tests/test_reference_cross_domain_cohort.py tests/test_reference_contribution.py tests/test_boundary_fixtures.py -o addopts= -q -p no:cacheprovider
+........................................................................ [ 41%]
+........................................................................ [ 83%]
+.............................                                            [100%]
+173 passed in 0.79s
+退出码：0
+
+复核：所有绑定文件在执行前后逐字节一致。

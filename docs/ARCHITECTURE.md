@@ -15,7 +15,7 @@
 
 ## 独立参考计算
 
-`reference/cohort.py` 的 `calculate_reference(input)` 仅使用标准库，位于生产包外，不导入 `dataagentx` 或共享生产校验工具，也不读取 Fixture 的 `expected`。它对小型合成输入独立解析 UTC 时间、构造半开支付队列、检查逐单成熟与两类水位，按订单集合去重成功退款，使用 `Fraction` 计算率及变化。前提不足时业务指标为空，候选订单另列为诊断。重复订单/事件、域快照混入、孤立或支付前退款以 `ValueError` 拒绝；这不是生产 DQ 结果映射。该入口的职责限于订单队列和总体退款率。
+`reference/cohort.py` 的 `calculate_reference(input)` 仅使用标准库，位于生产包外，不导入 `dataagentx` 或共享生产校验工具，也不读取 Fixture 的 `expected`。它对小型合成输入独立解析 UTC 时间、构造半开支付队列、检查逐单成熟与两类水位，按订单集合去重成功退款，使用 `Fraction` 计算率及变化。前提不足时业务指标为空，候选订单另列为诊断。重复订单/事件、域快照混入、孤立或支付前退款以 `ValueError` 拒绝。退款缺少必需时间 `refund_at` 也会抛出 `ValueError`，错误包含退款 ID 和来源行。生产 DQ 状态映射属于独立验收范围。该入口的职责限于订单队列和总体退款率。
 
 `reference/manual_checks/2026-10-14.md` 与 JSON 先于参考函数保存两个 Fixture 的输入驱动逐单推导及静态数值，标注输入 hash 和既有预期曾被阅读的限制；不声称首次盲审或用户独立验收。`tests/test_reference_cohort.py` 将实际参考计算与该记录、原静态预期对照，并验证水位/未成熟控制变体、重复订单拒绝、空队列阻断和输入不被修改。
 
