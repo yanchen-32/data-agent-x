@@ -1,0 +1,3809 @@
+{
+  "manifest_id": "G0-development",
+  "manifest_version": 1,
+  "record_date": "2026-11-24",
+  "purpose": "公开合成开发数据、局部参考验证和逐案审阅状态的维护索引。",
+  "inventory_source": {
+    "path": "reference/regression_checks/G0_fixture_inventory.json",
+    "as_of": "2026-10-30",
+    "main_count_at_audit": 10
+  },
+  "counting": {
+    "unit": "按已登记用例 ID 计数。同一输入因不同维度、断言或控制意图可能有多个 ID。",
+    "controls_scope": "纳入已选定且能定位、复现并绑定规范化输入的控制。代码内补充控制另作族索引，算术反例、重复执行和衍生 Oracle 分开登记。",
+    "historical_scope": "A3-08 v1 是历史副本。A3-11 早期草稿与主例输入相同，只保留谱系引用。"
+  },
+  "counts": {
+    "main_fixtures": 11,
+    "control_variants": 65,
+    "historical_fixtures": 1,
+    "derived_oracles": 1,
+    "indexed_test_only_families": 4,
+    "control_variants_with_direct_test": 63,
+    "control_variants_without_direct_test": 2
+  },
+  "construction": {
+    "method": "manual",
+    "note": "用例和先行预期由人工规则或显式变更构造。脚本只重放已有变更、索引和算指纹。"
+  },
+  "review_policy": {
+    "technical": "技术复核或现有证据核查，与用户独立签收分别记录。预期曾公开，未声称首次盲审或第二审核人。",
+    "user_independent_acceptance": "目前缺少已登记的本人签收证据。逐项复核后再更新对应记录。",
+    "approval_evidence": "当前清单用途为开发版本登记。生产批准、正式评测与 G0 整体验收按各自流程提供证据。"
+  },
+  "fingerprints": {
+    "file_sha256": "artifacts 对仓库相对路径的原始文件字节计算。",
+    "canonical_sha256": "按 Python json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(逗号,冒号)) 结果的 UTF-8 字节计算，无换行，保留数组顺序。",
+    "line_sha256": "按定位到的单行 UTF-8 字节计算，不含换行。JSON pointer 用 RFC 6901 跟随字段及数组索引。",
+    "span_sha256": "按起止行取源码，行间以 LF 连接，末尾无换行，编码为 UTF-8。"
+  },
+  "maintenance": [
+    "新增或变更用例时填实际来源路径与指针。控制使用原数据和已记录的变更复演输入。已有固定指纹不随意覆盖，差异审定后另记版本。",
+    "同一规则、实现和测试文件通过 ID 共享，完整文件指纹集中保存在 artifacts。变更实现后更新实际执行证据及对应的源码版本。",
+    "frozen_json 绑定静态预期对象。manual_case_record 绑定人工控制记录及其发布预期。assertions_without_separately_frozen_output 绑定现有断言和手工依据。design_only 表示仅定位设计。",
+    "测试通过以执行记录中的 PASSED 身份为准。历史副本、派生分析和代码内控制族各归专栏，计数由数组长计算。"
+  ],
+  "rule_sets": {
+    "DD02-1.2": {
+      "baseline": "DAX-RB-1.2.1",
+      "version": "DD02 v1.2",
+      "documents": [
+        "docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+        "docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md",
+        "docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md",
+        "docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json"
+      ]
+    },
+    "channel-v1": {
+      "inherits": "DD02-1.2",
+      "version": "A3-11 冻结实施方案 C01～C07",
+      "documents": [
+        "reference/manual_checks/A3-11_channel_oracle_plan.md"
+      ]
+    },
+    "M01-region-rules-v1": {
+      "inherits": "DD02-1.2",
+      "version": "M01-region-rules-v1",
+      "documents": [
+        "reference/manual_checks/G0_M01_region_rule_review.md"
+      ]
+    },
+    "M02-DD02-v1.2-design-v1": {
+      "inherits": "DD02-1.2",
+      "version": "M02-DD02-v1.2-design-v1",
+      "documents": [
+        "reference/manual_checks/G0_M02_cross_domain_design.md"
+      ]
+    },
+    "M03-DD02-1.2": {
+      "inherits": "DD02-1.2",
+      "version": "DD02 §2 贡献公式",
+      "documents": [
+        "reference/manual_checks/G0_M03_formula_boundary_review.md"
+      ]
+    },
+    "M04-DD02-1.2": {
+      "inherits": "DD02-1.2",
+      "version": "DD02 §1–2 退款质量",
+      "documents": [
+        "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md"
+      ]
+    }
+  },
+  "reference_implementations": {
+    "overall": {
+      "path": "reference/cohort.py",
+      "commit": "a479fad6cd19994ef08d5a49d5d2cd274f0acf36"
+    },
+    "category": {
+      "path": "reference/category_cohort.py",
+      "commit": "a479fad6cd19994ef08d5a49d5d2cd274f0acf36"
+    },
+    "channel": {
+      "path": "reference/channel_cohort.py",
+      "commit": "a479fad6cd19994ef08d5a49d5d2cd274f0acf36"
+    },
+    "region": {
+      "path": "reference/region_cohort.py",
+      "commit": "a479fad6cd19994ef08d5a49d5d2cd274f0acf36"
+    },
+    "contribution": {
+      "path": "reference/contribution.py",
+      "commit": "a479fad6cd19994ef08d5a49d5d2cd274f0acf36"
+    }
+  },
+  "test_suites": {
+    "cohort": {
+      "path": "tests/test_reference_cohort.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": [
+        "overall"
+      ]
+    },
+    "category_cohort": {
+      "path": "tests/test_reference_category_cohort.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": [
+        "category",
+        "overall"
+      ]
+    },
+    "channel_cohort": {
+      "path": "tests/test_reference_channel_cohort.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": [
+        "channel",
+        "overall"
+      ]
+    },
+    "region_cohort": {
+      "path": "tests/test_reference_region_cohort.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": [
+        "region",
+        "overall",
+        "category",
+        "channel"
+      ]
+    },
+    "cross_domain_cohort": {
+      "path": "tests/test_reference_cross_domain_cohort.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": [
+        "category",
+        "overall"
+      ]
+    },
+    "contribution": {
+      "path": "tests/test_reference_contribution.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": [
+        "contribution",
+        "category",
+        "overall"
+      ]
+    },
+    "refund_dq": {
+      "path": "tests/test_reference_refund_dq.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": [
+        "overall"
+      ]
+    },
+    "boundary": {
+      "path": "tests/test_boundary_fixtures.py",
+      "execution_id": "G0-public-candidate-2026-11-24",
+      "implementation_ids": []
+    }
+  },
+  "execution": {
+    "id": "G0-public-candidate-2026-11-24",
+    "scope": "公开候选工作树本地相关参考及静态回归",
+    "log": "reference/regression_checks/G0_development_manifest_pytest.txt",
+    "passed": 186,
+    "exit_code": 0,
+    "public_source_anchor": "a479fad6cd19994ef08d5a49d5d2cd274f0acf36",
+    "config": "pyproject.toml",
+    "prior_local_closure_log": "reference/regression_checks/G0_M04_Must_closure_pytest.txt"
+  },
+  "main_fixtures": [
+    {
+      "case_id": "A3-01",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+        "pointer": "/input",
+        "canonical_sha256": "2617971e97393b5ec170861321e9c903ff51d29e39e4b10d650d4a56844d6f9a"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+          "pointer": "/expected",
+          "canonical_sha256": "98524cc05d73e02db015a6957c876b4cdf7bad02304b390e6d74534d3da9560c"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/2026-10-14.json"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_matches_precomputed_manual_record_and_fixture[01_maturity_watermark.json]"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/0",
+        "canonical_sha256": "3d1065a2dade207a8077507909223ce4bc2bdc251f3dac376e42e4a847b75dc5"
+      },
+      "raw_counts": {
+        "orders": 2,
+        "refunds": 0
+      },
+      "expected_outcome": "insufficient_evidence"
+    },
+    {
+      "case_id": "A3-02",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/02_utc_boundaries.json",
+        "pointer": "/input",
+        "canonical_sha256": "4f8410306b8bc4039212c2ace5e8340fca0acb08d305b2497cfa40f667f61711"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/02_utc_boundaries.json",
+          "pointer": "/expected",
+          "canonical_sha256": "6551c72bd346f34f71a15c1b95e898f5a27f461b7626990612ed81555d0b58e5"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/2026-10-14.json"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_matches_precomputed_manual_record_and_fixture[02_utc_boundaries.json]"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/1",
+        "canonical_sha256": "94dedb18ed626fa47672eb41ecad6e8bb33b9264426d27b571fcc42d754e640a"
+      },
+      "raw_counts": {
+        "orders": 6,
+        "refunds": 5
+      },
+      "expected_outcome": "ready"
+    },
+    {
+      "case_id": "A3-03",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/03_duplicate_orders.json",
+        "pointer": "/input",
+        "canonical_sha256": "3dedc50609d23226a5b794c62478d884a793978abda7b30bced61220398f35a9"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/03_duplicate_orders.json",
+          "pointer": "/expected",
+          "canonical_sha256": "ab5dab62e0b4c4d1fdec4fa151aa51a2153d74a60b952b411310d99fc06a10ef"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_rejects_duplicate_orders_instead_of_silent_deduplication"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/2",
+        "canonical_sha256": "d6da51d1b616a702edcc02b9bbaf0edea61acd9afbf6857aaac827bef5475426"
+      },
+      "raw_counts": {
+        "orders": 3,
+        "refunds": 1
+      },
+      "expected_outcome": "blocked_by_quality"
+    },
+    {
+      "case_id": "A3-04",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/04_zero_denominator_window.json",
+        "pointer": "/input",
+        "canonical_sha256": "2dfc833a68f7e9896bb8e9fdbfe6a150e85eaf2587e47907652513448474b2f9"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/04_zero_denominator_window.json",
+          "pointer": "/expected",
+          "canonical_sha256": "cda193b179f4f547762d357b8fbff1a0a50f44c4f1782c8df792a6052534d08d"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-04_A3-05_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_matches_frozen_boundary_fixture[A3-04]"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/3",
+        "canonical_sha256": "2865715cb7d30196e743ff19e7a9072cd47db3c0819ad04443d7a367549261f2"
+      },
+      "raw_counts": {
+        "orders": 3,
+        "refunds": 1
+      },
+      "expected_outcome": "insufficient_evidence"
+    },
+    {
+      "case_id": "A3-05",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/05_single_region_filter.json",
+        "pointer": "/input",
+        "canonical_sha256": "45a77832c8daf80dd4d9a6c64e05f97ae9cbe1aa8c9f943b5a3f0f1cdf29c3fd"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/05_single_region_filter.json",
+          "pointer": "/expected",
+          "canonical_sha256": "2d02934765537b105e3e363a40b7d39d3bfa7f78e34d018a20950a0235326f65"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-04_A3-05_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_matches_frozen_boundary_fixture[A3-05]"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/4",
+        "canonical_sha256": "6462a708962f330c0240c96dacbe360edd02099af3ce8a7da1f4931af8d1bc06"
+      },
+      "raw_counts": {
+        "orders": 6,
+        "refunds": 3
+      },
+      "expected_outcome": "ready"
+    },
+    {
+      "case_id": "A3-06",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json",
+        "pointer": "/input",
+        "canonical_sha256": "94511257e4a84e8ab7c0c3b6f130c64b9719598c450072659b071cab11b9f4df"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json",
+          "pointer": "/expected",
+          "canonical_sha256": "ca81be7036a5e87973d317210f1844958fb3307a9d627a44de089850530e0db4"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/regression_checks/A3-06.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_a3_06_counts_refund_orders_not_events"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/5",
+        "canonical_sha256": "036d01ee4d645ac1b994299ca87a43d56b607fad26d02d209ac2e25dbffdfa14"
+      },
+      "raw_counts": {
+        "orders": 4,
+        "refunds": 4
+      },
+      "expected_outcome": "ready"
+    },
+    {
+      "case_id": "A3-07",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json",
+        "pointer": "/input",
+        "canonical_sha256": "cb458cfb0bc5555c8c680bab64885c0f2fd2e212951a12143260eb9ea3e339ca"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json",
+          "pointer": "/expected",
+          "canonical_sha256": "b9640a6dd7dbc73f1e50f94406659d3c869b7000f21282951c33f9e4a848a7e7"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-07_review.json",
+          "reference/manual_checks/A3-07_review.md",
+          "reference/regression_checks/A3-07_category.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "category_cohort",
+          "node_ids": [
+            "test_category_reference_matches_six_frozen_rows_and_manual_sources"
+          ]
+        },
+        {
+          "suite": "boundary",
+          "node_ids": [
+            "test_same_label_category_group_refunds_trace_to_source_rows[baseline-category-a]",
+            "test_same_label_category_group_refunds_trace_to_source_rows[baseline-category-b]",
+            "test_same_label_category_group_refunds_trace_to_source_rows[current-category-a]",
+            "test_same_label_category_group_refunds_trace_to_source_rows[current-category-b]"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/6",
+        "canonical_sha256": "ee04223f5bfd6352f0150f0a34a4e45a8f354955f6c1a1b27d46b6ef99b33d7b"
+      },
+      "raw_counts": {
+        "orders": 6,
+        "refunds": 2
+      },
+      "expected_outcome": "ready"
+    },
+    {
+      "case_id": "A3-08",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/08_category_entry_exit.json",
+        "pointer": "/input",
+        "canonical_sha256": "4cf45c7f2404ffd854393e21936fb288981491d98d5cd2e9951bcfedf46f49fb"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/08_category_entry_exit.json",
+          "pointer": "/expected",
+          "canonical_sha256": "36cf18db12ba260105f033943ec77674f023a2af98a20cd2c6998c0dd6b273ad"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-08_v2_expected.json",
+          "reference/manual_checks/A3-08_v2_review.md",
+          "reference/regression_checks/A3-08_v2.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "category_cohort",
+          "node_ids": [
+            "test_category_reference_a3_08_v2_matches_frozen_rows_and_metrics",
+            "test_category_reference_a3_08_v2_lifecycle_omits_absent_groups",
+            "test_category_reference_a3_08_v2_traces_order_and_refund_sources[0-baseline]",
+            "test_category_reference_a3_08_v2_traces_order_and_refund_sources[1-current]"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/7",
+        "canonical_sha256": "7f5730b285e5728ee205c373c4ac9b1d9d5cafa26e45c9bac5f16d150cb6ee9f"
+      },
+      "raw_counts": {
+        "orders": 8,
+        "refunds": 6
+      },
+      "expected_outcome": "ready",
+      "fixture_revision": "2"
+    },
+    {
+      "case_id": "A3-09",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/09_unknown_category_preserved.json",
+        "pointer": "/input",
+        "canonical_sha256": "6d504013cfcf21f98b4cac416ac2acc39283136212ee867f83d837fa6801ed56"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/09_unknown_category_preserved.json",
+          "pointer": "/expected",
+          "canonical_sha256": "e7c8c0f78fd02b93a866d22e4c9786d84e86bb08ca77fa578528036256771dab"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-09_expected.json",
+          "reference/regression_checks/A3-09_acceptance.md",
+          "reference/regression_checks/A3-09.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "category_cohort",
+          "node_ids": [
+            "test_category_reference_a3_09_matches_frozen_unknown_category_oracle"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/9",
+        "canonical_sha256": "7b1c90f8f5df04c8353b7c6bd18d85528b8dd7109445e229ffedc90d3f8f075f"
+      },
+      "raw_counts": {
+        "orders": 8,
+        "refunds": 5
+      },
+      "expected_outcome": "ready"
+    },
+    {
+      "case_id": "A3-10",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/10_missing_product_join_blocks.json",
+        "pointer": "/input",
+        "canonical_sha256": "4966e1e7b68ac237d88cbce97f511c2d5cc62bdd301183d567d4bd4be8e627a1"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/10_missing_product_join_blocks.json",
+          "pointer": "/expected",
+          "canonical_sha256": "e7e79f9a0088cf6ef6c37b1e671130445a1c29b002eff950dd9822ab5d114967"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/A3-10.json",
+          "reference/regression_checks/A3-10_acceptance.md",
+          "reference/regression_checks/A3-10.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "category_cohort",
+          "node_ids": [
+            "test_missing_product_join_is_rejected_before_comparison_gate[ready]",
+            "test_missing_product_join_is_rejected_before_comparison_gate[immature]",
+            "test_category_reference_a3_10_rejects_missing_product_join"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/10",
+        "canonical_sha256": "d885e0aa522f907893f4e93dcf7a5fc14bd98c6f24cd905275ab80b70ae977c7"
+      },
+      "raw_counts": {
+        "orders": 4,
+        "refunds": 2
+      },
+      "expected_outcome": "blocked_by_quality"
+    },
+    {
+      "case_id": "A3-11",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/11_single_region_channel_grouping.json",
+        "pointer": "/input",
+        "canonical_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/11_single_region_channel_grouping.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        },
+        "independent_record": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/manual_checks/A3-11_freeze_review.md",
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_a3_11_matches_six_frozen_rows_and_metrics",
+            "test_channel_reference_a3_11_sources_scope_and_conservation[baseline]",
+            "test_channel_reference_a3_11_sources_scope_and_conservation[current]"
+          ]
+        }
+      ],
+      "raw_counts": {
+        "orders": 11,
+        "refunds": 6
+      },
+      "expected_outcome": "ready",
+      "prior_draft": {
+        "path": "reference/fixture_drafts/11_single_region_channel_grouping.json",
+        "pointer": "/input",
+        "canonical_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257"
+      }
+    }
+  ],
+  "historical_fixtures": [
+    {
+      "case_id": "A3-08-v1",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/08_category_entry_exit.v1.json",
+        "pointer": "/input",
+        "canonical_sha256": "3f31f3a1ec845747f98e5c53b0dca065bc761ae1167fe69d88b63fc8e4d3d856"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/08_category_entry_exit.v1.json",
+          "pointer": "/expected",
+          "canonical_sha256": "cd734d63415886dea8f34765227a4ed75208be5b1537919f91c744451fe862dd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/manual_checks/A3-08_review.json"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "category_cohort",
+          "node_ids": [
+            "test_category_reference_a3_08_matches_frozen_manual_ledger"
+          ]
+        }
+      ],
+      "inventory_locator": {
+        "path": "reference/regression_checks/G0_fixture_inventory.json",
+        "pointer": "/results/8",
+        "canonical_sha256": "6a6932784268e6f458ccabde4aa9ada7b29da75bfce2391ce5c85b5aeae564de"
+      },
+      "raw_counts": {
+        "orders": 6,
+        "refunds": 2
+      },
+      "expected_outcome": "ready",
+      "fixture_revision": 1
+    }
+  ],
+  "control_variants": [
+    {
+      "case_id": "A3-01-EQUAL",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "base_case_id": "A3-01",
+        "recipe": {
+          "path": "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+          "pointer": "/variants/0/input_overrides",
+          "canonical_sha256": "4696a3d956f0da3aaba13c4087210333e27209378fb366b08b996b69ec7d34b1"
+        },
+        "materialization": "对象字段路径覆盖",
+        "canonical_sha256": "2b4be2ad8f8f4fd1aa9fcff2100bfda63dd909734f9ccb8bb69db70491a51640"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+          "pointer": "/variants/0/expected",
+          "canonical_sha256": "93c65426d7af306236c81f201c8d387a1d7f8b1a788233c2047c2cb4b852e1fb"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_matches_existing_control_variant[watermark_equal]"
+          ]
+        }
+      ],
+      "family": "A3-01"
+    },
+    {
+      "case_id": "A3-01-IMMATURE",
+      "construction": "manual",
+      "rule_set": "DD02-1.2",
+      "input": {
+        "base_case_id": "A3-01",
+        "recipe": {
+          "path": "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+          "pointer": "/variants/1/input_overrides",
+          "canonical_sha256": "6f3e41c2d497422f5c81ea0fa64c3940dc0abf2c172c9dff6724ca281af0c56f"
+        },
+        "materialization": "对象字段路径覆盖",
+        "canonical_sha256": "4ae7b4e6656989b8d6c2d8808a16c8b152ad1914c8f9a3628828bdb2b5c58bc2"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "tests/fixtures/order_boundaries/01_maturity_watermark.json",
+          "pointer": "/variants/1/expected",
+          "canonical_sha256": "aa3c09e563e7ca2d3fd1a4f83c2127c13e2b66624e5bca8a703a530040301395"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "tests/fixtures/order_boundaries/ORACLE.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cohort",
+          "node_ids": [
+            "test_reference_matches_existing_control_variant[as_of_one_microsecond_early]"
+          ]
+        }
+      ],
+      "family": "A3-01"
+    },
+    {
+      "case_id": "A3-11-C03",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "tests/test_reference_channel_cohort.py",
+          "line": 217,
+          "line_sha256": "0cc5cabdd32286b6446068e943501a900d15df55274c0a4c17ddcb9ce161f912"
+        },
+        "materialization": "清空地区过滤",
+        "canonical_sha256": "46b72e78ff75d2bbad685d1923efea250e1cd624af92d09d9f6004466d26d169"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected/unfiltered_counterexample",
+          "canonical_sha256": "adfd8a20d45f7d0e25f9d9720477167c75671b9aa3d9e72c1958cf61a0494764"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_a3_11_all_regions_matches_frozen_counterexample"
+          ]
+        }
+      ],
+      "family": "A3-11-C03"
+    },
+    {
+      "case_id": "A3-11-C05.immature",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/immature",
+          "canonical_sha256": "2e4c5dd9cbc41d4f46bf8bae80cb8ec60cef16617e1e86c5b880d6d4669d82bb"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "6d4b23d5eff446026353919e8602443fefb6632f113393001540c44cba488442"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/immature",
+          "canonical_sha256": "2e4c5dd9cbc41d4f46bf8bae80cb8ec60cef16617e1e86c5b880d6d4669d82bb"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/blocked_publication",
+          "canonical_sha256": "f0c50be6c2f700cf0226875747358e399dc3dfbcb4922038bc9f33255d7120be"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_blocks_insufficient_comparisons[immature]"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C05.payments_below",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/payments_below",
+          "canonical_sha256": "dcec43a8b7102a8fb15db78c96665dd696934b7531ee7f266bfb515546e0373f"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "02c1300504ccda48ea9f60527c54ec3402154cfd4aef0ff35189633d38ad2751"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/payments_below",
+          "canonical_sha256": "dcec43a8b7102a8fb15db78c96665dd696934b7531ee7f266bfb515546e0373f"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/blocked_publication",
+          "canonical_sha256": "f0c50be6c2f700cf0226875747358e399dc3dfbcb4922038bc9f33255d7120be"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_blocks_insufficient_comparisons[payments_below]"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C05.refunds_below",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/refunds_below",
+          "canonical_sha256": "2aa70ca90e3e211228bb0a97349469c1c98d1e8a5892f64915c2e82da442069c"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "fbd5ee2d9d9575ae32d089dc4aa923bf789f10ef084fb5ea7724f9279f4f2dd0"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/refunds_below",
+          "canonical_sha256": "2aa70ca90e3e211228bb0a97349469c1c98d1e8a5892f64915c2e82da442069c"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/blocked_publication",
+          "canonical_sha256": "f0c50be6c2f700cf0226875747358e399dc3dfbcb4922038bc9f33255d7120be"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_blocks_insufficient_comparisons[refunds_below]"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C05.empty_baseline",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/empty_baseline",
+          "canonical_sha256": "286f3280e7c0bdb911f600ffda5f53eadb3a4e339a039dd3911c19d893310e14"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "45dc5443d609c9db788c80eeb21dd1575d1e12c0734e98808bb5cb36da2abdbf"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/empty_baseline",
+          "canonical_sha256": "286f3280e7c0bdb911f600ffda5f53eadb3a4e339a039dd3911c19d893310e14"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/blocked_publication",
+          "canonical_sha256": "f0c50be6c2f700cf0226875747358e399dc3dfbcb4922038bc9f33255d7120be"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_blocks_insufficient_comparisons[empty_baseline]"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C05.maturity_equal",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/maturity_equal",
+          "canonical_sha256": "d0d742e489107f57db0ee1b4118d2d77bd5cc4cb2dca7963e73ae3ab14cc1e56"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "077463938035569ad569abb22e7b7a4d9538a5b18cad7f1fe6e33d538197d2d8"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/maturity_equal",
+          "canonical_sha256": "d0d742e489107f57db0ee1b4118d2d77bd5cc4cb2dca7963e73ae3ab14cc1e56"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_allows_exact_comparison_boundaries[maturity_equal]"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C05.payments_equal",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/payments_equal",
+          "canonical_sha256": "111bcc1d308bc7c9aea669ae96b0b1d1fd34e78a1b8dd8c682baa84ae4b866a2"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/payments_equal",
+          "canonical_sha256": "111bcc1d308bc7c9aea669ae96b0b1d1fd34e78a1b8dd8c682baa84ae4b866a2"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_allows_exact_comparison_boundaries[payments_equal]"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C05.refunds_equal",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/refunds_equal",
+          "canonical_sha256": "c43c990f063e5d828af2cbbe015cc406823eb82c2c7172e7afbf7bbb74499c5f"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "02037181c636ac979c51cdcffaeb758e4804da977d9e92b9120bd85da68e3bec"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/refunds_equal",
+          "canonical_sha256": "c43c990f063e5d828af2cbbe015cc406823eb82c2c7172e7afbf7bbb74499c5f"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_allows_exact_comparison_boundaries[refunds_equal]"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C05.zero_baseline_refunds",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/zero_baseline_refunds",
+          "canonical_sha256": "0b8d729b28c9398f377820d7c6fb0dbaf39345c73a3044d056fbe314c47eb143"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "2ab271f2e19dff44d17b1830683ba509964084004ed1df1dfce5e8e685c470a3"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/cases/zero_baseline_refunds",
+          "canonical_sha256": "0b8d729b28c9398f377820d7c6fb0dbaf39345c73a3044d056fbe314c47eb143"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_C05_expected.json",
+          "pointer": "/zero_baseline_publication",
+          "canonical_sha256": "f4889a57f3477993f009962f73a50bc40db657b76c023f6957e21ddde6b4925d"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c05_publishes_legal_zero_baseline_refunds"
+          ]
+        }
+      ],
+      "family": "A3-11-C05"
+    },
+    {
+      "case_id": "A3-11-C06.second_success_baseline",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/second_success_baseline",
+          "canonical_sha256": "7e21ccecc05018966fb6b5b14d16ce10517bee0ad7d4184455d6b358c89bdbed"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "2bd1f8492fc6c298ce69a9ff888e2816418152d5fb3b3a9bff158b493b44a23f"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/second_success_baseline",
+          "canonical_sha256": "7e21ccecc05018966fb6b5b14d16ce10517bee0ad7d4184455d6b358c89bdbed"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[second_success_baseline]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "A3-11-C06.second_success_current",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/second_success_current",
+          "canonical_sha256": "3430d836b65ecc090d2ac1199f6a100744518f2ebe7218871a2d4457743bd6de"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "535e5df1f77c9401267efcadee4cd7813af6f53368973c83810d481642755f97"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/second_success_current",
+          "canonical_sha256": "3430d836b65ecc090d2ac1199f6a100744518f2ebe7218871a2d4457743bd6de"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[second_success_current]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "A3-11-C06.failed_baseline",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/failed_baseline",
+          "canonical_sha256": "3833c277c68edcbf1c3f80065c56ae58cacaea11ede77c89f88e9d89f4c1dfb1"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "08ce21e378dbdb0ff7f241568e875d0f49696ae519ca1eddd847f16c96a77601"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/failed_baseline",
+          "canonical_sha256": "3833c277c68edcbf1c3f80065c56ae58cacaea11ede77c89f88e9d89f4c1dfb1"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[failed_baseline]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "A3-11-C06.failed_current",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/failed_current",
+          "canonical_sha256": "6382cfde24a5a76e9b37905010a4938afe9facd35510c7a4919949b7229851d8"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "374790c4a580acb0fc987df3a416854985c9b87d53418fe3bcbe90d1a62978c5"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/failed_current",
+          "canonical_sha256": "6382cfde24a5a76e9b37905010a4938afe9facd35510c7a4919949b7229851d8"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[failed_current]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "A3-11-C06.after_horizon_baseline",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_horizon_baseline",
+          "canonical_sha256": "60536d9512c2ef5113de08ca8bbf80232aca93d0e5fe567e183844e2d83e7302"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "65c9f04ecd54736b44d95334c20167c14d830198d8b5899a33aa01bf7af5a040"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_horizon_baseline",
+          "canonical_sha256": "60536d9512c2ef5113de08ca8bbf80232aca93d0e5fe567e183844e2d83e7302"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_horizon_baseline]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "A3-11-C06.after_horizon_current",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_horizon_current",
+          "canonical_sha256": "e898fc04603d2a4275cdf135bb0e452a406b5315714d8e7d0e1d8d620042c6e9"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "60a75fdd1e80f43950b8d71f78c697877b8110be7440bcd2a740ed4af1045d23"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_horizon_current",
+          "canonical_sha256": "e898fc04603d2a4275cdf135bb0e452a406b5315714d8e7d0e1d8d620042c6e9"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_horizon_current]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "A3-11-C06.after_as_of_baseline",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_as_of_baseline",
+          "canonical_sha256": "3c83aa2f16449984f16d6bdfc01e933734bd99e362d1a54c963d93dd36516460"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "f4fabe54eb1e296245a49a8a2699b2f47e116e143cf1bbdbd02e80d022b001e3"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_as_of_baseline",
+          "canonical_sha256": "3c83aa2f16449984f16d6bdfc01e933734bd99e362d1a54c963d93dd36516460"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_as_of_baseline]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "A3-11-C06.after_as_of_current",
+      "construction": "manual",
+      "rule_set": "channel-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_as_of_current",
+          "canonical_sha256": "2845978dfadf792d61ffb8f8f52f44407401ca8b4cf3f54c9869ba152257d7ea"
+        },
+        "materialization": "按来源记录重放",
+        "canonical_sha256": "132d1ac5077eec03dfe91140febfd098adddbf26459a0a042dd493fa51e76124"
+      },
+      "expected": {
+        "kind": "manual_case_record",
+        "locator": {
+          "path": "reference/manual_checks/A3-11_C06_expected.json",
+          "pointer": "/cases/after_as_of_current",
+          "canonical_sha256": "2845978dfadf792d61ffb8f8f52f44407401ca8b4cf3f54c9869ba152257d7ea"
+        },
+        "publication": {
+          "path": "reference/manual_checks/A3-11_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/A3-11_Must_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c06_refund_events_keep_frozen_order_metrics[after_as_of_current]"
+          ]
+        }
+      ],
+      "family": "A3-11-C06"
+    },
+    {
+      "case_id": "RG01.W",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "A3-11",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG01.W",
+          "canonical_sha256": "ac3384cd3a0aca22be39616d3578a6ace42c0101758e91289f463b428c44b463"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG01.W/expected",
+          "canonical_sha256": "4bf1651b89c9e02ac35f618f628e0d5485353cf8ebc98e79db595db23e7d5d09"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_matches_frozen_oracle_and_sources[RG01.W]",
+            "test_reference_dimensions_share_frozen_scope_and_conserve_groups[RG01.W]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG02.A",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG02.A",
+          "canonical_sha256": "bb4c27aa287e39a33c28e1e10dcda81b0c9260848f63e68c998c0b06aed564eb"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "46b72e78ff75d2bbad685d1923efea250e1cd624af92d09d9f6004466d26d169"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG02.A/expected",
+          "canonical_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_matches_frozen_oracle_and_sources[RG02.A]",
+            "test_reference_dimensions_share_frozen_scope_and_conserve_groups[RG02.A]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG03.D",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG03.D",
+          "canonical_sha256": "c95580ffdb27fbd948fe9b6246038dd88aee9c3aa4149602aa5a3ce5babc297e"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "4fa22184fbc13ea25529d7668d34ce714da0867108647869ec7703aaff389ac9"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_deduplicates_refunds_for_southeast_order",
+          "start_line": 264,
+          "end_line": 323,
+          "span_sha256": "e818c7b4ed583e28980ad881f0aebf55bff446c56de222faa89c5baae8ceb77c"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG02.A/expected",
+          "canonical_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_deduplicates_refunds_for_southeast_order"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG03.T",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG03.T",
+          "canonical_sha256": "31dd8324b2d2fa4388970cd03626c6abc4ecb16f45e3a175de73d3ef4ece4914"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "503a4d242de946e57a4eeb5d562c9c0660c506cd6e07ff127f7ffe24236e9251"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_refund_follows_payment_window_and_region",
+          "start_line": 359,
+          "end_line": 371,
+          "span_sha256": "9eb8a71e01d7b16dc380f685e25eafc3693ebd54256ef854df379a0893df50fb"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG02.A/expected",
+          "canonical_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_refund_follows_payment_window_and_region"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG03.Z",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG03.Z",
+          "canonical_sha256": "30c8be82aaf554077e5e2983ca5de3331ee84d9bd87852239d02b90f63cad6ee"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "0c5a36c701b45be6e4fa58cfa6d0fde4127fe322db6e6d084338700ee2190d90"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_keeps_positive_denominator_zero_refund_group",
+          "start_line": 374,
+          "end_line": 401,
+          "span_sha256": "e4be84c74712abd99d3584659d51064bf79fb3f680074aafe4bbe4a4a434a723"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_keeps_positive_denominator_zero_refund_group"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.M-minus",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.M-minus",
+          "canonical_sha256": "65c6ae6928596e2d2cecc372c1e1c6b3498af9ae30afdc83343aae43f6244195"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "86c596e34dc1a8d898a3917156e1c13443b539538798cb0e1d29c3d0042d3e95"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_comparison_gates_suppress_all_published_results",
+          "start_line": 456,
+          "end_line": 488,
+          "span_sha256": "b9b8ae3e840b6be66fc908e3ae957799e463c666c4b9c388932a3ef4fd3c9fcb"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_comparison_gates_suppress_all_published_results[RG04.M-minus-\\u89c2\\u5bdf\\u671f\\u672a\\u6210\\u719f-all_orders_mature]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.P-minus",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.P-minus",
+          "canonical_sha256": "0608690f81b2f6be816f75d272651d3fc58b9bb79eb13073b7e881bedee55a94"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "04655485e7783335960778ba89127317db900e9cc51e5fbd248ca922f445d033"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_comparison_gates_suppress_all_published_results",
+          "start_line": 456,
+          "end_line": 488,
+          "span_sha256": "b9b8ae3e840b6be66fc908e3ae957799e463c666c4b9c388932a3ef4fd3c9fcb"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_comparison_gates_suppress_all_published_results[RG04.P-minus-\\u652f\\u4ed8\\u6c34\\u4f4d\\u4e0d\\u8db3-payments_watermark_covered]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.R-minus",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.R-minus",
+          "canonical_sha256": "ae6e21c5ab9d5fdb2931d20228a09b62b625e27094cdc7ecb59506b8cbc8c6c6"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "f45749ecf636114484fec5dcda6134e1e9c80d2129ab2c72f397fa1de8e5545d"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_comparison_gates_suppress_all_published_results",
+          "start_line": 456,
+          "end_line": 488,
+          "span_sha256": "b9b8ae3e840b6be66fc908e3ae957799e463c666c4b9c388932a3ef4fd3c9fcb"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_comparison_gates_suppress_all_published_results[RG04.R-minus-\\u9000\\u6b3e\\u6c34\\u4f4d\\u4e0d\\u8db3-refunds_watermark_covered]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.M-equal",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.M-equal",
+          "canonical_sha256": "8f38c3616f6370993b4be4f4a219c33186f5ced01b52a6b094097e175dc73268"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "856d699617ac4da5dfa8329e3e8f50d53ba9565f1fbf7960c38483f688099162"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_comparison_gate_equalities_are_ready",
+          "start_line": 492,
+          "end_line": 504,
+          "span_sha256": "881425e1ab360f29b323d628f9532ad564bc9223b3f0aa5fee13159b22963c8d"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_comparison_gate_equalities_are_ready[RG04.M-equal]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.R-equal",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.R-equal",
+          "canonical_sha256": "825c6a7825e377e597366fceb042c50ac55149cef53641a1d6175c2f2cfb096e"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "7eae50d626a43a10a7502ff27a45b01663dcd46baa73287395df6337307e16a0"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_comparison_gate_equalities_are_ready",
+          "start_line": 492,
+          "end_line": 504,
+          "span_sha256": "881425e1ab360f29b323d628f9532ad564bc9223b3f0aa5fee13159b22963c8d"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_comparison_gate_equalities_are_ready[RG04.R-equal]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.E",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.E",
+          "canonical_sha256": "68efc6592581c9ace88769d077a513f4ec2aead1ec91511123d7c67aa8b78c81"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "8eb5850f0e5868c1ed50bd78d1a6bf9775cdf5bfb292a40018cdc94c6d14ea47"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_comparison_gates_suppress_all_published_results",
+          "start_line": 456,
+          "end_line": 488,
+          "span_sha256": "b9b8ae3e840b6be66fc908e3ae957799e463c666c4b9c388932a3ef4fd3c9fcb"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_comparison_gates_suppress_all_published_results[RG04.E-\\u652f\\u4ed8\\u7a97\\u53e3\\u65e0\\u6709\\u6548\\u6837\\u672c-None]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG02.Q",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG02.Q",
+          "canonical_sha256": "e79c3d3e36fb3b1d0046ce3a2bb4d3496f7eccae055813cace91ff21ad521884"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "87923b72fe33fba06ebc97048014aa8ebb55b239890668a451809ac4a4ab1049"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_absent_region_has_no_fabricated_zero_rate_row",
+          "start_line": 507,
+          "end_line": 536,
+          "span_sha256": "95e8e84ae6b7869598935404b65da7ea9fe21d03706a1ee9fe6f75dbbd4a6761"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_absent_region_has_no_fabricated_zero_rate_row"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.label-same",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.label-same",
+          "canonical_sha256": "36b2e574be64ff7ff8548d1e59b7eb6153a6531a64fd7f3906c825af05e39cbb"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "3dc3c8e31dfd72b06857dbcd4a071c5b193f557a5bb9f62e8e1e7d55dcd4ae82"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_same_label_preserves_distinct_registered_ids",
+          "start_line": 674,
+          "end_line": 692,
+          "span_sha256": "a6ed0a4a8d5d17f5e67f5b0d906bacbf873a92c018c36dc5ab1614cd93594416"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_same_label_preserves_distinct_registered_ids"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.label-null",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.label-null",
+          "canonical_sha256": "ce6a170ed0f35bcb267d1c78371be24eac720662f12aeae61a0c455ff18cfb84"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "41c85313d145eb0e7d8a1b66a40efceccf15cd45d8f797412657a0e0c79a1c9f"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_missing_label_preserves_registered_id",
+          "start_line": 739,
+          "end_line": 745,
+          "span_sha256": "d5a013853ccda8b305a1f63eec9f23f8f47753d8e5b8169cf2c3483ae50bba75"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_missing_label_preserves_registered_id"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.label-absent",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.label-absent",
+          "canonical_sha256": "3a1d2e39cad3c655d3b414968935a14a9d48c6dc73f673e87aa410d807e08728"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "291b5e56ea8a6d4e79bc0d8fc68f47d985889119726ee9bce83bd60534dbf298"
+      },
+      "expected": {
+        "kind": "design_only",
+        "locator": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.label-absent",
+          "canonical_sha256": "3a1d2e39cad3c655d3b414968935a14a9d48c6dc73f673e87aa410d807e08728"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "documented_not_executed",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [],
+      "family": "M01-region",
+      "reference_coverage": "no_direct_execution"
+    },
+    {
+      "case_id": "RG05.unknown-explicit",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.unknown-explicit",
+          "canonical_sha256": "8b2b5dffc1b792fb6747afa305039c26e6a1e420ff5d8caef25e1d30fcff6cac"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "bf73cb8d6fa888a6fcdd8577c5b54c2a88c0ccf0f98de207130f669ec549713f"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_preserves_preapproved_noncritical_unknown",
+          "start_line": 602,
+          "end_line": 671,
+          "span_sha256": "c22241275a1d9f8e01c526d374f39cf86bde90bb235ae7ce995668dfdfc2b04c"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_preserves_preapproved_noncritical_unknown[RG05.unknown-explicit]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.filtered-explicit",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.filtered-explicit",
+          "canonical_sha256": "d1549629cb93e158227d45667b850f9a4220427aec4d85f652d888da1c72176d"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "57e0689ebd8001e55192252d59f1cad034788effb76322d968acea100e7c3119"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_single_region_excludes_unknown_source",
+          "start_line": 702,
+          "end_line": 736,
+          "span_sha256": "24b37d39221f00bf21996e9e5c167211da4935d69e90acc82a01d10957ece878"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_single_region_excludes_unknown_source[RG05.filtered-explicit-__unknown__]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.unknown-unregistered",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.unknown-unregistered",
+          "canonical_sha256": "94fae2814c0ec3339582cbbae54a779f0a98518a74ddf6508b1b37cfac442965"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "8fc595d38da73b8fd3adfd1af41cf763baa410a54a465cbfbfcd2c8c011cdcf5"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_preserves_preapproved_noncritical_unknown",
+          "start_line": 602,
+          "end_line": 671,
+          "span_sha256": "c22241275a1d9f8e01c526d374f39cf86bde90bb235ae7ce995668dfdfc2b04c"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_preserves_preapproved_noncritical_unknown[RG05.unknown-unregistered]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.filtered-unregistered",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.filtered-unregistered",
+          "canonical_sha256": "6a558c294acd43c2d4ff802602c91d29890756e97d61983dc5add0efe41aa028"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "03f23f6931bef8a0cbf5203051f6772be2566cd5d82c59a7ab4185a19b74d6ee"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_single_region_excludes_unknown_source",
+          "start_line": 702,
+          "end_line": 736,
+          "span_sha256": "24b37d39221f00bf21996e9e5c167211da4935d69e90acc82a01d10957ece878"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_single_region_excludes_unknown_source[RG05.filtered-unregistered-region_unregistered_rg05]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.invalid-filter-unregistered",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.invalid-filter-unregistered",
+          "canonical_sha256": "09cae6826d0ab1fdfc39115ffd6467976db14362db68acbe94c870b16cf67fe2"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "47d6450349f8b4b62b4ca1535f1e34c1234e2462ce9279dbd102355e23c7f54f"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_invalid_filter_or_order_region",
+          "start_line": 749,
+          "end_line": 751,
+          "span_sha256": "06158142688f0df80d5d17bd7bdae2f41a25e3b82c5ab2b5e17bbcde52329482"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-filter-unregistered]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.invalid-filter-sentinel",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.invalid-filter-sentinel",
+          "canonical_sha256": "3d775cb65fee2dc0b28ed8bf22a5232dd6db8e94d1e276bb186ad1898e9cc465"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "3a4965986c8e95f7b37b1c2ff6fcc91511b190c98d5153395ebde303dabb8e7b"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_invalid_filter_or_order_region",
+          "start_line": 749,
+          "end_line": 751,
+          "span_sha256": "06158142688f0df80d5d17bd7bdae2f41a25e3b82c5ab2b5e17bbcde52329482"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-filter-sentinel]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG05.invalid-order-null",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG05.invalid-order-null",
+          "canonical_sha256": "119f2cfff8c8ef86db859015ad7691f3f264322c9c1336df52f7d558c0c3e237"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "1fda66f11343743d4c9cb568d0180c9b352d55b6a0e389ec887a230d528d5e88"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_invalid_filter_or_order_region",
+          "start_line": 749,
+          "end_line": 751,
+          "span_sha256": "06158142688f0df80d5d17bd7bdae2f41a25e3b82c5ab2b5e17bbcde52329482"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_invalid_filter_or_order_region[RG05.invalid-order-null]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.duplicate-products",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.duplicate-products",
+          "canonical_sha256": "3ebacc87590f4000b59c92367bb22b4de3db60b293ec8a781a2aa4c3b02cffcd"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "799cdce35044ec8a7b09aceeb21a46680d2904934cb4b96437d73538181f30fb"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_duplicate_catalog_full_keys",
+          "start_line": 549,
+          "end_line": 567,
+          "span_sha256": "2f36b59293d019797c6cc2198e6ad3664ceab7a6da30d6549a1d6e9071b25ac6"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_duplicate_catalog_full_keys[products-product_id]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.foreign-products-domain_id",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.foreign-products-domain_id",
+          "canonical_sha256": "dfcb96d556fcfafd78c6c38f5afd594ce97dadf78bafc0a73fd3fb9e40299b8c"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "0450165e1635ae883f0bcabcca5c7fd56606e7467380c1a44b2285f07842a522"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_foreign_catalog_scope",
+          "start_line": 572,
+          "end_line": 598,
+          "span_sha256": "86d6929d6dbfd7debe13c0128e3929e0fc78478bfacf20d002b0637a19e66c08"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_foreign_catalog_scope[domain_id-products-product_id]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.foreign-products-snapshot_id",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.foreign-products-snapshot_id",
+          "canonical_sha256": "35a597a4b1c6b64370df79ec45ea63d284cc73a9b783bac9e60aba5d3ed067e8"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "2b4f4870802150f17868689efe97a1407c52a5b4f723ba1be5a3f1dee6d041e7"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_foreign_catalog_scope",
+          "start_line": 572,
+          "end_line": 598,
+          "span_sha256": "86d6929d6dbfd7debe13c0128e3929e0fc78478bfacf20d002b0637a19e66c08"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_foreign_catalog_scope[snapshot_id-products-product_id]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.duplicate-regions",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.duplicate-regions",
+          "canonical_sha256": "f7b46689220b6f4a8307737e253925b26c2c1299bd74357c15df2f3afc880818"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "6e1bc881829854f8ff459379e6fb785d4a5e639d8a3308689f181b97b3180540"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_duplicate_catalog_full_keys",
+          "start_line": 549,
+          "end_line": 567,
+          "span_sha256": "2f36b59293d019797c6cc2198e6ad3664ceab7a6da30d6549a1d6e9071b25ac6"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_duplicate_catalog_full_keys[regions-region_id]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.foreign-regions-domain_id",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.foreign-regions-domain_id",
+          "canonical_sha256": "e2144686ae976114537c2954fd7c3d8ee65333be4e07647156145ef98b1e10a1"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "8ef3ee8eb646095545b557874c603951990fb50e6313a368146ed205cc91bdf9"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_foreign_catalog_scope",
+          "start_line": 572,
+          "end_line": 598,
+          "span_sha256": "86d6929d6dbfd7debe13c0128e3929e0fc78478bfacf20d002b0637a19e66c08"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_foreign_catalog_scope[domain_id-regions-region_id]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.foreign-regions-snapshot_id",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.foreign-regions-snapshot_id",
+          "canonical_sha256": "6ca8a6b1548c0a1992cdf7650eb36e88d85ac6068f71485ae4f389867f0728ee"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "37ba8d33ea13a50912945d1417657ce248705788d443e9506992e8990c50954e"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_foreign_catalog_scope",
+          "start_line": 572,
+          "end_line": 598,
+          "span_sha256": "86d6929d6dbfd7debe13c0128e3929e0fc78478bfacf20d002b0637a19e66c08"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_foreign_catalog_scope[snapshot_id-regions-region_id]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.product-ready",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.product-ready",
+          "canonical_sha256": "d1b2d77d79d69d5bcd13103d795888c20e845f2cbaa1cfee410ca743c97b97d7"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "1f13921b7b420b908ae767bbd69c4613ea8970ec17005268087282d05e275208"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_critical_product_join_outside_filter",
+          "start_line": 540,
+          "end_line": 545,
+          "span_sha256": "6924b37a1fa064ae287ed41cc7629b1cabb0ff7c3aeb1749803c1a9d716827ed"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_critical_product_join_outside_filter[RG04.product-ready]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.product-immature",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.product-immature",
+          "canonical_sha256": "b6c6d9289699ba2e1a1b153eb172455216e1388c340e0a2d933b96fecfef4435"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "6378c36e580aaef6149a443fc1329eddf2a99454e11f429fbbda43ad1e543f1a"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_rejects_critical_product_join_outside_filter",
+          "start_line": 540,
+          "end_line": 545,
+          "span_sha256": "6924b37a1fa064ae287ed41cc7629b1cabb0ff7c3aeb1749803c1a9d716827ed"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_rejects_critical_product_join_outside_filter[RG04.product-immature]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG04.scope-W",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.scope-W",
+          "canonical_sha256": "69180ab4df3adc4b5f962754741ff4767f12f7280f6cba03fd6301d176791625"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "077463938035569ad569abb22e7b7a4d9538a5b18cad7f1fe6e33d538197d2d8"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_maturity_uses_filtered_scope",
+          "start_line": 430,
+          "end_line": 444,
+          "span_sha256": "84e1d10711305c961535e8db53aff797ef0d80344772bb0ce636d356de1ec15c"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG01.W/expected",
+          "canonical_sha256": "4bf1651b89c9e02ac35f618f628e0d5485353cf8ebc98e79db595db23e7d5d09"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_maturity_uses_filtered_scope"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.W-reverse-orders",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.W-reverse-orders",
+          "canonical_sha256": "0c7a6741ab6efc6184f09ebfe6360d4b557e1b1980f3740e3812431f9b63f906"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "262f7d46122b6cbbbc83bb4b54ab7c8a24477daca7713084c69646054b3f4dbb"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_individual_reordering_matches_frozen_oracle",
+          "start_line": 420,
+          "end_line": 427,
+          "span_sha256": "afa3a0e98af65aa9d938b35875ccdeeff8d55e423b2323024344833dbce9ace9"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG01.W/expected",
+          "canonical_sha256": "4bf1651b89c9e02ac35f618f628e0d5485353cf8ebc98e79db595db23e7d5d09"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_individual_reordering_matches_frozen_oracle[orders-RG01.W-W]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.W-reverse-refunds",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.W-reverse-refunds",
+          "canonical_sha256": "497a28855fc215caefdfa0dc94dfe4e4300b884e3e78142a3745d89736533337"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "1d186552e82761323da0bda6b915953a5f8d23a870c6c287e268e2e0bf460d50"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_individual_reordering_matches_frozen_oracle",
+          "start_line": 420,
+          "end_line": 427,
+          "span_sha256": "afa3a0e98af65aa9d938b35875ccdeeff8d55e423b2323024344833dbce9ace9"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG01.W/expected",
+          "canonical_sha256": "4bf1651b89c9e02ac35f618f628e0d5485353cf8ebc98e79db595db23e7d5d09"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_individual_reordering_matches_frozen_oracle[refunds-RG01.W-W]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.W-reverse-regions",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.W-reverse-regions",
+          "canonical_sha256": "b0890d1e757e4e2405acc8a6c07abcde1f32886d7223e0d0f4687d6e07df4d0c"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "a8a933a233cb42c96902c11548f29690e8b6031dc70e05b620c32f9a4f4bbb24"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_individual_reordering_matches_frozen_oracle",
+          "start_line": 420,
+          "end_line": 427,
+          "span_sha256": "afa3a0e98af65aa9d938b35875ccdeeff8d55e423b2323024344833dbce9ace9"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG01.W/expected",
+          "canonical_sha256": "4bf1651b89c9e02ac35f618f628e0d5485353cf8ebc98e79db595db23e7d5d09"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_individual_reordering_matches_frozen_oracle[regions-RG01.W-W]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.W-reverse-combined",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG01.W",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.W-reverse-combined",
+          "canonical_sha256": "2028f444f03e8cfc923e35af3f955fde33a8511ef282ffba3aa019ad68410c6e"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "7fc0b9c44dc97af68169aa7c071d340a19ac5f8984bb9031ed9295cb0d5c7dc4"
+      },
+      "expected": {
+        "kind": "design_only",
+        "locator": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.W-reverse-combined",
+          "canonical_sha256": "2028f444f03e8cfc923e35af3f955fde33a8511ef282ffba3aa019ad68410c6e"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "documented_not_executed",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [],
+      "family": "M01-region",
+      "reference_coverage": "no_direct_execution"
+    },
+    {
+      "case_id": "RG04.scope-A",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG04.scope-A",
+          "canonical_sha256": "12a25e2a328db0c9100fbccc3f90b5d73463fbf393636dce2664cc096a3fe890"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "f3c1f35a702d9e03a6aefbd5730749ebf794943a89625d4fc3d962d88dffcf4e"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_maturity_uses_filtered_scope",
+          "start_line": 430,
+          "end_line": 444,
+          "span_sha256": "84e1d10711305c961535e8db53aff797ef0d80344772bb0ce636d356de1ec15c"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_maturity_uses_filtered_scope"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.A-reverse-orders",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.A-reverse-orders",
+          "canonical_sha256": "9d0b1577dbd628320cf4bfca2d6644d412daaa753a1bd57531e5e223ce7feadb"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "e93820496130115e1359c7d3c0967f0842448483252e2151abf4487676b5ce00"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_individual_reordering_matches_frozen_oracle",
+          "start_line": 420,
+          "end_line": 427,
+          "span_sha256": "afa3a0e98af65aa9d938b35875ccdeeff8d55e423b2323024344833dbce9ace9"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG02.A/expected",
+          "canonical_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_individual_reordering_matches_frozen_oracle[orders-RG02.A-A]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.A-reverse-refunds",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.A-reverse-refunds",
+          "canonical_sha256": "302cad794c6018a340eacf66ede8ba24578527da3c1f32bbb3b1dadaa8d559eb"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "5efde247ebf0006f178330c6158d6d9b32c55f535dd03145e4d65477162249d4"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_individual_reordering_matches_frozen_oracle",
+          "start_line": 420,
+          "end_line": 427,
+          "span_sha256": "afa3a0e98af65aa9d938b35875ccdeeff8d55e423b2323024344833dbce9ace9"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG02.A/expected",
+          "canonical_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_individual_reordering_matches_frozen_oracle[refunds-RG02.A-A]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.A-reverse-regions",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.A-reverse-regions",
+          "canonical_sha256": "851b38288e2fb6669249d065171f7e4a75cc9a67a0bf32fc12de7e0323ce72b2"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "40bb3f4e57af6a2de667e8b39df78b879a9bd8a345e1a6ff7c0004f2a87bc282"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_individual_reordering_matches_frozen_oracle",
+          "start_line": 420,
+          "end_line": 427,
+          "span_sha256": "afa3a0e98af65aa9d938b35875ccdeeff8d55e423b2323024344833dbce9ace9"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG02.A/expected",
+          "canonical_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_individual_reordering_matches_frozen_oracle[regions-RG02.A-A]"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "RG06.A-reverse-combined",
+      "construction": "manual",
+      "rule_set": "M01-region-rules-v1",
+      "input": {
+        "base_case_id": "RG02.A",
+        "recipe": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/input_variants/RG06.A-reverse-combined",
+          "canonical_sha256": "b17d71b3148e0d7bc0ba0f6659b486e562ecc05245da64281ca4264e9ae8cd28"
+        },
+        "materialization": "按变更链重放",
+        "canonical_sha256": "c8e448434e1f5ed872dd3f4e8f3febd8496dc78265239fab7a2ca4faad941556"
+      },
+      "expected": {
+        "kind": "assertions_without_separately_frozen_output",
+        "locator": {
+          "path": "tests/test_reference_region_cohort.py",
+          "symbol": "test_region_reference_results_calls_and_reordering_are_isolated",
+          "start_line": 404,
+          "end_line": 415,
+          "span_sha256": "7611dd5ae02d3727b6a1dfaec700b6777a2ed95008919346397dcbcf3da20c4f"
+        },
+        "manual_basis": "reference/manual_checks/G0_M01_region_expected_draft.md",
+        "shared_oracle": {
+          "path": "reference/manual_checks/G0_M01_region_expected.json",
+          "pointer": "/cases/RG02.A/expected",
+          "canonical_sha256": "7c07e96251d4699befa0f24fb85dee112ae5300b10552420531aff1477e8d2cd"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M01_region_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "region_cohort",
+          "node_ids": [
+            "test_region_reference_results_calls_and_reordering_are_isolated"
+          ]
+        }
+      ],
+      "family": "M01-region",
+      "reference_coverage": "direct_test_passed"
+    },
+    {
+      "case_id": "M02-A",
+      "construction": "manual",
+      "rule_set": "M02-DD02-v1.2-design-v1",
+      "input": {
+        "path": "reference/fixture_drafts/m02_cross_domain_scope_a.json",
+        "pointer": "/input",
+        "canonical_sha256": "2f0da4cb15e390f5042e32443415aa4e1d40ed1b510638e833fe13027eddbdcf"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "reference/manual_checks/G0_M02_cross_domain_expected.json",
+          "pointer": "/cases/M02-A/expected",
+          "canonical_sha256": "dbd2eb3a1d42533d9d0ce6a247d1455c51449cd2ea0760103b93336be7e7be1f"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M02_Must_closure.md",
+          "reference/manual_checks/G0_M02_cross_domain_freeze_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cross_domain_cohort",
+          "node_ids": [
+            "test_cross_domain_scope_matches_frozen_oracle_and_sources[M02-A]",
+            "test_cross_domain_interleaving_keeps_each_frozen_scope[A-B-A]",
+            "test_cross_domain_interleaving_keeps_each_frozen_scope[B-A-B]"
+          ]
+        }
+      ],
+      "family": "M02-pair"
+    },
+    {
+      "case_id": "M02-B",
+      "construction": "manual",
+      "rule_set": "M02-DD02-v1.2-design-v1",
+      "input": {
+        "path": "reference/fixture_drafts/m02_cross_domain_scope_b.json",
+        "pointer": "/input",
+        "canonical_sha256": "8ef18ba042f9f6282391a3ff45575c043cf37a4f5365e744e00502bfb08169ce"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "reference/manual_checks/G0_M02_cross_domain_expected.json",
+          "pointer": "/cases/M02-B/expected",
+          "canonical_sha256": "76b45bd9b2a7be877772b483ad5612b769f5842d972c71e3e01e120af7461e81"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M02_Must_closure.md",
+          "reference/manual_checks/G0_M02_cross_domain_freeze_review.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "cross_domain_cohort",
+          "node_ids": [
+            "test_cross_domain_scope_matches_frozen_oracle_and_sources[M02-B]",
+            "test_cross_domain_interleaving_keeps_each_frozen_scope[A-B-A]",
+            "test_cross_domain_interleaving_keeps_each_frozen_scope[B-A-B]"
+          ]
+        }
+      ],
+      "family": "M02-pair"
+    },
+    {
+      "case_id": "M04-01",
+      "construction": "manual",
+      "rule_set": "M04-DD02-1.2",
+      "input": {
+        "path": "reference/fixture_drafts/m04_01_duplicate_refund_event.json",
+        "pointer": "/input",
+        "canonical_sha256": "f7f283466f32ce5988308ffb3a8a4830fa8350277c3d3991e81b681efc336fdc"
+      },
+      "expected": {
+        "kind": "manual_blocking_expectation",
+        "locator": {
+          "path": "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md",
+          "line": 25,
+          "line_sha256": "35b5496c7a2faa4eb6e6733ec4c77a42b51ee8b80e7e1d13d6bd01e4e5e2f6b9"
+        },
+        "expected_outcome": "blocked_by_quality",
+        "tested_behavior": "ValueError"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md",
+          "reference/regression_checks/G0_M04_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "refund_dq",
+          "node_ids": [
+            "test_reference_rejects_single_refund_fault[M04-01]"
+          ]
+        }
+      ],
+      "family": "M04"
+    },
+    {
+      "case_id": "M04-02",
+      "construction": "manual",
+      "rule_set": "M04-DD02-1.2",
+      "input": {
+        "path": "reference/fixture_drafts/m04_02_orphan_refund.json",
+        "pointer": "/input",
+        "canonical_sha256": "2b3a809d80d621ea49b6f96b1796c00242df0632393596a6131cdcd61eb40151"
+      },
+      "expected": {
+        "kind": "manual_blocking_expectation",
+        "locator": {
+          "path": "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md",
+          "line": 26,
+          "line_sha256": "c09312a8879a25cb0a2a56f9fedc85aa331d3f485ec4ef56770876ea158b157a"
+        },
+        "expected_outcome": "blocked_by_quality",
+        "tested_behavior": "ValueError"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md",
+          "reference/regression_checks/G0_M04_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "refund_dq",
+          "node_ids": [
+            "test_reference_rejects_single_refund_fault[M04-02]"
+          ]
+        }
+      ],
+      "family": "M04"
+    },
+    {
+      "case_id": "M04-03",
+      "construction": "manual",
+      "rule_set": "M04-DD02-1.2",
+      "input": {
+        "path": "reference/fixture_drafts/m04_03_refund_before_payment.json",
+        "pointer": "/input",
+        "canonical_sha256": "0a0c4aa78e58ddede8b851d5c8b44074a399114127f0d31c47e53da9a28b20b1"
+      },
+      "expected": {
+        "kind": "manual_blocking_expectation",
+        "locator": {
+          "path": "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md",
+          "line": 27,
+          "line_sha256": "6cedf514fe69648bcbdadaa2f58db110428ec5b8e4fa079965930594297168b9"
+        },
+        "expected_outcome": "blocked_by_quality",
+        "tested_behavior": "ValueError"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md",
+          "reference/regression_checks/G0_M04_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "refund_dq",
+          "node_ids": [
+            "test_reference_rejects_single_refund_fault[M04-03]"
+          ]
+        }
+      ],
+      "family": "M04"
+    },
+    {
+      "case_id": "M04-missing-refund-time",
+      "construction": "manual",
+      "rule_set": "M04-DD02-1.2",
+      "input": {
+        "base_case_id": "A3-07",
+        "recipe": {
+          "path": "tests/test_reference_refund_dq.py",
+          "line": 56,
+          "line_sha256": "ad232e837f514b3319738af3a23b0a0471f14877967e9ea752a4aed7b6378767"
+        },
+        "materialization": "仅删除来源 r07-refund-a-c1 的 refund_at",
+        "canonical_sha256": "f87758cc81977969fc57b73886f3205fb186ef5d8a684806b6eee8566cc38580"
+      },
+      "expected": {
+        "kind": "rule_derived_blocking_expectation",
+        "locator": {
+          "path": "docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md",
+          "line": 10,
+          "line_sha256": "cdf0088db80c096d3f9bd3e3841b1c3500a8aef699861a933bd202f9d1ea4117"
+        },
+        "expected_outcome": "blocked_by_quality",
+        "tested_behavior": "ValueError，含退款 ID 和来源行"
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md",
+          "reference/regression_checks/G0_M04_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "refund_dq",
+          "node_ids": [
+            "test_reference_rejects_missing_required_refund_time"
+          ]
+        }
+      ],
+      "family": "M04"
+    }
+  ],
+  "derived_oracles": [
+    {
+      "case_id": "M03-A3-08-v2",
+      "construction": "manual",
+      "rule_set": "M03-DD02-1.2",
+      "input": {
+        "path": "tests/fixtures/order_boundaries/08_category_entry_exit.json",
+        "pointer": "/input",
+        "canonical_sha256": "4cf45c7f2404ffd854393e21936fb288981491d98d5cd2e9951bcfedf46f49fb"
+      },
+      "expected": {
+        "kind": "frozen_json",
+        "locator": {
+          "path": "reference/manual_checks/G0_M03_A3-08_v2_contribution_expected.json",
+          "pointer": "/expected",
+          "canonical_sha256": "7dd614e381c89743c1fe56ac8c7ae0df53b772e2589a7981277a1612eb6e039d"
+        }
+      },
+      "review": {
+        "technical": "technical_review_recorded",
+        "user_independent_acceptance": "pending_user_confirmation",
+        "records": [
+          "reference/regression_checks/G0_M03_Must_closure.md"
+        ]
+      },
+      "test_evidence": [
+        {
+          "suite": "contribution",
+          "node_ids": [
+            "test_a3_08_v2_matches_frozen_contribution_oracle"
+          ]
+        }
+      ],
+      "base_case_id": "A3-08",
+      "counted_as_control": false
+    }
+  ],
+  "indexed_test_only_families": [
+    {
+      "id": "A3-11-C04",
+      "base_case_id": "A3-11",
+      "construction": "manual",
+      "description": "目录键、域快照、缺失产品及非关键未知类别控制",
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c04_rejects_duplicate_catalog_keys[products]",
+            "test_channel_reference_c04_rejects_duplicate_catalog_keys[regions]",
+            "test_channel_reference_c04_rejects_duplicate_catalog_keys[channels]",
+            "test_channel_reference_c04_rejects_foreign_catalog_scope[domain_id-products]",
+            "test_channel_reference_c04_rejects_foreign_catalog_scope[domain_id-regions]",
+            "test_channel_reference_c04_rejects_foreign_catalog_scope[domain_id-channels]",
+            "test_channel_reference_c04_rejects_foreign_catalog_scope[snapshot_id-products]",
+            "test_channel_reference_c04_rejects_foreign_catalog_scope[snapshot_id-regions]",
+            "test_channel_reference_c04_rejects_foreign_catalog_scope[snapshot_id-channels]",
+            "test_channel_reference_c04_rejects_missing_product_before_comparison_gate[in-scope-northwest-ready]",
+            "test_channel_reference_c04_rejects_missing_product_before_comparison_gate[in-scope-northwest-immature]",
+            "test_channel_reference_c04_rejects_missing_product_before_comparison_gate[excluded-southeast-ready]",
+            "test_channel_reference_c04_rejects_missing_product_before_comparison_gate[excluded-southeast-immature]",
+            "test_channel_reference_c04_preserves_legal_unknown_category"
+          ]
+        }
+      ],
+      "review_record": "reference/regression_checks/A3-11_Must_review.md"
+    },
+    {
+      "id": "A3-11-C07",
+      "base_case_id": "A3-11",
+      "construction": "manual",
+      "description": "逆序、隔离调用及返回值隔离",
+      "test_evidence": [
+        {
+          "suite": "channel_cohort",
+          "node_ids": [
+            "test_channel_reference_c07_repeated_calls_and_results_are_isolated",
+            "test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[orders]",
+            "test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[refunds]",
+            "test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[products]",
+            "test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[categories]",
+            "test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[channels]",
+            "test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[regions]",
+            "test_channel_reference_c07_reordering_preserves_groups_and_candidate_sets[all]"
+          ]
+        }
+      ],
+      "review_record": "reference/regression_checks/A3-11_Must_review.md"
+    },
+    {
+      "id": "category-inline-controls",
+      "base_case_id": "A3-07",
+      "construction": "manual",
+      "description": "类别身份、目录异常、退款观察窗及比较门槛的代码内控制",
+      "test_evidence": [
+        {
+          "suite": "category_cohort",
+          "node_ids": [
+            "test_same_display_label_still_returns_two_distinct_category_groups[baseline]",
+            "test_same_display_label_still_returns_two_distinct_category_groups[current]",
+            "test_label_rename_does_not_change_identity_or_counts[rename-one]",
+            "test_label_rename_does_not_change_identity_or_counts[rename-both-distinct]",
+            "test_label_rename_does_not_change_identity_or_counts[rename-both-same]",
+            "test_group_refunds_use_original_closed_observation_period[paid-inclusive]",
+            "test_group_refunds_use_original_closed_observation_period[horizon-inclusive-offset]",
+            "test_group_refunds_use_original_closed_observation_period[horizon-one-microsecond-late]",
+            "test_group_refunds_use_original_closed_observation_period[failed]",
+            "test_multiple_refund_events_still_count_one_group_order",
+            "test_single_region_filters_denominator_and_refunds_before_grouping",
+            "test_unknown_category_preserves_orders_instead_of_dropping_them",
+            "test_missing_product_join_is_rejected_before_comparison_gate[ready]",
+            "test_missing_product_join_is_rejected_before_comparison_gate[immature]",
+            "test_missing_display_catalog_preserves_known_category_id",
+            "test_duplicate_catalog_key_is_not_silently_overwritten[products]",
+            "test_duplicate_catalog_key_is_not_silently_overwritten[categories]",
+            "test_catalog_id_without_matching_domain_and_snapshot_cannot_join[domain_id-products]",
+            "test_catalog_id_without_matching_domain_and_snapshot_cannot_join[domain_id-categories]",
+            "test_catalog_id_without_matching_domain_and_snapshot_cannot_join[snapshot_id-products]",
+            "test_catalog_id_without_matching_domain_and_snapshot_cannot_join[snapshot_id-categories]",
+            "test_group_publication_inherits_overall_blocking_semantics[immature]",
+            "test_group_publication_inherits_overall_blocking_semantics[payments]",
+            "test_group_publication_inherits_overall_blocking_semantics[refunds]",
+            "test_group_publication_inherits_overall_blocking_semantics[empty_baseline]"
+          ]
+        }
+      ],
+      "review_record": "reference/regression_checks/A3-07_category.md"
+    },
+    {
+      "id": "contribution-inline-controls",
+      "base_case_id": "A3-08",
+      "construction": "manual",
+      "description": "贡献聚合输入拒绝和维度生命周期控制",
+      "test_evidence": [
+        {
+          "suite": "contribution",
+          "node_ids": [
+            "test_rejects_invalid_aggregate_fields[path0-insufficient_evidence-\\u53ef\\u6bd4]",
+            "test_rejects_invalid_aggregate_fields[path1-value1-\\u53ef\\u6bd4]",
+            "test_rejects_invalid_aggregate_fields[path2-False-\\u6210\\u719f\\u671f\\u53ca\\u4e24\\u7c7b\\u6c34\\u4f4d]",
+            "test_rejects_invalid_aggregate_fields[path3-False-\\u6210\\u719f\\u671f\\u53ca\\u4e24\\u7c7b\\u6c34\\u4f4d]",
+            "test_rejects_invalid_aggregate_fields[path4-False-\\u6210\\u719f\\u671f\\u53ca\\u4e24\\u7c7b\\u6c34\\u4f4d]",
+            "test_rejects_invalid_aggregate_fields[path5-True-\\u672a\\u622a\\u65ad]",
+            "test_rejects_invalid_aggregate_fields[path6-False-\\u5b8c\\u6574]",
+            "test_rejects_invalid_aggregate_fields[path7-False-window_index]",
+            "test_rejects_invalid_aggregate_fields[path8-channel-\\u6307\\u5b9a\\u5355\\u7ef4\\u5ea6]",
+            "test_rejects_invalid_aggregate_fields[path9--\\u975e\\u7a7a\\u7ec4 ID]",
+            "test_rejects_invalid_aggregate_fields[path10-0-\\u8ba1\\u6570]",
+            "test_rejects_invalid_aggregate_fields[path11-True-\\u8ba1\\u6570]",
+            "test_rejects_invalid_aggregate_fields[path12--1-\\u8ba1\\u6570]",
+            "test_rejects_invalid_aggregate_fields[path13-3-\\u8ba1\\u6570]",
+            "test_rejects_invalid_aggregate_fields[path14-value14-\\u4e0e U/N \\u4e00\\u81f4]",
+            "test_rejects_invalid_aggregate_fields[path15-0.5-Fraction]",
+            "test_rejects_invalid_aggregate_fields[path16-value16-\\u603b\\u4f53\\u53d8\\u5316]",
+            "test_rejects_duplicate_or_incomplete_rows[duplicate-total]",
+            "test_rejects_duplicate_or_incomplete_rows[duplicate-group-id]",
+            "test_rejects_duplicate_or_incomplete_rows[missing-total]",
+            "test_rejects_duplicate_or_incomplete_rows[missing-group]",
+            "test_rejects_nonconservation_with_all_rows_present[N-only]",
+            "test_rejects_nonconservation_with_all_rows_present[U-only]",
+            "test_rejects_total_row_that_disagrees_with_metrics",
+            "test_rejects_zero_total_denominator_even_if_marked_ready[baseline]",
+            "test_rejects_zero_total_denominator_even_if_marked_ready[current]",
+            "test_all_groups_turn_over_with_zero_baseline_and_unknown_entry[region]",
+            "test_all_groups_turn_over_with_zero_baseline_and_unknown_entry[channel]"
+          ]
+        }
+      ],
+      "review_record": "reference/regression_checks/G0_M03_Must_closure.md"
+    }
+  ],
+  "other_evidence": {
+    "arithmetic_counterexample": {
+      "path": "tests/fixtures/order_boundaries/05_single_region_filter.json",
+      "pointer": "/expected/unfiltered_counterexample",
+      "canonical_sha256": "ace034b916faa7ef8c7661c89b79f22ff15b35b47918e32858cf1e46c135677d"
+    },
+    "A3-11-draft_review": "reference/manual_checks/A3-11_input_review.md"
+  },
+  "artifacts": {
+    "docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md": "8440318ebaea1565dc02fd9096e09cbe23e10f0c961dad4762ea74d605fc7950",
+    "docs/engineering/02_总体设计与方案验证/DataAgentX_指标目录与数据契约_v1.2.md": "51b2d179259c7e6d077491d319bf5da7b0f477c817d55db90dcb10861c0a2bce",
+    "docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md": "3c5452e0121db488da05686bdbda8d8ec38dc4107ed71837862943e518fc83b0",
+    "docs/engineering/04_详细设计与实现准备/DataAgentX_对象Schema_v1.2.1.json": "e50b08ca770ef699dcc58db246782ff800eb2e7c856c9558369c25022528383a",
+    "pyproject.toml": "5538c1a99b063fab904d089a4f2d59e86d95f797f8454575e50b82d55219a4a0",
+    "reference/category_cohort.py": "53507d6ba6671e7ca7ca6cd4f955fa345b53be73bf98edf5fd638d5206f2b216",
+    "reference/channel_cohort.py": "207071252972bbd3cf6de22bc463fbd0c444068966cbb9cfd176b37f2d61629c",
+    "reference/cohort.py": "596bbce438326ad3f4f537c20a78b80190a36efde4cd97983eff8417e84cb1b3",
+    "reference/contribution.py": "23076d69d7f9283c7271252539a866bae9d3512c428a45933b2897ddc97a4b62",
+    "reference/fixture_drafts/11_single_region_channel_grouping.json": "bd522d87d50d59d126836d5b05a979d75ddae6e8da3fcd3716c7552e53596205",
+    "reference/fixture_drafts/m02_cross_domain_scope_a.json": "66e23c0f5988eefb3ef84b7ec0533fb601d4645e2dbbe494a30d79118b58f31a",
+    "reference/fixture_drafts/m02_cross_domain_scope_b.json": "77ebe993f50b56dbe22dfc0c50cd64d61e479b116afb9fe871becddece88b24e",
+    "reference/fixture_drafts/m04_01_duplicate_refund_event.json": "56f61c74eb07b6df94e294a68f32791eb4f0f4c9ad8d6eee6e3934d10967952e",
+    "reference/fixture_drafts/m04_02_orphan_refund.json": "0787622080be1bd10a8a10e2a8e83bec42201671edc5981da3fff26aae68c226",
+    "reference/fixture_drafts/m04_03_refund_before_payment.json": "cb8a24516c2792db82653a07c848cdcee36565212a71a336e843ed6955605d1a",
+    "reference/manual_checks/2026-10-14.json": "b3b05df4a7f69df8c4da86e92ad44b8260cc36870926906694b335fc6f5b605b",
+    "reference/manual_checks/A3-04_A3-05_review.md": "a2845b59b63e27608c97fc7b30f24c79e36b6c3fa9320545a1bbc46757acf32a",
+    "reference/manual_checks/A3-07_review.json": "f9a9fb70234190a16ecccdc8645b763aaa919597fa9e20f0e4dc42a90d41e6ac",
+    "reference/manual_checks/A3-07_review.md": "668151e1c275b36d29c678c614b5c05029d3bfe48448ff28b819116d154e2bb3",
+    "reference/manual_checks/A3-08_review.json": "e6e0f2408aa31082232e7e8ccb74ecb48b76e06bdaced8266c790a96c97ddd3b",
+    "reference/manual_checks/A3-08_v2_expected.json": "1b1d63e22f6285cf43f64f8c2db1ce1da39070af6f801840cc47ba596aa159da",
+    "reference/manual_checks/A3-08_v2_expected.md": "5100c04b432ca3eb21214f6b8d14d4dbd9be3313798aab854f98d88098d9dbb6",
+    "reference/manual_checks/A3-08_v2_review.md": "502bcd48f0b92cafd5227fe6373e208c99b440760c389eb10ba83093b45879bc",
+    "reference/manual_checks/A3-09_expected.json": "07dca84a024330d35ff1bfb68ff8159d2d7cf52a953926ee76afd1e07b7ae35f",
+    "reference/manual_checks/A3-10.json": "ce3e4aca7f5213792f0936df40bf61acb7505e84ad4bcbc8c7937845347b4fde",
+    "reference/manual_checks/A3-11_C05_expected.json": "cbe71efb6734e3480f5d1ad93793d4338c240377dec5cb3335c01136c7565819",
+    "reference/manual_checks/A3-11_C06_expected.json": "32ecd37ddf05767c5496362c8f0f3529d8a905412cd6c1b78ae8d8a42c52ae03",
+    "reference/manual_checks/A3-11_channel_oracle_plan.md": "178c5061a1741f3f85688fdfc21c197a9fd4be604e1cc1db7031604cc3f3eb08",
+    "reference/manual_checks/A3-11_expected.json": "c0e82fc22fb028235f249d524e516920b733636f7ad22ecbb53d7a7b6e811a7e",
+    "reference/manual_checks/A3-11_freeze_review.md": "e7a1c127464b8e0ad11cbfb635e3bb15ac1cea57c71b6b73c5a56d2b3ec04726",
+    "reference/manual_checks/A3-11_input_review.md": "28498ead0ea560d1e60de75b99feb14a22f804e9735b94155d2a784e0fbe1427",
+    "reference/manual_checks/G0_M01_region_expected.json": "50bca606d29077276d7a5d39c0c55dc0fbd57cfa5a0ff836db953bd9e301b1ce",
+    "reference/manual_checks/G0_M01_region_expected_draft.md": "99040571560c27f8eadd84ce72ee4640a53f25a6eadfaff8ffd6ba4705fc9fe3",
+    "reference/manual_checks/G0_M01_region_plan.md": "20200d0af6c99bf4118d7ea0d81ebd22ab1f3a03084148b79606da56d1949b2c",
+    "reference/manual_checks/G0_M01_region_rule_review.md": "5322018b50b74da02b32c888b6777e9527fecd84b58d66b4a752ed664343c96c",
+    "reference/manual_checks/G0_M01_region_test_matrix.md": "8da7fd865cb1bd590d6c4b457490ccf4638e9a32e23d61f637d8e8aa23e2b7e1",
+    "reference/manual_checks/G0_M02_cross_domain_design.md": "9a80e46c09cdd81ac316f18b6d5effa7dd2596e31a157b90740a4934d77b5159",
+    "reference/manual_checks/G0_M02_cross_domain_expected.json": "d6b831e08c943a259a56c4ed24db0dd153585c994c759685002dbc6be86ba8a6",
+    "reference/manual_checks/G0_M02_cross_domain_freeze_review.md": "d2576f71e67eda6f6a1075bf88a317a339e28c2d205417fdba2e081b8f14316a",
+    "reference/manual_checks/G0_M03_A3-08_v2_contribution_draft.md": "1e9f69c7887dd49047ab6888293de078c7544fcd438e0c01338f5ca673466327",
+    "reference/manual_checks/G0_M03_A3-08_v2_contribution_expected.json": "8a583a41f4bb557c016fd1c548345d9f824ed1450911f6bf262252e0cf271a0d",
+    "reference/manual_checks/G0_M03_formula_boundary_review.md": "f81fa9941ca9a74ed1b2ae8aa00a1ec0487cc2cce195e65cc65965f30449d995",
+    "reference/manual_checks/G0_M04_refund_dq_acceptance_plan.md": "6e8edd62e902f9417a46b84278d5eb8ccffea4d63937441580665a375747d784",
+    "reference/region_cohort.py": "4652685bd2a104a047a09e62b8eb26c9aa400330fb1a2268bce4e00987c15dba",
+    "reference/regression_checks/A3-06.md": "103c0b0c79ae0e7779528ae1d0e4dbdc8e6fd0f7a35a9aed1abd368ac011c112",
+    "reference/regression_checks/A3-07_category.md": "d991d814d8ee81c3f7002165fbe956a6694cfbfc4be779f42f8174d45cc49109",
+    "reference/regression_checks/A3-08_v2.md": "9bb09d69a3b1caacd0a2f96c06c65b9f89ebc09f03e9a039b01cf2185a7a317a",
+    "reference/regression_checks/A3-09.md": "d1f274155146e79078e688c2f02c6ea82b1b45d34dd45ee109e04b8ae852dcf1",
+    "reference/regression_checks/A3-09_acceptance.md": "84d43ba8e0d1fb172c43709cc36ba93a97d8867a200d9573cf53df38ed37a9fe",
+    "reference/regression_checks/A3-10.md": "4ad38a58613f1aee60340d8c8c4603cbbcfbb8ca47cbefe4a3adb2dbc4ee0356",
+    "reference/regression_checks/A3-10_acceptance.md": "a628b6dd6e97ad2030b79b7897b39e8b7453f379409ce2e9401fca037f46bd5d",
+    "reference/regression_checks/A3-11_Must_review.md": "e45c27102f9ee9a3ea9d9af48db5a9a526231aec3f5354d5b478eec2e84429bf",
+    "reference/regression_checks/G0_M01_region_Must_closure.md": "be55285a97f2a00df7b3dcdc35f4eca580cc4763800f9ef55c7b597dce9d6bc0",
+    "reference/regression_checks/G0_M02_Must_closure.md": "f6942b7aca147252911525ee1470002c73327cc4b87a087423178c2e16797503",
+    "reference/regression_checks/G0_M03_A3-08_v2_manual_check.txt": "14951f2caef4115b3a05e0c0e5baeaa7f423b34d4c0b21d8d2a65894f8e647a9",
+    "reference/regression_checks/G0_M03_Must_closure.md": "7b012a5ead09a9df55eeca46093a6613373b8c3a4c5348a2c71cabb5556e5395",
+    "reference/regression_checks/G0_M04_Must_closure.md": "cdbcbb640c0b6d56b7dc5513a97df4979500161528f29037fc1a11e54d543388",
+    "reference/regression_checks/G0_M04_Must_closure_pytest.txt": "017deb048560167ae045c280e0498df0849fbe06b24a0d3bdefccdb4d5d0d9b3",
+    "reference/regression_checks/G0_development_manifest_pytest.txt": "d01f1601e8668bf53579339629831ca7250e3bdf69327b30fc9d6b4d50ecd86f",
+    "reference/regression_checks/G0_fixture_inventory.json": "f25381ac9deb503aa38121bf60f1ee6d193570f91c90d1ba4458426fef3b58a9",
+    "tests/fixtures/order_boundaries/01_maturity_watermark.json": "115afb0b7d40387dc0ef39e22af64af7ede26854d7b923e5ca33ba921d9fadba",
+    "tests/fixtures/order_boundaries/02_utc_boundaries.json": "5c842684b3b917dc137607edd87fb558e79d777b94af845bb5edfcd580bf3b82",
+    "tests/fixtures/order_boundaries/03_duplicate_orders.json": "606d0c0aefaa385a59c81222e70f779a3a652af97c5bf27c17c8a26a5e0b85a7",
+    "tests/fixtures/order_boundaries/04_zero_denominator_window.json": "5d2da96ec1dded382eb454fe68ee24f6bedaffeffbd45887e3526072a7d924c2",
+    "tests/fixtures/order_boundaries/05_single_region_filter.json": "d9f621f17385f2b7dcf2e58da70f79627adbf850e56e419f17de7e8baa233da8",
+    "tests/fixtures/order_boundaries/06_multiple_refunds_per_order.json": "a7fdc991ce7df027cc48630f76da1f733bc3a11742ea046d219b7acee1ed66fd",
+    "tests/fixtures/order_boundaries/07_same_label_distinct_category_ids.json": "e03a1c005e6f99f5e497e452bb3de5e75aa2096f83106f730a45ebcbbec737ac",
+    "tests/fixtures/order_boundaries/08_category_entry_exit.json": "79912e4cec13c3ab34482b02c24deeda4ec443caf569839e4ee5572958550e58",
+    "tests/fixtures/order_boundaries/08_category_entry_exit.v1.json": "b2ffe9d156a9e010f28bbfda072589c95b8ee8dd426f98a0da8c1515ed0cb580",
+    "tests/fixtures/order_boundaries/09_unknown_category_preserved.json": "d9677959c20e91b6965e984035742a6524592896fbf9ce40728192a43bd8439e",
+    "tests/fixtures/order_boundaries/10_missing_product_join_blocks.json": "4f2b8b097451cdbf2c3b7f97ff115235c58dea2de2a45b147d93a02bf0371cc3",
+    "tests/fixtures/order_boundaries/11_single_region_channel_grouping.json": "d652f050a45279f86b5900b76fdb1327ad9cefdaa114ad61a5d8e6457038f6f8",
+    "tests/fixtures/order_boundaries/ORACLE.md": "7c89a4872a618a342284908b93cd247de87c6d62a36a975651a986d96ed7394d",
+    "tests/test_boundary_fixtures.py": "1c092ecf94fc13f43b7f5eaa65bf40357fa510a3d27408f8ea8722a979d4a7f8",
+    "tests/test_reference_category_cohort.py": "f5be1f6e7740ed43f26231eaa62d51f75b59d4e16baf2e26821b71becd0387a5",
+    "tests/test_reference_channel_cohort.py": "d4fb4abaf6ade2d2fadbf20385943011e02db9b3e015a90b66da452712477817",
+    "tests/test_reference_cohort.py": "f0f7257f9471b4cff6a195332b54d37fc9833682ebd3ac5048739e4dc17c3fe0",
+    "tests/test_reference_contribution.py": "639c432993cec581a5428cda3100c85835c4992af26e968622791cd607b96ff1",
+    "tests/test_reference_cross_domain_cohort.py": "d0d0b6ac618e11f7bc1fe524b0754b8309ede979d5eb81cbd22476250299d1ad",
+    "tests/test_reference_refund_dq.py": "3e2f008c2c2e859913f56839763d4bfa93347a306373f0631173865f2f4f9909",
+    "tests/test_reference_region_cohort.py": "fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec"
+  }
+}
