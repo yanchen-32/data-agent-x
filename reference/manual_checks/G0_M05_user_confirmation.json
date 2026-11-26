@@ -1,0 +1,25 @@
+{
+  "record_id": "G0-M05-user-confirmation-2026-11-25",
+  "confirmed_on": "2026-11-25",
+  "timezone": "Asia/Shanghai",
+  "source": "explicit_user_confirmation",
+  "statement": "用户确认已完成本次复核，并授权代为登记本人签收。范围为 A3-06、A3-08 v2 及其贡献分解。",
+  "review_record": {
+    "path": "reference/manual_checks/G0_M05_independent_review.md",
+    "sha256": "7e2aaa116b12e0acd04d34e7e9d24b0dd1bf25dc037d91dc6524402c4e12451e"
+  },
+  "cases": {
+    "A3-06": {
+      "input_sha256": "94511257e4a84e8ab7c0c3b6f130c64b9719598c450072659b071cab11b9f4df",
+      "expected_sha256": "ca81be7036a5e87973d317210f1844958fb3307a9d627a44de089850530e0db4"
+    },
+    "A3-08": {
+      "input_sha256": "4cf45c7f2404ffd854393e21936fb288981491d98d5cd2e9951bcfedf46f49fb",
+      "expected_sha256": "36cf18db12ba260105f033943ec77674f023a2af98a20cd2c6998c0dd6b273ad"
+    },
+    "M03-A3-08-v2": {
+      "input_sha256": "4cf45c7f2404ffd854393e21936fb288981491d98d5cd2e9951bcfedf46f49fb",
+      "expected_sha256": "7dd614e381c89743c1fe56ac8c7ae0df53b772e2589a7981277a1612eb6e039d"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 {
   "manifest_id": "G0-development",
   "manifest_version": 1,
-  "record_date": "2026-11-24",
+  "record_date": "2026-11-25",
   "purpose": "公开合成开发数据、局部参考验证和逐案审阅状态的维护索引。",
   "inventory_source": {
     "path": "reference/regression_checks/G0_fixture_inventory.json",
@@ -28,7 +28,7 @@
   },
   "review_policy": {
     "technical": "技术复核或现有证据核查，与用户独立签收分别记录。预期曾公开，未声称首次盲审或第二审核人。",
-    "user_independent_acceptance": "目前缺少已登记的本人签收证据。逐项复核后再更新对应记录。",
+    "user_independent_acceptance": "confirmed_by_user 表示已登记明确的用户确认及与输入、预期版本绑定的本人签收回执。pending_user_confirmation 表示仍待本人确认。",
     "approval_evidence": "当前清单用途为开发版本登记。生产批准、正式评测与 G0 整体验收按各自流程提供证据。"
   },
   "fingerprints": {
@@ -425,11 +425,17 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
-          "reference/regression_checks/A3-06.md"
-        ]
+          "reference/regression_checks/A3-06.md",
+          "reference/manual_checks/G0_M05_independent_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_user_confirmation.json",
+          "pointer": "/cases/A3-06",
+          "canonical_sha256": "12fc083f41ce6393157ecf45e1f0ee5bf409098795f3ea3e4c4ee2f92bb73c3f"
+        }
       },
       "test_evidence": [
         {
@@ -524,13 +530,19 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
           "reference/manual_checks/A3-08_v2_expected.json",
           "reference/manual_checks/A3-08_v2_review.md",
-          "reference/regression_checks/A3-08_v2.md"
-        ]
+          "reference/regression_checks/A3-08_v2.md",
+          "reference/manual_checks/G0_M05_independent_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_user_confirmation.json",
+          "pointer": "/cases/A3-08",
+          "canonical_sha256": "f7e5ced360e7ff2f83dea014ea424df563cac6fa29fd82cac7e2f7a92b797389"
+        }
       },
       "test_evidence": [
         {
@@ -3565,10 +3577,16 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
-          "reference/regression_checks/G0_M03_Must_closure.md"
-        ]
+          "reference/regression_checks/G0_M03_Must_closure.md",
+          "reference/manual_checks/G0_M05_independent_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_user_confirmation.json",
+          "pointer": "/cases/M03-A3-08-v2",
+          "canonical_sha256": "637adf7b42c9ecfa57abc9a0e2926eada191ebe872f6ef3f5d0093957fa42d46"
+        }
       },
       "test_evidence": [
         {
@@ -3804,6 +3822,8 @@
     "tests/test_reference_contribution.py": "639c432993cec581a5428cda3100c85835c4992af26e968622791cd607b96ff1",
     "tests/test_reference_cross_domain_cohort.py": "d0d0b6ac618e11f7bc1fe524b0754b8309ede979d5eb81cbd22476250299d1ad",
     "tests/test_reference_refund_dq.py": "3e2f008c2c2e859913f56839763d4bfa93347a306373f0631173865f2f4f9909",
-    "tests/test_reference_region_cohort.py": "fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec"
+    "tests/test_reference_region_cohort.py": "fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec",
+    "reference/manual_checks/G0_M05_independent_review.md": "7e2aaa116b12e0acd04d34e7e9d24b0dd1bf25dc037d91dc6524402c4e12451e",
+    "reference/manual_checks/G0_M05_user_confirmation.json": "8cd3b75546e04bcea2858e5b4bbefa2151a44fc0dbb27517fb47a4fa63fd7b0d"
   }
 }

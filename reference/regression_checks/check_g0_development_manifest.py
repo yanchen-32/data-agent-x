@@ -211,10 +211,34 @@ def check_test_evidence(entries, suites, passed):
             require(f"{source}::{node}" in passed, f"执行记录缺少 PASSED {source}::{node}")
 
 
+def check_user_acceptance(case, evidence):
+    review = case["review"]
+    status = review["user_independent_acceptance"]
+    confirmation = review.get("user_confirmation")
+    if status == "pending_user_confirmation":
+        require(confirmation is None, "待签收条目带有本人签收回执")
+        return
+
+    require(status == "confirmed_by_user", "未知的本人签收状态")
+    require(confirmation is not None, "缺少本人签收回执")
+    require(confirmation["pointer"] == f"/cases/{case['case_id']}", "本人签收回执绑定到其他用例")
+    binding = evidence.locate(confirmation, "canonical_sha256")
+    receipt = evidence.document(confirmation["path"])
+    require(receipt["source"] == "explicit_user_confirmation", "本人签收缺少明确用户确认")
+    review_record = receipt["review_record"]
+    require(review_record["path"] in review["records"]
+            and evidence.digests.get(review_record["path"]) == review_record["sha256"],
+            "本人签收回执与审阅记录未绑定")
+    expected = case["expected"]
+    require(binding["input_sha256"] == case["input"]["canonical_sha256"]
+            and binding["expected_sha256"] == expected["locator"][EXPECTED_LOCATORS[expected["kind"]]],
+            "本人签收回执与输入或预期版本不一致")
+
+
 def check_manifest(manifest, root):
     require(manifest["manifest_id"] == "G0-development" and manifest["manifest_version"] == 1,
             "不支持的开发清单版本")
-    require(not approved_marker(manifest), "开发清单 v1 尚无本人签收与批准证据，禁止标记 approved")
+    require(not approved_marker(manifest), "开发清单 v1 用于证据登记，禁止标记 approved")
     evidence = Evidence(root, manifest["artifacts"])
     evidence.verify_files()
     evidence.file(manifest["inventory_source"]["path"])
@@ -283,11 +307,10 @@ def check_manifest(manifest, root):
                 design_only = case["expected"]["kind"] == "design_only"
                 technical = "documented_not_executed" if design_only else "technical_review_recorded"
                 require(review["technical"] == technical, "技术审阅状态与证据类型不一致")
-                require(review["user_independent_acceptance"] == "pending_user_confirmation",
-                        "当前清单未登记本人签收证据，签收状态应为 pending_user_confirmation")
                 require(review["records"], "缺少必需审阅记录")
                 for record in review["records"]:
                     evidence.file(record)
+                check_user_acceptance(case, evidence)
 
                 tests = case["test_evidence"]
                 require(bool(tests) != design_only, "测试证据与设计状态不一致")

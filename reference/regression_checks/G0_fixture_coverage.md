@@ -70,11 +70,11 @@
 
 | ID / 优先级 | 缺口与阶段 | 已有覆盖，避免重复建设 | 下一步与可核验完成条件 |
 | --- | --- | --- | --- |
-| M01 / Must | G0三维固定分组闭环缺region/channel | category固定Oracle与参考函数，05地区过滤，单地区类别变体均可复用 | 独立设计region/channel有区分力输入和双窗组/总计预期，再实现/比较各维。全域下至少两个实际ID；单地区过滤后地区维度只有选中地区一组可以合法，不强求两个组。验证各维同Scope、互斥穷尽、Fraction及来源追溯，不能只断言行数 |
+| M01 / Must | **最小三维参考层已关闭** | 类别、渠道、地区均有固定预期对照。RG06 核对三维共用 Scope 下的两窗总计、候选集合与各维守恒。[三维关闭评审](G0_M01_region_Must_closure.md) | C08 保持 Should，两项未执行的地区变体保留为非阻塞补强。生产分组与权限由 M06 验收 |
 | M02 / Must | **最小合法跨域参考层已关闭** | 双 Scope 各自匹配冻结 Oracle，完整事实键、支付及退款来源和双向交错调用均有直接断言。[关闭登记](G0_M02_Must_closure.md) | PostgreSQL 角色、授权视图和 SQL 隔离由 M06 验收。同域不同快照配对属于本次范围之外 |
 | M03 / Must | **最小贡献参考层已关闭** | A3-08v2 的组权重、组率、生命周期和四项贡献逐项匹配冻结 Oracle。总体变化为 `1/2`，精确残差为 `0`。专项 29 项、相关回归 182 项通过。[关闭登记](G0_M03_Must_closure.md) | 生产授权证据、查询完整性和正式序列化由 M06 验收 |
 | M04 / Must | **最小退款 DQ 参考层局部关闭** | 重复事件键、孤立退款、支付前 1 微秒及缺失 `refund_at` 各自抛出对应 `ValueError`。独立复跑专项 4 项、总体 9 项及相关 173 项全部通过，包含 A3-06 合法对照。[局部验收登记](G0_M04_Must_closure.md) | 生产 `blocked_by_quality` 状态映射仍由 M06 验收，金额规则待契约定义 |
-| M05 / Must | 开发数据清单与自动校验已建立，本人签收待确认 | 登记 11 个主例、65 个控制变体及 1 份历史副本。63 个控制具有直接回归，2 个地区控制保留输入与设计证据。已核对文件指纹、预期绑定、审阅及测试索引。[开发数据清单](G0_development_manifest.json) · [检查与执行记录](G0_M05_manifest_validation.md) | A3-06 与 A3-08 v2 待本人提交初算和对照差异。正式数据批准与评测由 M07 验收 |
+| M05 / Must | 开发数据版本清单与自动校验已建立，**两例已签收** | 登记 11 个主例、65 个控制变体、1 份历史副本和 1 份衍生 Oracle。63 个控制有直接测试，`RG05.label-absent` 和 `RG06.W-reverse-combined` 有输入与设计证据。A3-06、A3-08 v2 及其贡献分解已登记本人确认。[开发数据清单](G0_development_manifest.json) · [签收回执](../manual_checks/G0_M05_user_confirmation.json) | 其余 9 个主例待确认。正式数据批准与评测由 M07 验收 |
 
 ### 4.2 Should：已有路径上的边界补强
 
@@ -273,3 +273,34 @@ PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_contribution.p
 依据 DD02 §1，独立深拷贝 A3-07 输入，仅删除 `SR-A-C1`（来源 `r07-refund-a-c1`）的 `refund_at`。完整事件键、订单关联和原有时间水位均保留。人工预期是整次比较阻断。修复前专项实际触发 `KeyError('refund_at')`，pytest 退出码为 1。总体参考入口新增缺字段检查后，明确抛出带退款 ID 和来源行的 `ValueError`。专项断言拒绝行为和输入不变性。[DD02 §1](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md#data) · [专项测试](../../tests/test_reference_refund_dq.py)
 
 修复后四项 M04 专项及 186 项相关参考回归通过，退出码均为 0。原始红灯与绿灯输出、命令和前后版本指纹见执行记录，SHA-256 为 `dde8810cf3aea08fa1425fee3261c62a7cc9c1685e7573925cefab012a6474d8`。[实际执行记录](G0_M04_missing_refund_time_pytest.txt)
+
+## G0 阶段门预审（2026-11-25）
+
+**G0 数据与参考 Oracle 暂缓放行。** 主例数量、独立预期来源、可运行的参考计算和开发版本绑定已有证据。M05 的真实签收仍是本阶段待补的 Must。
+
+本次以路线图 M1 的 10～20 个独立核验边界样例为数量目标，以 DAX-RB-1.2.1 中生效的 DD02 v1.2 及指标目录核对业务口径，沿用覆盖矩阵 M01～M05 的局部范围。DD06 §3 的独立 Oracle 原则用于检查答案来源。DD06 §5 的最终放行另有生产、盲测、校准及档案要求。[路线图](../../docs/ROADMAP.md) · [冻结基线](../../docs/engineering/BASELINE.md) · [DD02 指标口径](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md#metric) · [DD06 评分与裁决](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#scoring)
+
+| 核对项 | 证据与结论 |
+| --- | --- |
+| 主例与控制 | 主例 A3-01～11 共 11 个，达到数量目标。65 个控制、A3-08 v1 历史副本、M03 衍生贡献 Oracle 和 4 族代码内控制各自登记。63 个控制有测试身份及通过记录，2 个补强变体保留设计证据。[开发清单](G0_development_manifest.json) |
+| 先行人工预期 | 11 个主例均有原始输入、静态 `expected`、推导依据和可定位来源。A3-01～10 可从逐例 Oracle 追溯。A3-11 另有冻结的人工台账和独立 JSON。08 v2 的逐单台账及贡献 Oracle 均有冻结源指纹。[逐例 Oracle](../../tests/fixtures/order_boundaries/ORACLE.md) · [A3-11 冻结记录](../manual_checks/A3-11_freeze_review.md) · [A3-08 v2 逐单台账](../manual_checks/A3-08_v2_expected.md) · [M03 冻结贡献预期](../manual_checks/G0_M03_A3-08_v2_contribution_expected.json) |
+| 可运行参考 Oracle | 总体、类别、渠道、地区和贡献入口均有实际回归。M01 三维共用 Scope、M02 合法双域交错、M03 精确残差和 M04 四类退款 DQ 都有直接断言与版本化证据。A3-03、A3-10 和 M04 主要由参考层拒绝分支核验，生产状态映射在 M06。[M01](G0_M01_region_Must_closure.md) · [M02](G0_M02_Must_closure.md) · [M03](G0_M03_Must_closure.md) · [M04](G0_M04_Must_closure.md) |
+| 版本与执行绑定 | `SYNC_MANIFEST` 中 25 份当前设计文件的 SHA-256 均匹配。开发清单 81 份证据通过自动校验，绑定输入、预期、规则、参考源码与测试节点。当前开发树另有实跑结果见下方。公开候选本地提交为 `5fb815d`。[设计指纹清单](../../docs/engineering/SYNC_MANIFEST.json) · [开发版本校验记录](G0_M05_manifest_validation.md) |
+| M05 真实签收 | 11 个主例的 `user_independent_acceptance` 均为 `pending_user_confirmation`。A3-06 与 A3-08 v2 由独立子进程先保存初算，再对照冻结预期，数值与来源一致，记录署名为子进程。结项证据仍缺用户本人明确确认及其对应版本、案例和差异处理记录。[复核表](../manual_checks/G0_M05_independent_review.md) · [审阅状态清单](G0_development_manifest.json) |
+
+### 仍待验收的 Must
+
+- **M05，G0 当前缺口。** 已有开发数据与技术复核证据。登记用户本人确认及其所核验的案例、输入与 Oracle 版本和差异结论后再判定放行。当前没有 `approved` 或 L3 通过登记。[本人复核记录](../manual_checks/G0_M05_independent_review.md)
+- **M06，生产调查链路。** 参考层已覆盖拒绝和比较门槛。真实 PostgreSQL 只读权限与双域探针、状态映射 `blocked_by_quality`、恢复证据、受控 SQL、QueryEvidence 及正式数值序列化仍缺集成验收。[DD02 数据质量与 SQL](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md#data) · [路线图 M1](../../docs/ROADMAP.md)
+- **M07，正式评测。** 现有清单用于合成开发回归。正式 `dataset_manifest`、公开输入与私有标签隔离、机制分组和种子、独立评分、冻结分层与三轮基线、CI 和正式归档仍缺交付证据。CAL-R01 与 CAL-P01 另依 DD06 放行条款验收。[DD06 正式数据](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#dataset) · [DD06 最终放行](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#load)
+
+本次使用开发工作树的 CPython 3.10.12、pytest 9.1.1。完整性检查退出码 `0`。参考、静态 Fixture 与清单控制的组合回归退出码 `0`，实际输出 `196 passed in 1.18s`。结论基于上述原始预期、覆盖断言、版本指纹和签收状态。运行证据属于本地开发树。
+
+```bash
+python3 -I -B reference/regression_checks/check_g0_development_manifest.py
+PYTHONPATH=src .venv/bin/python -B -m pytest -q tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_region_cohort.py tests/test_reference_cross_domain_cohort.py tests/test_reference_contribution.py tests/test_reference_refund_dq.py tests/test_boundary_fixtures.py tests/test_g0_development_manifest.py -o addopts= -p no:cacheprovider
+```
+
+### 本人签收增量（2026-11-25）
+
+预审后，用户确认已完成本次复核并授权登记签收。清单中 A3-06、A3-08 v2 及其 M03 贡献 Oracle 更新为 `confirmed_by_user`，回执绑定复核表、输入及各自的冻结预期 SHA-256。其余 9 个主例仍待本人确认，G0 整体仍处于预审阶段。[签收回执](../manual_checks/G0_M05_user_confirmation.json)

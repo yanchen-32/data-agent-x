@@ -38,6 +38,8 @@ def test_current_development_manifest_passes():
         ("swapped_oracle", "固定预期缺少与输入的关联"),
         ("unregistered_review", "必需证据缺少文件指纹登记"),
         ("unconfirmed_approval", "禁止标记 approved"),
+        ("missing_user_confirmation", "缺少本人签收回执"),
+        ("wrong_case_confirmation", "本人签收回执绑定到其他用例"),
         ("missing_passed_node", "执行记录缺少 PASSED"),
     ),
 )
@@ -58,6 +60,12 @@ def test_rejects_inconsistent_manifest_copy(tmp_path, change, message):
         del manifest["artifacts"][first["review"]["records"][0]]
     elif change == "unconfirmed_approval":
         first["review"]["approval_status"] = "approved"
+    elif change == "missing_user_confirmation":
+        first["review"]["user_independent_acceptance"] = "confirmed_by_user"
+    elif change == "wrong_case_confirmation":
+        signed = next(case for case in manifest["main_fixtures"] if case["case_id"] == "A3-06")
+        first["review"]["user_independent_acceptance"] = "confirmed_by_user"
+        first["review"]["user_confirmation"] = signed["review"]["user_confirmation"]
     elif change == "missing_passed_node":
         first["test_evidence"][0]["node_ids"] = ["test_unrecorded"]
 
