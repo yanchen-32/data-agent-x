@@ -1,7 +1,7 @@
 {
   "manifest_id": "G0-development",
   "manifest_version": 1,
-  "record_date": "2026-11-25",
+  "record_date": "2026-11-26",
   "purpose": "公开合成开发数据、局部参考验证和逐案审阅状态的维护索引。",
   "inventory_source": {
     "path": "reference/regression_checks/G0_fixture_inventory.json",
@@ -206,11 +206,17 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
-          "reference/manual_checks/2026-10-14.json"
-        ]
+          "reference/manual_checks/2026-10-14.json",
+          "reference/manual_checks/G0_M05_remaining_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_remaining_user_confirmation.json",
+          "pointer": "/cases/A3-01",
+          "canonical_sha256": "5287c3cd8a0d642336e28c19c040dda8ae0fafb3ae9aa759885d221b641fada1"
+        }
       },
       "test_evidence": [
         {
@@ -250,11 +256,17 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
-          "reference/manual_checks/2026-10-14.json"
-        ]
+          "reference/manual_checks/2026-10-14.json",
+          "reference/manual_checks/G0_M05_remaining_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_remaining_user_confirmation.json",
+          "pointer": "/cases/A3-02",
+          "canonical_sha256": "5c92f4a7b943ccd3d711dacd04f07aae7de94970ac635a7362ffc08d957465d4"
+        }
       },
       "test_evidence": [
         {
@@ -294,10 +306,16 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
-          "tests/fixtures/order_boundaries/ORACLE.md"
-        ]
+          "tests/fixtures/order_boundaries/ORACLE.md",
+          "reference/manual_checks/G0_M05_remaining_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_remaining_user_confirmation.json",
+          "pointer": "/cases/A3-03",
+          "canonical_sha256": "da7710ed184e892f80041389d3ae5f29321af9a344809e2d661501966f74c461"
+        }
       },
       "test_evidence": [
         {
@@ -337,11 +355,17 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
-          "reference/manual_checks/A3-04_A3-05_review.md"
-        ]
+          "reference/manual_checks/A3-04_A3-05_review.md",
+          "reference/manual_checks/G0_M05_remaining_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_remaining_user_confirmation.json",
+          "pointer": "/cases/A3-04",
+          "canonical_sha256": "9151abc2d6822163406a63c9489f12a51ca21d52d6c9e7bbca80c6097d6a8190"
+        }
       },
       "test_evidence": [
         {
@@ -381,11 +405,17 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
-          "reference/manual_checks/A3-04_A3-05_review.md"
-        ]
+          "reference/manual_checks/A3-04_A3-05_review.md",
+          "reference/manual_checks/G0_M05_remaining_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_remaining_user_confirmation.json",
+          "pointer": "/cases/A3-05",
+          "canonical_sha256": "cad8a812ed099856c3855dabc76e7dbcb53b0cdb140773d2dc4ca5db8eea1c07"
+        }
       },
       "test_evidence": [
         {
@@ -475,13 +505,19 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
           "reference/manual_checks/A3-07_review.json",
           "reference/manual_checks/A3-07_review.md",
-          "reference/regression_checks/A3-07_category.md"
-        ]
+          "reference/regression_checks/A3-07_category.md",
+          "reference/manual_checks/G0_M05_remaining_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_remaining_user_confirmation.json",
+          "pointer": "/cases/A3-07",
+          "canonical_sha256": "37810cae80e76ccea7eb0302153b63f4a0a339293d6f839c6d3511ecf4a7b857"
+        }
       },
       "test_evidence": [
         {
@@ -586,13 +622,19 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
           "reference/manual_checks/A3-09_expected.json",
           "reference/regression_checks/A3-09_acceptance.md",
-          "reference/regression_checks/A3-09.md"
-        ]
+          "reference/regression_checks/A3-09.md",
+          "reference/manual_checks/G0_M05_A3-09_independent_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_A3-09_user_confirmation.json",
+          "pointer": "/cases/A3-09",
+          "canonical_sha256": "541462652a8e263e938caad1cd75bbb269a076f7f0ec934f542eef444e0df3e0"
+        }
       },
       "test_evidence": [
         {
@@ -632,13 +674,19 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "tests/fixtures/order_boundaries/ORACLE.md",
           "reference/manual_checks/A3-10.json",
           "reference/regression_checks/A3-10_acceptance.md",
-          "reference/regression_checks/A3-10.md"
-        ]
+          "reference/regression_checks/A3-10.md",
+          "reference/manual_checks/G0_M05_A3-10_independent_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_A3-10_user_confirmation.json",
+          "pointer": "/cases/A3-10",
+          "canonical_sha256": "e96eeb77fa5740d436f27b64775f953a7756fc6a8fb812bed7d6ffd218c9d534"
+        }
       },
       "test_evidence": [
         {
@@ -685,11 +733,17 @@
       },
       "review": {
         "technical": "technical_review_recorded",
-        "user_independent_acceptance": "pending_user_confirmation",
+        "user_independent_acceptance": "confirmed_by_user",
         "records": [
           "reference/manual_checks/A3-11_freeze_review.md",
-          "reference/regression_checks/A3-11_Must_review.md"
-        ]
+          "reference/regression_checks/A3-11_Must_review.md",
+          "reference/manual_checks/G0_M05_remaining_review.md"
+        ],
+        "user_confirmation": {
+          "path": "reference/manual_checks/G0_M05_remaining_user_confirmation.json",
+          "pointer": "/cases/A3-11",
+          "canonical_sha256": "86a92a8a67b538020f87415065ed2123b4ed0b17908c519c00591d1c7340c836"
+        }
       },
       "test_evidence": [
         {
@@ -3824,6 +3878,12 @@
     "tests/test_reference_refund_dq.py": "3e2f008c2c2e859913f56839763d4bfa93347a306373f0631173865f2f4f9909",
     "tests/test_reference_region_cohort.py": "fd8dd9c2f754aad650a70a5a021fde6e17eeedd435d3bde3df34962c6df730ec",
     "reference/manual_checks/G0_M05_independent_review.md": "7e2aaa116b12e0acd04d34e7e9d24b0dd1bf25dc037d91dc6524402c4e12451e",
-    "reference/manual_checks/G0_M05_user_confirmation.json": "8cd3b75546e04bcea2858e5b4bbefa2151a44fc0dbb27517fb47a4fa63fd7b0d"
+    "reference/manual_checks/G0_M05_user_confirmation.json": "8cd3b75546e04bcea2858e5b4bbefa2151a44fc0dbb27517fb47a4fa63fd7b0d",
+    "reference/manual_checks/G0_M05_A3-09_independent_review.md": "be3926fad355a39815b6584f62dc97f10e6189d404f946a9fb3bb4d6ab74f10b",
+    "reference/manual_checks/G0_M05_A3-09_user_confirmation.json": "3b6fa46360edb5997e619b50d1335d28cfa24e25f75af861be4d07e94e5cffbb",
+    "reference/manual_checks/G0_M05_A3-10_independent_review.md": "22ca354a994ff775606ca690b04c4930083a035764c777b229f924ad018592b3",
+    "reference/manual_checks/G0_M05_A3-10_user_confirmation.json": "3a62a741e8af50ed3af7053a457d360d3de6a742156c6a10e5f9855661c6a060",
+    "reference/manual_checks/G0_M05_remaining_review.md": "a48d5138cac65fcd4288499bc550abce0a0ad04b8c506774054a9d6bf9fe82e9",
+    "reference/manual_checks/G0_M05_remaining_user_confirmation.json": "62fb6d02595398c84ae41cf3c4b2af21d5bc28466853921e37a01e1f80aff442"
   }
 }

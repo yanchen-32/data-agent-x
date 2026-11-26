@@ -5,7 +5,7 @@
 - [x] 当前需求、详细设计与机器契约定版并提供脱敏公开快照。
 - [x] 基础FastAPI健康检查、内存items接口与对应测试代码纳入快照。
 - [ ] 独立Python能力诊断、依赖锁定与CI。
-- [ ] 固定合成数据、10–20个边界样例与独立Oracle。
+- [x] 固定合成数据、10–20个边界样例与独立Oracle。[G0 放行记录](../reference/regression_checks/G0_fixture_coverage.md#g0-data-oracle-release)
 - [ ] 真实PostgreSQL只读角色、两域隔离与授权地区过滤。
 - [ ] Scope/QuerySpec/确定性贡献/证据核验与第一条可复算报告。
 - [ ] 有界Mock Runtime、三时钟、幂等、取消与预算；20–30个集成任务。

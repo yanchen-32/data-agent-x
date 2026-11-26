@@ -1,0 +1,17 @@
+{
+  "record_id": "G0-M05-A3-10-user-confirmation-2026-11-26",
+  "confirmed_on": "2026-11-26",
+  "timezone": "Asia/Shanghai",
+  "source": "explicit_user_confirmation",
+  "statement": "用户明确确认 A3-10 的 M05 复核并请求登记。核验表随后补充了本人确认和日期。",
+  "review_record": {
+    "path": "reference/manual_checks/G0_M05_A3-10_independent_review.md",
+    "sha256": "22ca354a994ff775606ca690b04c4930083a035764c777b229f924ad018592b3"
+  },
+  "cases": {
+    "A3-10": {
+      "input_sha256": "4966e1e7b68ac237d88cbce97f511c2d5cc62bdd301183d567d4bd4be8e627a1",
+      "expected_sha256": "e7e79f9a0088cf6ef6c37b1e671130445a1c29b002eff950dd9822ab5d114967"
+    }
+  }
+}

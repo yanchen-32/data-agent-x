@@ -1,0 +1,41 @@
+{
+  "record_id": "G0-M05-remaining-seven-user-confirmation-2026-11-26",
+  "confirmed_on": "2026-11-26",
+  "timezone": "Asia/Shanghai",
+  "source": "explicit_user_confirmation",
+  "statement": "用户明确确认已核查 A3-01、A3-02、A3-03、A3-04、A3-05、A3-07、A3-11 的当前冻结版本及结论，并授权登记这七例的 M05 本人签收。",
+  "review_record": {
+    "path": "reference/manual_checks/G0_M05_remaining_review.md",
+    "sha256": "a48d5138cac65fcd4288499bc550abce0a0ad04b8c506774054a9d6bf9fe82e9"
+  },
+  "cases": {
+    "A3-01": {
+      "input_sha256": "2617971e97393b5ec170861321e9c903ff51d29e39e4b10d650d4a56844d6f9a",
+      "expected_sha256": "98524cc05d73e02db015a6957c876b4cdf7bad02304b390e6d74534d3da9560c"
+    },
+    "A3-02": {
+      "input_sha256": "4f8410306b8bc4039212c2ace5e8340fca0acb08d305b2497cfa40f667f61711",
+      "expected_sha256": "6551c72bd346f34f71a15c1b95e898f5a27f461b7626990612ed81555d0b58e5"
+    },
+    "A3-03": {
+      "input_sha256": "3dedc50609d23226a5b794c62478d884a793978abda7b30bced61220398f35a9",
+      "expected_sha256": "ab5dab62e0b4c4d1fdec4fa151aa51a2153d74a60b952b411310d99fc06a10ef"
+    },
+    "A3-04": {
+      "input_sha256": "2dfc833a68f7e9896bb8e9fdbfe6a150e85eaf2587e47907652513448474b2f9",
+      "expected_sha256": "cda193b179f4f547762d357b8fbff1a0a50f44c4f1782c8df792a6052534d08d"
+    },
+    "A3-05": {
+      "input_sha256": "45a77832c8daf80dd4d9a6c64e05f97ae9cbe1aa8c9f943b5a3f0f1cdf29c3fd",
+      "expected_sha256": "2d02934765537b105e3e363a40b7d39d3bfa7f78e34d018a20950a0235326f65"
+    },
+    "A3-07": {
+      "input_sha256": "cb458cfb0bc5555c8c680bab64885c0f2fd2e212951a12143260eb9ea3e339ca",
+      "expected_sha256": "b9640a6dd7dbc73f1e50f94406659d3c869b7000f21282951c33f9e4a848a7e7"
+    },
+    "A3-11": {
+      "input_sha256": "459879d55d0ebbd0ed4103a628d1946d5e9c58f2aff7e8bbdbcf9804a4f85257",
+      "expected_sha256": "27479fab57016e1162c47d90fd7bbae465f8ac4d46ce77e061949db82b8a9b91"
+    }
+  }
+}

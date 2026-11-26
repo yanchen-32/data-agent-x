@@ -74,7 +74,7 @@
 | M02 / Must | **最小合法跨域参考层已关闭** | 双 Scope 各自匹配冻结 Oracle，完整事实键、支付及退款来源和双向交错调用均有直接断言。[关闭登记](G0_M02_Must_closure.md) | PostgreSQL 角色、授权视图和 SQL 隔离由 M06 验收。同域不同快照配对属于本次范围之外 |
 | M03 / Must | **最小贡献参考层已关闭** | A3-08v2 的组权重、组率、生命周期和四项贡献逐项匹配冻结 Oracle。总体变化为 `1/2`，精确残差为 `0`。专项 29 项、相关回归 182 项通过。[关闭登记](G0_M03_Must_closure.md) | 生产授权证据、查询完整性和正式序列化由 M06 验收 |
 | M04 / Must | **最小退款 DQ 参考层局部关闭** | 重复事件键、孤立退款、支付前 1 微秒及缺失 `refund_at` 各自抛出对应 `ValueError`。独立复跑专项 4 项、总体 9 项及相关 173 项全部通过，包含 A3-06 合法对照。[局部验收登记](G0_M04_Must_closure.md) | 生产 `blocked_by_quality` 状态映射仍由 M06 验收，金额规则待契约定义 |
-| M05 / Must | 开发数据版本清单与自动校验已建立，**两例已签收** | 登记 11 个主例、65 个控制变体、1 份历史副本和 1 份衍生 Oracle。63 个控制有直接测试，`RG05.label-absent` 和 `RG06.W-reverse-combined` 有输入与设计证据。A3-06、A3-08 v2 及其贡献分解已登记本人确认。[开发数据清单](G0_development_manifest.json) · [签收回执](../manual_checks/G0_M05_user_confirmation.json) | 其余 9 个主例待确认。正式数据批准与评测由 M07 验收 |
+| M05 / Must | **G0 主例签收与版本绑定已完成** | 11 个主例及 A3-08 v2 衍生贡献 Oracle 均有本人确认，绑定当前冻结版本。65 个控制变体与 1 份历史副本保留各自的证据状态。63 个控制有直接测试，另 2 个有输入与设计证据。[开发数据清单](G0_development_manifest.json) · [阶段门放行](#g0-data-oracle-release) | 正式数据批准与评测由 M07 验收 |
 
 ### 4.2 Should：已有路径上的边界补强
 
@@ -304,3 +304,23 @@ PYTHONPATH=src .venv/bin/python -B -m pytest -q tests/test_reference_cohort.py t
 ### 本人签收增量（2026-11-25）
 
 预审后，用户确认已完成本次复核并授权登记签收。清单中 A3-06、A3-08 v2 及其 M03 贡献 Oracle 更新为 `confirmed_by_user`，回执绑定复核表、输入及各自的冻结预期 SHA-256。其余 9 个主例仍待本人确认，G0 整体仍处于预审阶段。[签收回执](../manual_checks/G0_M05_user_confirmation.json)
+
+### A3-09 与 A3-10 本人签收（2026-11-26）
+
+用户明确确认两例的 M05 复核并授权登记。两例分别绑定复核表、冻结输入和预期的 SHA-256，清单更新为 `confirmed_by_user`。A3-09 表内原有本人确认已保留，A3-10 按用户本次明确确认登记。子进程初算与 AI 对照仍各自署名。清单完整性校验通过，覆盖 87 份证据。现有 4 个主例已签收，7 个主例待本人确认，G0 整体仍处于预审阶段。[A3-09 回执](../manual_checks/G0_M05_A3-09_user_confirmation.json) · [A3-10 回执](../manual_checks/G0_M05_A3-10_user_confirmation.json)
+
+增量回归首轮检出 A3-10 本人补写确认后的指纹变化。核实仅确认栏改变并同步回执后，87 份证据校验及 12 项专项 pytest 均退出 `0`，缺回执、回执错绑、未签收批准三类拒绝控制均通过。A3-01、A3-02、A3-03、A3-04、A3-05、A3-07、A3-11 仍为 `pending_user_confirmation`。**G0 继续暂缓放行。**[增量回归与版本记录](G0_M05_manifest_validation.md)
+
+### 剩余七例放行前准备（2026-11-26）
+
+已从原始输入推导七例，保存初算后核对冻结 Oracle。业务状态、核心数值和逐例来源在核对范围内一致。复跑标准库清单检查覆盖 87 份证据，专项 12 项通过，均退出 `0`。核验表列有各例版本指纹、关键核查点与待本人确认栏。当前唯一尚待登记的 G0 材料为上述七例的本人确认，回执齐备并复验后再登记阶段门结论。[七例本人核验表](../manual_checks/G0_M05_remaining_review.md)
+
+<a id="g0-data-oracle-release"></a>
+
+## G0 数据与参考 Oracle 放行（2026-11-26）
+
+**G0 数据与参考 Oracle 阶段通过。** A3-01、A3-02、A3-03、A3-04、A3-05、A3-07、A3-11 的本人确认已登记，当前 11 个主例全部签收。A3-08 v2 的衍生贡献 Oracle 沿用既有回执。M01～M04 的四份最小参考层关闭登记和 25 份冻结设计文件指纹复核一致。[七例签收回执](../manual_checks/G0_M05_remaining_user_confirmation.json) · [开发数据清单](G0_development_manifest.json)
+
+本地复验通过 89 份证据完整性检查，专项 pytest 12 项、相关参考与静态回归 198 项通过，三次退出码均为 `0`。缺回执、回执错绑和未签收批准三类控制继续通过。路线图登记边界测试数据及参考答案一项完成。[放行复验记录](G0_M05_manifest_validation.md#g0-release-evidence) · [路线图](../../docs/ROADMAP.md)
+
+65 个控制变体和 1 份历史副本继续使用现有审阅状态。M06 的 PostgreSQL 权限、受控 SQL、生产 DQ 和证据链，以及 M07 的正式数据批准、盲测和归档仍按各自阶段验收。

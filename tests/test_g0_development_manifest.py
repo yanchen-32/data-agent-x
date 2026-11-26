@@ -59,9 +59,12 @@ def test_rejects_inconsistent_manifest_copy(tmp_path, change, message):
     elif change == "unregistered_review":
         del manifest["artifacts"][first["review"]["records"][0]]
     elif change == "unconfirmed_approval":
+        first["review"]["user_independent_acceptance"] = "pending_user_confirmation"
+        first["review"].pop("user_confirmation", None)
         first["review"]["approval_status"] = "approved"
     elif change == "missing_user_confirmation":
         first["review"]["user_independent_acceptance"] = "confirmed_by_user"
+        first["review"].pop("user_confirmation", None)
     elif change == "wrong_case_confirmation":
         signed = next(case for case in manifest["main_fixtures"] if case["case_id"] == "A3-06")
         first["review"]["user_independent_acceptance"] = "confirmed_by_user"

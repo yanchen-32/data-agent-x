@@ -49,3 +49,34 @@ A3-06、A3-08 v2 及其贡献分解已登记本人签收。回执绑定复核表
 6deb24d28b1ef77793d81609470055fa60c75f9e84edb278be6a4a8a9a7d18aa  reference/regression_checks/check_g0_development_manifest.py
 3626354af59185efda9e23c35bac8d6a48c1b4ca94f958066920489ab5a11562  tests/test_g0_development_manifest.py
 ```
+
+<a id="g0-release-evidence"></a>
+
+## G0 放行公开候选复验（2026-11-26）
+
+以公开提交 `cb247ff` 为父版本核对 G0 放行增量。11 个主例及 A3-08 v2 衍生贡献 Oracle 的签收回执均与冻结输入和预期一致。A3-09、A3-10 核验表保留本人确认状态和日期，公开版省略署名并重新绑定这两份表的指纹。执行索引继续绑定最初的 186 项参考回归记录，本次公开候选另行执行下表所列测试。[G0 放行登记](G0_fixture_coverage.md#g0-data-oracle-release) · [开发数据清单](G0_development_manifest.json)
+
+| 执行 | 实际用时与结果 | 退出码 |
+| --- | --- | ---: |
+| 标准库清单校验 | 89 个文件、11 个主例、65 个控制变体、1 个衍生 Oracle 通过 | 0 |
+| M05 专项 pytest | `12 passed in 0.37s` | 0 |
+| 参考、静态 Fixture 与清单组合 pytest | `198 passed in 1.19s` | 0 |
+| 公开候选全量 pytest，沙箱外 | `258 passed in 1.78s` | 0 |
+
+执行环境为 CPython 3.10.12、pytest 9.1.1 和 Linux x86_64，命令中的 `python` 指该验证解释器。未确认批准、缺签收回执、回执错绑的拒绝控制均通过。本记录对应本地公开候选执行。
+
+```bash
+python3 -I -B reference/regression_checks/check_g0_development_manifest.py
+PYTHONPATH=src python -B -m pytest -q tests/test_g0_development_manifest.py -o addopts= -p no:cacheprovider
+PYTHONPATH=src python -B -m pytest -q tests/test_reference_cohort.py tests/test_reference_category_cohort.py tests/test_reference_channel_cohort.py tests/test_reference_region_cohort.py tests/test_reference_cross_domain_cohort.py tests/test_reference_contribution.py tests/test_reference_refund_dq.py tests/test_boundary_fixtures.py tests/test_g0_development_manifest.py -o addopts= -p no:cacheprovider
+timeout 30s env PYTHONPATH=src python -B -m pytest -q -o addopts= -p no:cacheprovider
+```
+
+```text
+2b5d030bf45189a5bba86dffa48eb8e79047d5ef2bb59df13337bcd470ea7cfb  reference/regression_checks/G0_development_manifest.json
+6deb24d28b1ef77793d81609470055fa60c75f9e84edb278be6a4a8a9a7d18aa  reference/regression_checks/check_g0_development_manifest.py
+903b09755d5d5d6ab0a870d0a1afbb03852975efc48cae5fe60132d235ea7b82  tests/test_g0_development_manifest.py
+3b6fa46360edb5997e619b50d1335d28cfa24e25f75af861be4d07e94e5cffbb  reference/manual_checks/G0_M05_A3-09_user_confirmation.json
+3a62a741e8af50ed3af7053a457d360d3de6a742156c6a10e5f9855661c6a060  reference/manual_checks/G0_M05_A3-10_user_confirmation.json
+62fb6d02595398c84ae41cf3c4b2af21d5bc28466853921e37a01e1f80aff442  reference/manual_checks/G0_M05_remaining_user_confirmation.json
+```
