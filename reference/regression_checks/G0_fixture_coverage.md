@@ -276,6 +276,8 @@ PYTHONPATH=src .venv/bin/python -B -m pytest tests/test_reference_contribution.p
 
 ## G0 阶段门预审（2026-11-25）
 
+本节及签收增量保留当时的预审判断。关于全量本人签收的门槛性质，以[最终放行条件审定](#g0-g1-release-criteria)为准。
+
 **G0 数据与参考 Oracle 暂缓放行。** 主例数量、独立预期来源、可运行的参考计算和开发版本绑定已有证据。M05 的真实签收仍是本阶段待补的 Must。
 
 本次以路线图 M1 的 10～20 个独立核验边界样例为数量目标，以 DAX-RB-1.2.1 中生效的 DD02 v1.2 及指标目录核对业务口径，沿用覆盖矩阵 M01～M05 的局部范围。DD06 §3 的独立 Oracle 原则用于检查答案来源。DD06 §5 的最终放行另有生产、盲测、校准及档案要求。[路线图](../../docs/ROADMAP.md) · [冻结基线](../../docs/engineering/BASELINE.md) · [DD02 指标口径](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md#metric) · [DD06 评分与裁决](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#scoring)
@@ -324,3 +326,27 @@ PYTHONPATH=src .venv/bin/python -B -m pytest -q tests/test_reference_cohort.py t
 本地复验通过 89 份证据完整性检查，专项 pytest 12 项、相关参考与静态回归 198 项通过，三次退出码均为 `0`。缺回执、回执错绑和未签收批准三类控制继续通过。路线图登记边界测试数据及参考答案一项完成。[放行复验记录](G0_M05_manifest_validation.md#g0-release-evidence) · [路线图](../../docs/ROADMAP.md)
 
 65 个控制变体和 1 份历史副本继续使用现有审阅状态。M06 的 PostgreSQL 权限、受控 SQL、生产 DQ 和证据链，以及 M07 的正式数据批准、盲测和归档仍按各自阶段验收。
+
+<a id="g0-g1-release-criteria"></a>
+
+## G0 最终放行条件审定（2026-11-27）
+
+**G0 数据与参考 Oracle 通过，当前无阻塞项，可以进入 G1 的最小真实 PostgreSQL 查询与可复算报告链路。** 本文用 G0 指固定边界案例和独立 Oracle，用 G1 指后续最小真实数据库与确定性调查链路。开发顺序取自 SRS §11.3、DD05 §5 和 DD07 §5，R0 发布门槛见 SRS §10.3 与 DD06 §5。[SRS v1.2](../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md) · [DD05 §5](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD05_存储接口与集成_v1.2.1.md#integration) · [DD07 §5](../../docs/engineering/07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md#delivery) · [DD06 §5](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#load)
+
+| 证据 | 契约要求与阶段判定 | 当前状态 |
+| --- | --- | --- |
+| 独立 Oracle 正确性 | **G0 必要条件。** SRS §1.3、§11.3、DD02 §1–2 和 DD06 §3、§6 要求先做 10～20 个边界案例，以独立逐单计算或先行审核的标签给出可追溯预期。Oracle 独立于 Agent 输出和被测 SQL 模板、分析函数。贡献边界用独立实现与手算交叉核验。判定依据是冻结输入、规则、来源、预期与有效验证证据能相互对照。[SRS](../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md) · [DD02 §1–2](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md#data) · [DD06 §3](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#scoring) | 11 个固定主例满足数量目标，均有先行预期和验证路径。M01 三维参考、M02 合成双域正例、M03 贡献和 M04 退款质量的最小参考范围已关闭。[开发清单](G0_development_manifest.json) · [放行复验](G0_M05_manifest_validation.md#g0-release-evidence) |
+| 案例逐一由本人签收 | **冻结契约未将其列为 G0 硬门槛。** 11 月 25 日预审将 M05 签收列为待补 Must，属于当时的项目验收安排。DD06 §1 的逐 case 必要证据核对适用于正式冻结，§3 的两次独立审阅或代理复核适用于知识支持争议。签收回执证明本人确认了所指案例及版本，生产快照的 `approved` 依 DD02 §1 验收。[DD06 §1](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#dataset) · [DD06 §3](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#scoring) · [DD02 §1](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md#data) | 当前 11 个主例及 M03 衍生 Oracle 的回执均已登记。A3-03 的 10 月 16 日历史原件仍待定位，其当前冻结版本有 11 月 26 日回执。初算作者与签收人分别按记录认定。[签收登记](#g0-data-oracle-release) · [A3-03 历史索引](A3-03_historical_acceptance.md) |
+| 个人 L3 实操 | **个人能力核验，对应路线图的独立 Python 能力诊断。** 以本人独立实操或考核记录为依据。SRS §7.1 N09、DD06 T13 与 DD07 §5 另规定产品走查，新环境下三名体验者中至少两名能独立完成主流程并找到证据。[路线图](../../docs/ROADMAP.md) · [DD06 T13](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#tests) · [DD07 §5](../../docs/engineering/07_发布与求职材料/DataAgentX_DD07_部署运维与交付设计_v1.2.1.md#delivery) | 本人 L3 实操证据待补，案例签收和独立子进程初算各记录自己的证据范围。 |
+
+### 后续阶段的剩余验收项
+
+| 阶段 | 剩余验收证据 | 冻结依据 |
+| --- | --- | --- |
+| G1／M06 | 真实 PostgreSQL 只读角色与双域隔离、从冻结 Scope 继承过滤的参数化查询、生产 DQ 阻断与恢复条件、精确贡献与序列化、可复算 QueryEvidence 与核验报告。 | SRS F03、F06、F07、F09、F10、N01、N02；DD02 §1–4；DD04 的核验与报告契约。[SRS](../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md) · [DD02](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md) · [DD04](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD04_检索证据与报告_v1.2.md) |
+| 后续集成 | Mock 和真实小样本的状态、唯一终态、预算、故障恢复与取消实测。 | SRS F11、F12、N03、N05；DD03 §2–5；DD06 T04、T09–T11。[SRS](../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md) · [DD03](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD03_Runtime与Provider_v1.2.1.md) · [DD06 测试组](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#tests) |
+| 正式评测与 R0 发布／M07 | 120 个正式案例按 30/30/60 隔离，完成基线对照及 60 例三轮盲测。检索与负载校准、安全和数值硬例、正式归档读回重评分、CI、新环境和走查均须提供证据。 | SRS F08、F13–F15、N01–N04、N07、N09–N10；DD06 §1–5、§7。R0 按 SRS §10.3 的全部 25 项 Must 和所列测试组验收。[SRS](../../docs/engineering/01_需求基线/DataAgentX_SRS_v1.2.md) · [DD06](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md) |
+
+渠道 C08 展示名、地区 `RG05.label-absent` 与 `RG06.W-reverse-combined`、整份输入的额外 Z/offset 配对等覆盖补强**不阻塞进入 G1**。A3-02 已有 offset 转 UTC 的固定案例及独立对照，生产 Scope 及查询的时间等价仍由 DD02 §4 与 DD06 T01/T02 验收。范围未选定的 Should/Could 按 SRS §10.3 的增强条款处理。[渠道 Must 评审](A3-11_Must_review.md) · [地区 Must 评审](G0_M01_region_Must_closure.md) · [A3-02 独立复核](G0_M05_manifest_validation.md) · [DD02 §4](../../docs/engineering/04_详细设计与实现准备/DataAgentX_DD02_指标数据与SQL工具_v1.2.md#execution) · [DD06 测试组](../../docs/engineering/06_评测与验收/DataAgentX_DD06_评测与验收设计_v1.2.1.md#tests)
+
+本次复验 `SYNC_MANIFEST` 的 25 份技术文件 SHA-256 全部匹配，开发清单检查覆盖 89 份证据，相关参考、静态 Fixture 与清单组合回归实际输出 `198 passed in 1.24s`，均退出 `0`。复验在本地开发工作树执行，沿用预审的清单检查及组合回归范围。

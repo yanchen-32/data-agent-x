@@ -24,3 +24,18 @@
 ## 当前冻结版本签收补记（2026-11-26）
 
 用户随后明确确认 A3-03 当前冻结版本及复核结论，并授权登记本人签收。清单以此次确认及上列输入、预期指纹登记为 `confirmed_by_user`。10 月 16 日的历史本人证据仍待定位。[当前版本回执](../manual_checks/G0_M05_remaining_user_confirmation.json)
+
+## 10 月 16 日历史签收索引（2026-11-27）
+
+| 登记项 | 已核对内容 |
+| --- | --- |
+| 拟归档的历史证据 | `2026-10-16`（Asia/Shanghai）的 A3-03 本人独立复核。 |
+| 案例版本 | Fixture 格式 `1`，基线 `DAX-RB-1.2.1`，快照 `fixture_duplicate`。10 月 16 日前后的版本锚点为 `468882b` 和 `1f4f31f`。[冻结 Fixture](../../tests/fixtures/order_boundaries/03_duplicate_orders.json) |
+| 输入和预期定位 | Fixture 的 `/input` 与 `/expected`，完整 SHA-256 见上表。 |
+| 冻结业务结论 | `(domain_a, fixture_duplicate, D-B)` 在 `d-row-1`、`d-row-2` 重复，预期为 `blocked_by_quality`，双窗 N、U、率及绝对和相对变化均为 `null`。[Oracle](../../tests/fixtures/order_boundaries/ORACLE.md) |
+| 历史签收状态 | 待确认。缺少能辨识日期、本人结论与案例版本的当日原件或可核查出处。 |
+| 当前版本签收 | `2026-11-26`，`confirmed_by_user`。回执 `G0-M05-remaining-seven-user-confirmation-2026-11-26` 的 `/cases/A3-03` 与复核表、当前输入和预期指纹一致。[回执](../manual_checks/G0_M05_remaining_user_confirmation.json) · [复核表](../manual_checks/G0_M05_remaining_review.md#a3-03) · [开发数据清单](G0_development_manifest.json) |
+
+在已核对的项目验收材料和 Git 历史中，暂未找到 A3-03 的本人复核原件。10 月 16 日可定位的回归记录覆盖 A3-04 和 A3-05。[10 月 16 日回归记录](A3-04_A3-05.md)
+
+当前 Fixture 与 `9b6ca92`、`468882b`、`1f4f31f`、`cb247ff`、`40981cd` 逐字节一致。Oracle 以 A3-03 二级标题起至下一二级标题前的原字节核验，保留段末换行，五个版本均一致。上表四项指纹全部复验通过。本轮仅核对证据绑定，沿用冻结预期。
